@@ -1,0 +1,4 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TOKEN_KEY = 'token';
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidHlwZXMuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJ0eXBlcy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFhLFFBQUEsU0FBUyxHQUFHLE9BQU8sQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBjb25zdCBUT0tFTl9LRVkgPSAndG9rZW4nO1xyXG4iXX0=

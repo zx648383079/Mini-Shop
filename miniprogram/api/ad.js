@@ -1,0 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var http_1 = require("../utils/http");
+exports.getAds = function (position) { return http_1.fetch('shop/ad', {
+    position: position,
+}); };
+exports.getBanners = function () { return http_1.fetch('shop/ad/banner'); };
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYWQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJhZC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLHNDQUFvQztBQUd2QixRQUFBLE1BQU0sR0FBRyxVQUFDLFFBQWdCLElBQUssT0FBQSxZQUFLLENBQWEsU0FBUyxFQUFFO0lBQ3JFLFFBQVEsVUFBQTtDQUNYLENBQUMsRUFGMEMsQ0FFMUMsQ0FBQztBQUVVLFFBQUEsVUFBVSxHQUFHLGNBQU0sT0FBQSxZQUFLLENBQWEsZ0JBQWdCLENBQUMsRUFBbkMsQ0FBbUMsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7ZmV0Y2h9IGZyb20gJy4uL3V0aWxzL2h0dHAnO1xyXG5pbXBvcnQgeyBJRGF0YSwgSUFkIH0gZnJvbSAnLi9tb2RlbCc7XHJcblxyXG5leHBvcnQgY29uc3QgZ2V0QWRzID0gKHBvc2l0aW9uOiBudW1iZXIpID0+IGZldGNoPElEYXRhPElBZD4+KCdzaG9wL2FkJywge1xyXG4gICAgcG9zaXRpb24sXHJcbn0pO1xyXG5cclxuZXhwb3J0IGNvbnN0IGdldEJhbm5lcnMgPSAoKSA9PiBmZXRjaDxJRGF0YTxJQWQ+Pignc2hvcC9hZC9iYW5uZXInKTtcclxuIl19

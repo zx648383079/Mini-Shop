@@ -1,0 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var http_1 = require("../utils/http");
+exports.getRegionTree = function () { return http_1.fetch('shop/region/tree'); };
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVnaW9uLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsicmVnaW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQ0Esc0NBQXNDO0FBR3pCLFFBQUEsYUFBYSxHQUFHLGNBQU0sT0FBQSxZQUFLLENBQTBCLGtCQUFrQixDQUFDLEVBQWxELENBQWtELENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBJUmVnaW9uT2JqZWN0LCBJRGF0YU9uZSB9IGZyb20gJy4vbW9kZWwnO1xyXG5pbXBvcnQgeyBmZXRjaCB9IGZyb20gJy4uL3V0aWxzL2h0dHAnO1xyXG5cclxuXHJcbmV4cG9ydCBjb25zdCBnZXRSZWdpb25UcmVlID0gKCkgPT4gZmV0Y2g8SURhdGFPbmU8SVJlZ2lvbk9iamVjdD4+KCdzaG9wL3JlZ2lvbi90cmVlJyk7XHJcbiJdfQ==
