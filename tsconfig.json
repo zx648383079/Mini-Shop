@@ -26,11 +26,11 @@
     ]
   },
   "include": [
-    "./miniprogram/**/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "miniprogram_dist",
+    "dist",
     "**/*.spec.ts"
   ]
 }
