@@ -9,6 +9,12 @@ module.exports = function (tag) {
             if (file.isNull()) {
                 return callback(null, file);
             }
+            function htmlToWxml(content) {
+                if (content.indexOf('<view') >= 0) {
+                    return content;
+                }
+                
+            }
             function isLang(attr, lang) {
                 if (lang === 'tpl') {
                     return true;
@@ -43,6 +49,9 @@ module.exports = function (tag) {
                     if (isLang(result[1], tag)) {
                         str += result[2];
                     }
+                }
+                if (tag === 'tpl') {
+                    str = htmlToWxml(str);
                 }
                 file.contents = Buffer.from(str);
                 return callback(null, file);
