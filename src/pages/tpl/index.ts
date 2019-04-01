@@ -6,9 +6,12 @@ import {
 
 const app = getApp<IMyApp>();
 
-Page({
-    data: {},
+class Index implements IPage {
+    data: any;
+
     onLoad() {
         app.globalData;
-    },
-});
+    }
+}
+
+Page(new Index());
