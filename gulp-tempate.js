@@ -27,11 +27,11 @@ module.exports = function (tag) {
                 }
                 var html = String(file.contents);
                 var maps = {
-                    js: '<script([\\s\\S]*?)>([\\s\\S]+)</script>',
-                    tpl: '<template([\\s\\S]*?)>([\\s\\S]+)</template>',
-                    css: '<style([\\s\\S]*?)>([\\s\\S]+)</style>',
-                    sass: '<style([\\s\\S]*?)>([\\s\\S]+)</style>',
-                    ts: '<script([\\s\\S]*?)>([\\s\\S]+)</script>',
+                    js: '<script([\\s\\S]*?)>([\\s\\S]+?)</script>',
+                    tpl: '<template([\\s\\S]*?)>([\\s\\S]+?)</template>',
+                    css: '<style([\\s\\S]*?)>([\\s\\S]+?)</style>',
+                    sass: '<style([\\s\\S]*?)>([\\s\\S]+?)</style>',
+                    ts: '<script([\\s\\S]*?)>([\\s\\S]+?)</script>',
                 };
                 if (!maps.hasOwnProperty(tag)) {
                     return callback({stack: 'error ' + tag}, file);
@@ -41,7 +41,7 @@ module.exports = function (tag) {
                 var str = '';
                 while ((result = reg.exec(html)) !== null) {
                     // 支持wxml子模版
-                    if (tag === 'tpl' && result[1].indexOf('name') > 0) {
+                    if (tag === 'tpl' && result[1].indexOf('name=') > 0) {
                         str += result[0];
                         continue;
                     }

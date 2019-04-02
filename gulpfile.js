@@ -2,10 +2,18 @@ var gulp = require('gulp'),
     sass = require("gulp-sass"),
     rename = require('gulp-rename'),
     ts = require("gulp-typescript"),
-    tap = require('gulp-tap'),
+    clean = require('gulp-clean'),
     template = require('./gulp-tempate'),
-    path = require('path'),
     tsProject = ts.createProject('tsconfig.json');
+gulp.task('cleanall', function() {
+    return gulp.src('dist/*', {read: false})
+        .pipe(clean());
+});
+gulp.task('clean', function() {
+    return gulp.src('dist/parser.js')
+        .pipe(clean());
+});
+
 gulp.task('ts', async() => {
     await gulp.src('src/**/*.ts')
         .pipe(tsProject())

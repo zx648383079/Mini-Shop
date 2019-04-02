@@ -183,3 +183,96 @@ declare interface IPage extends Page.PageInstance {
 
 declare const Page: Page.PageConstructor
 declare const getCurrentPages: Page.GetCurrentPages
+
+interface IComponentProperty {
+    type?: Object | String | Number,
+    value?: any,
+    observer?: (newVal: any, oldVal: any, changedPath: string) => void
+}
+
+interface IComponentLefeTime {
+    attached?: Function,
+    moved?: Function,
+    detached?: Function
+}
+
+interface IComponentPageLefeTime {
+    show?: Function,
+    hide?: Function,
+    resize?: Function
+}
+
+interface IComponentRelation {
+    type?: string,
+    linked?: (target: any) => void,
+    linkChanged?: (target: any) => void,
+    unlinked?: (target: any) => void,
+}
+
+interface IBehaviorLefeTime {
+    created?: Function,
+}
+
+declare interface IBehavior {
+    behaviors?: IBehavior[],
+    lifetimes?: IBehaviorLefeTime,
+    definitionFilter?(defFields: any, definitionFilterArr: any): void,
+}
+
+declare const Behavior: (options: IBehavior) => IBehavior;
+
+declare interface IComponent extends Page.PageInstance {
+    /**
+     * 组件的对外属性，是属性名到属性设置的映射表
+     */
+    properties?: {[key: string]: IComponentProperty|Object | String | Number},
+    /**
+     * 组件生命周期声明对象
+     */
+    lifetimes?: IComponentLefeTime,
+    /**
+     * 组件生命周期函数，在组件实例进入页面节点树时执行
+     */
+    attached?: Function,
+    ready?: Function,
+    options?: any,
+    /**
+     * 组件接受的外部样式类
+     */
+    externalClasses?: string|string[],
+    /**
+     * 组件所在页面的生命周期声明对象，支持页面的 show 、 hide 等生命周期
+     */
+    pageLifetimes?: IComponentPageLefeTime,
+    /**
+     * 定义段过滤器
+     */
+    definitionFilter?: Function,
+    /**
+     * 组件生命周期声明对象
+     */
+    methods?: {[key: string]: Function},
+    /**
+     * 类似于mixins和traits的组件间代码复用机制
+     */
+    behaviors?: IBehavior[],
+    /**
+     * 组件数据字段监听器
+     */
+    observers: {[key: string]: (args: any)=>void},
+    /**
+     * 组件间关系定义
+     */
+    relations?: {[key: string]: IComponentRelation},
+
+    triggerEvent?(name: string, detail: any, options: any): void,
+    createSelectorQuery?(): any,
+    createIntersectionObserver?(): any,
+    selectComponent?(selector: string): any,
+    selectAllComponents?(selector: string): any,
+    getRelationNodes?(relationKey: string): any,
+    groupSetData?(callback: Function): any,
+    getTabBar?(): any,
+}
+
+declare const Component: (options: IComponent) => void;

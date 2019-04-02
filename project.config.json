@@ -10,7 +10,7 @@
 	"scripts": {
 		"beforeCompile": "npm run start",
 		"beforePreview": "npm run start",
-		"beforeUpload": "npm run start"
+		"beforeUpload": "npm run build"
 	},
 	"setting": {},
 	"appid": "wxfc5287e8354375f4",

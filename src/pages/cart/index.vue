@@ -1,3 +1,8 @@
+<template name="aa">
+    <div>
+        
+    </div>
+</template>
 <template>
     <div class="empty-cart-box" v-if="!items || items.length < 1" @click="$router.push('/login')">
         <div v-if="isGuest">

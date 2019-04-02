@@ -84,7 +84,7 @@ export function htmlToJson(content: string): IElement[] {
         if (text.length < 1) {
             return false;
         }
-        return {node: 'text', text};
+        return {node: 'text', text: text.trim()};
     },
     backslashedCount = function() {
         let po = pos, code: string, count = 0;
@@ -261,16 +261,22 @@ export function jsonToWxml(json: IElement | IElement[]): string {
     const disallow_attrs: string[] = [],
         replace_attrs:{[key: string]: Function | string| boolean} = {
             'v-if': function(value: string) {
-                return ['wx:if', '{{ ' +value + ' }}']
+                return ['wx:if', '{{ ' +value + ' }}'];
             },
             'v-elseif': function(value: string) {
-                return ['wx:elif', '{{ ' +value + ' }}']
+                return ['wx:elif', '{{ ' +value + ' }}'];
             },
             'v-else': 'wx:else',
+            ':src': function(value: string) {
+                return ['src', '{{ ' +value + ' }}'];
+            },
+            'v-bind:src': function(value: string) {
+                return ['src', '{{ ' +value + ' }}'];
+            },
             'v-for': function(value: string) {
                 let index = 'index';
                 let item = 'item';
-                let match = value.match(/\(?([\w_]+)(,\s?([\w_]+)\))?\s+in\s+([\w_]+)/);
+                let match = value.match(/\(?([\w_]+)(,\s?([\w_]+)\))?\s+in\s+([\w_\.]+)/);
                 if (match === null) {
                     return ['wx:for', '{{ ' +value + ' }}'];
                 }
@@ -315,20 +321,21 @@ export function jsonToWxml(json: IElement | IElement[]): string {
         const attr = parseNodeAttr(json.attrs, json.tag);
         return `<form${attr}>${child}</form>`;
     }
+    if (['slider', 'icon', 'progress', 'switch', 'radio', 'checkbox', 'live-player', 'live-pusher'].indexOf(json.tag + '') >= 0) {
+        const attr = parseNodeAttr(json.attrs, json.tag);
+        return `<${json.tag}${attr}/>`;
+    }
     if (json.children && json.children.length == 1 && json.children[0].node == 'text') {
         child = json.children[0].text + '';
     }
-    if (json.tag == 'label') {
+    if (['label', 'style', 
+        'script', 'template', 'view', 'scroll-view', 'swiper', 'block', 
+        'swiper-item', 'movable-area', 'movable-view', 'cover-view', 'video',
+        'rich-text', 'picker', 'picker-view', 'picker-view-column', 'checkbox-group', 'radio-group', 'navigator', 'functional-page-navigator', 'audio', 'image', 'camera', 'map', 'canvas',
+        'open-data', 'web-view', 'ad', 'official-account'
+        ].indexOf(json.tag + '') >= 0) {
         const attr = parseNodeAttr(json.attrs, json.tag);
-        return `<label${attr}>${child}</label>`;
-    }
-    if (json.tag == 'style') {
-        const attr = parseNodeAttr(json.attrs, json.tag);
-        return `<style${attr}>${child}</style>`;
-    }
-    if (json.tag == 'script') {
-        const attr = parseNodeAttr(json.attrs, json.tag);
-        return `<script${attr}>${child}</script>`;
+        return `<${json.tag}${attr}>${child}</${json.tag}>`;
     }
     if (json.tag == 'textarea') {
         json.attrs = Object.assign({}, json.attrs, {
