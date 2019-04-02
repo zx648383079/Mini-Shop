@@ -374,7 +374,10 @@ export function jsonToWxml(json: IElement | IElement[]): string {
             }
             if (disallow_attrs.indexOf(key) >= 0) {
                 continue;
-            } 
+            }
+            if (key.indexOf('@') >= 0) {
+                continue;
+            }
             let value = attrs[key];
             let ext = '';
             if (replace_attrs.hasOwnProperty(key)) {

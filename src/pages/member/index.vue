@@ -94,56 +94,14 @@
 import {
     IMyApp
 } from '../../app';
-import { IAd, ICategory, IProduct, ISubtotal, IHomeProduct } from '../../api/model';
-import { getHome } from '../../api/product';
-import { getCategories } from '../../api/article';
-import { getBanners } from '../../api/ad';
 
 const app = getApp<IMyApp>();
 
-interface IPageData {
-    banners: IAd[];
-    categories: ICategory[];
-    data: IHomeProduct;
-    subtotal: ISubtotal| null;
-    mode: number;
-    goods: IProduct | null
-}
-interface Index extends IPage {
-}
-
-class Index {
-    public data: IPageData = {
-        banners: [],
-        categories: [],
-        data: {},
-        subtotal: null,
-        mode: 0,
-        goods: null,
-    };
+class Index implements IPage {
+    data: any;
 
     onLoad() {
-        getHome().then(res => {
-            this.setData({
-                data: res
-            });
-        });
-        getCategories().then(res => {
-            if (!res.data) {
-                return;
-            }
-            this.setData({
-                categories: res.data
-            });
-        });
-        getBanners().then(res => {
-             if (!res.data) {
-                return;
-            }
-            this.setData({
-                banners: res.data
-            });
-        });
+        app.globalData;
     }
 }
 

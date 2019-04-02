@@ -86,14 +86,6 @@ $lineHeight: 2.5rem;
   #{$content-name}: $content-txt;
 }
 
-.fa {
-  &.fa-close {
-      &::before {
-          content: "\f00d";
-      }
-  }
-}
-
 .dialog-bg {
   position: fixed;
   top: 0;
@@ -107,85 +99,8 @@ $lineHeight: 2.5rem;
 .dialog {
   position: fixed;
   z-index: 920;
-  &.dialog-private {
-      position: absolute;
-      z-index: 919;
-  }
-  &.dialog-tip,
-  &.dialog-pop {
-      background: rgba(0, 0, 0, .6);
-      color: #fff;
-      max-width: 66.66%;
-      min-width: 100px;
-      padding: 5px 10px;
-      text-align: center;
-      @include prefix-animation(dialog-tip 1s both);
-      @include prefix-content(transition, top 1s);
-  }
-  &.dialog-message {
-      background: rgba(0, 0, 0, .6);
-      color: #fff;
-      max-width: 33.33%;
-      min-width: 100px;
-      padding: 5px 10px;
-      right: 0;
-      @include prefix-animation(dialog-message .5s);
-      @include prefix-content(transition, top 1s);
-  }
-  &.dialog-loading {}
-  &.dialog-pop {
-      bottom: auto;
-      &:before {
-          position: absolute;
-          content: "";
-          width: 0;
-          height: 0;
-          border: transparent 20px solid;
-      }
-      &.dialog-pop-top,
-      &.dialog-pop-leftTop,
-      &.dialog-pop-center,
-          {
-          &:before {
-              bottom: -40px;
-              left: 50%;
-              margin-left: -20px;
-              border-top-color: rgba(0, 0, 0, .6);
-          }
-      }
-      &.dialog-pop-left,
-      &.dialog-pop-leftBottom {
-          &:before {
-              right: -40px;
-              margin-top: -20px;
-              top: 50%;
-              border-left-color: rgba(0, 0, 0, 0.6);
-          }
-      }
-      &.dialog-pop-bottom,
-      &.dialog-pop-rightBottom {
-          &:before {
-              top: -40px;
-              left: 50%;
-              margin-left: -20px;
-              border-bottom-color: rgba(0, 0, 0, .6);
-          }
-      }
-      &.dialog-pop-right,
-      &.dialog-pop-rightTop {
-          &:before {
-              left: -40px;
-              margin-top: -20px;
-              top: 50%;
-              border-right-color: rgba(0, 0, 0, 0.6);
-          }
-      }
-  }
-  &.dialog-page,
   &.dialog-content,
-  &.dialog-box,
-  &.dialog-form,
-  &.dialog-disk {
+  &.dialog-box {
       background: #fff;
       min-width: 260px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -265,7 +180,6 @@ $lineHeight: 2.5rem;
       }
   }
   &.dialog-box,
-  &.dialog-form,
   &.dialog-content {
       .dialog-header {
           .dialog-title {
@@ -282,165 +196,6 @@ $lineHeight: 2.5rem;
       top: 0;
       left: 0;
       right: 0;
-      .dialog-body {}
-      .dialog-footer {
-          text-align: center
-      }
-  }
-  &.dialog-page {
-      top: 0;
-      left: 0;
-      width: 100%;
-      bottom: 0;
-      .dialog-header {
-          .dialog-close {
-              background: #333;
-              color: #fff;
-              top: 6px;
-          }
-      }
-      .dialog-body {
-          position: absolute;
-          bottom: 40px;
-          width: 100%;
-          top: 40px;
-      }
-      .dialog-footer {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-          text-align: center
-      }
-  }
-  &.dialog-form {
-      .dialog-body {
-          input,
-          textarea {
-              font-size: 20px;
-              width: 100%;
-              box-sizing: border-box;
-              border: none;
-              border-bottom: 1px solid #333;
-              padding: 5px;
-          }
-          label {
-              font-size: 20px;
-          }
-          select {
-              font-size: 20px;
-              width: 100px;
-              float: right;
-              border: none;
-              border-bottom: 1px solid #333;
-              padding: 5px;
-          }
-      }
-  }
-  &.dialog-box {}
-  &.dialog-image {
-      @include prefix-content(transition, all 1s);
-      .dialog-previous,
-      .dialog-next,
-      .dialog-close {
-          position: absolute;
-          font-size: 30px;
-          display: none;
-      }
-      .dialog-previous,
-      .dialog-next {
-          top: 50%;
-          margin-top: -15px;
-      }
-      .dialog-previous {}
-      .dialog-body {
-          img {}
-      }
-      .dialog-next {
-          right: 0;
-      }
-      .dialog-close {
-          right: 0;
-          top: 0;
-      }
-      &:hover {
-          .dialog-previous,
-          .dialog-next,
-          .dialog-close {
-              display: block;
-          }
-      }
-  }
-  &.dialog-disk {
-      .dialog-body {
-          min-width: 300px;
-          min-height: 500px;
-          position: relative;
-          .dialog-catalog {
-              width: 100px;
-              display: inline-block;
-              top: 0;
-              bottom: 0;
-              left: 0;
-              overflow: auto;
-              ul {
-                  margin: 0;
-                  padding: 0;
-                  li {
-                      list-style: none;
-                  }
-              }
-              .tree {
-                  .tree-item {
-                      .tree-header {
-                          line-height: 30px;
-                          text-align: center;
-                      }
-                      .tree-child {
-                          margin-left: 15px;
-                          display: none;
-                          .tree-item {}
-                      }
-                      &.active,
-                      &:hover {
-                          >.tree-header {
-                              color: #fff;
-                              background: #337ab7;
-                          }
-                      }
-                      &.active {
-                          .tree-child {
-                              display: block;
-                          }
-                      }
-                  }
-              }
-          }
-          .dialog-content {
-              display: inline-block;
-              position: absolute;
-              left: 120px;
-              right: 0;
-              top: 0;
-              bottom: 0;
-              overflow-y: auto;
-              .folder-item,
-              .file-item {
-                  display: inline-block;
-                  width: 100px;
-                  text-align: center;
-                  padding: 20px 5px;
-                  box-sizing: border-box;
-                  .fa {
-                      font-size: 40px;
-                  }
-                  &.active,
-                  &:hover {
-                      border: 1px solid #337ab7;
-                      color: #337ab7;
-                  }
-              }
-          }
-      }
       .dialog-footer {
           text-align: center
       }
@@ -523,24 +278,6 @@ $lineHeight: 2.5rem;
       @include prefix-content(transform, scale(.2));
   }
 }
-* {
-  margin: 0;
-  padding: 0;
-}
-
-*,
-*::before,
-*::after {
-box-sizing: border-box;
-}
-
-body {
-  background-color: $bg;
-}
-
-a {
-  text-decoration: none;
-}
 
 .hide {
   display: none;
@@ -556,7 +293,6 @@ a {
   margin: 0 8px;
   vertical-align: middle;
 }
-
 
 .form-inline {
   .input-group {
@@ -1212,10 +948,6 @@ footer,
       .tree-item {
           a {
               text-align: center;
-              &:not(:nth-child(3n - 1)),
-              &:not(:last-child) {
-                  border-right: $hr;
-              }
           }
       }
   }

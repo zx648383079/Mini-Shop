@@ -60,9 +60,15 @@ gulp.task('vue', gulp.series('vuejs', 'vuets', 'vuecss', 'vuesass', async() => {
         .pipe(template('tpl'))
         .pipe(rename({extname: '.wxml'}))
         .pipe(gulp.dest('dist/'));
-}))
+}));
 
-gulp.task('default', gulp.series('ts', 'sass', async() => {
+gulp.task('md5', async() => {
+    await gulp.src('node_modules/ts-md5/dist/md5.js')
+        .pipe(rename({basename: 'ts-md5'}))
+        .pipe(gulp.dest('dist/utils/'));
+});
+
+gulp.task('default', gulp.series('ts', 'sass', 'md5', async() => {
     await gulp.src('src/**/*.{js,json,wxml,wxss,png,jpg,jpeg}')
             .pipe(gulp.dest('dist/'));
 }));
