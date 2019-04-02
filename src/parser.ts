@@ -280,6 +280,9 @@ export function jsonToWxml(json: IElement | IElement[]): string {
                 item = match[1];
                 return ['wx:for', '{{ ' + match[4] + ' }}', `wx:for-index="${index}" wx:for-item="${item}"`];
             },
+            'v-show': function(value: string) {
+                return ['hidden', '{{ !' +value + ' }}'];
+            },
             ':key': false,
             '@click': 'bindtap',
             'v-on:click': 'bindtap',

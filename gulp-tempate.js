@@ -9,12 +9,6 @@ module.exports = function (tag) {
             if (file.isNull()) {
                 return callback(null, file);
             }
-            function htmlToWxml(content) {
-                if (content.indexOf('<view') >= 0) {
-                    return content;
-                }
-                
-            }
             function isLang(attr, lang) {
                 if (lang === 'tpl') {
                     return true;
@@ -46,6 +40,11 @@ module.exports = function (tag) {
                 var result;
                 var str = '';
                 while ((result = reg.exec(html)) !== null) {
+                    // 支持wxml子模版
+                    if (tag === 'tpl' && result[1].indexOf('name') > 0) {
+                        str += result[0];
+                        continue;
+                    }
                     if (isLang(result[1], tag)) {
                         str += result[2];
                     }

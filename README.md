@@ -9,6 +9,34 @@
 
 sass 引用模式未做处理
 
-## 待开发
+自动转化html 为 wxml, 自动转化 v-if v-for v-else v-show
 
-自动转化html 为 wxml
+## 标准模板
+
+```html
+<template>
+    <div>
+        
+    </div>
+</template>
+<script lang="ts">
+import {
+    IMyApp
+} from '../../app';
+
+const app = getApp<IMyApp>();
+
+class Index implements IPage {
+    data: any;
+
+    onLoad() {
+        app.globalData;
+    }
+}
+
+Page(new Index());
+</script>
+<style lang="scss" scoped>
+
+</style>
+```
