@@ -1,6 +1,7 @@
 'use strict';
 
 var Transform = require('readable-stream/transform');
+var parser = require('./dist/parser.js');
 
 module.exports = function (tag) {
     return new Transform({
@@ -51,7 +52,7 @@ module.exports = function (tag) {
                     }
                 }
                 if (tag === 'tpl') {
-                    str = htmlToWxml(str);
+                    str = parser.htmlToWxml(str);
                 }
                 file.contents = Buffer.from(str);
                 return callback(null, file);

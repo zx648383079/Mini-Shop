@@ -6051,7 +6051,7 @@ declare namespace wx {
      * 隐藏 loading 提示框
      *
      * 最低基础库： `1.1.0` */
-    hideLoading(option: HideLoadingOption): void;
+    hideLoading(option?: HideLoadingOption): void;
     /** [wx.showActionSheet(Object object)](wx.showActionSheet.md)
   *
   * ​显示操作菜单
