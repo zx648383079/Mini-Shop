@@ -1,7 +1,7 @@
 <template>
     <div class="empty-cart-box" v-if="!items || items.length < 1" @click="$router.push('/login')">
         <div v-if="isGuest">
-            <p>登录后可同步购物车中商品</p>
+            <p v-for="(item, index) in items" :key="index">登录后可同步购物车中商品</p>
             <a @click="$router.push('/login')" class="btn">登录</a>
         </div>
         <div v-else>
