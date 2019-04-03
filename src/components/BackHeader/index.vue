@@ -10,11 +10,8 @@
     </header>
 </template>
 <script lang="ts">
-interface BackHeader extends IComponent {
-    
-}
 
-class BackHeader {
+export class BackHeader extends WxComponent<any>  {
     public properties = {
         title: String,
         fixed: {
@@ -28,7 +25,6 @@ class BackHeader {
     }
 }
 
-Component(new BackHeader());
 </script>
 <style lang="scss" scoped>
 

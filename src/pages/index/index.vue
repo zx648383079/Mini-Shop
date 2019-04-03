@@ -112,10 +112,8 @@ interface IPageData {
     goods: IProduct | null,
     isGuest: boolean;
 }
-interface Index extends IPage {
-}
 
-class Index {
+export class Index extends WxPage<IPageData> {
     public data: IPageData = {
         banners: [],
         categories: [],
@@ -155,8 +153,6 @@ class Index {
         });
     }
 }
-
-Page(new Index());
 </script>
 <style lang="scss" scoped>
 .banner {

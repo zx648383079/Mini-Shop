@@ -21,6 +21,18 @@ module.exports = function (tag) {
                 }
                 return new RegExp('lang=["\']?'+lang).test(attr);
             }
+            function parserPage(content) {
+                var match = content.match(/(export\s+)?class\s+(\S+)\s+extends\s(WxPage|WxComponent)[^\s\{]+/);
+                if (!match) {
+                    return content;
+                }
+                content = content.replace(match[0], 'class ' + match[2]);
+                var reg = new RegExp('(Page|Component)\\(new\\s+'+ match[2]);
+                if (reg.test(content)) {
+                    return content;
+                }
+                return content + "\r\n" + (match[3].indexOf('Page') > 0 ? 'Page' : 'Component') + '(new '+ match[2] +'());';
+            }
             function doReplace() {
                 if (!file.isBuffer()) {
                     return callback({stack: 'error file'}, file);
@@ -51,6 +63,8 @@ module.exports = function (tag) {
                 }
                 if (tag === 'tpl') {
                     str = require('./dist/parser.js').htmlToWxml(str);
+                } else if (tag === 'ts') {
+                    str = parserPage(str);
                 }
                 file.contents = Buffer.from(str);
                 return callback(null, file);

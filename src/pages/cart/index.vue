@@ -57,15 +57,13 @@ import {
 
 const app = getApp<IMyApp>();
 
-class Index implements IPage {
+export class Index extends WxPage<IPageData> {
     data: any;
 
     onLoad() {
         app.globalData;
     }
 }
-
-Page(new Index());
 </script>
 <style lang="scss" scoped>
 

@@ -6,7 +6,7 @@ import {
 
 const app = getApp<IMyApp>();
 
-class Index implements IPage {
+export class Index extends WxPage<any> {
     data: any;
 
     onLoad() {

@@ -97,15 +97,21 @@ import {
 
 const app = getApp<IMyApp>();
 
-class Index implements IPage {
-    data: any;
-
-    onLoad() {
-        app.globalData;
-    }
+interface IPageData {
+    items: number[];
 }
 
-Page(new Index());
+export class Index extends WxPage<IPageData> {
+    public data: IPageData = {
+        items: [],
+    };
+
+    onLoad() {
+        this.setData({
+            items: []
+        });
+    }
+}
 </script>
 <style lang="scss" scoped>
 

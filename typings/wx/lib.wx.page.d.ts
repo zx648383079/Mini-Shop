@@ -177,7 +177,7 @@ declare namespace Page {
   }
 }
 
-declare interface IPage extends Page.PageInstance {
+declare interface IPage<T> extends Page.PageInstance<T> {
   
 }
 
@@ -221,7 +221,7 @@ declare interface IBehavior {
 
 declare const Behavior: (options: IBehavior) => IBehavior;
 
-declare interface IComponent extends Page.PageInstance {
+declare interface IComponent<T> extends Page.PageInstance<T> {
     /**
      * 组件的对外属性，是属性名到属性设置的映射表
      */
@@ -259,7 +259,7 @@ declare interface IComponent extends Page.PageInstance {
     /**
      * 组件数据字段监听器
      */
-    observers: {[key: string]: (args: any)=>void},
+    observers?: {[key: string]: (args: any)=>void},
     /**
      * 组件间关系定义
      */
@@ -275,4 +275,24 @@ declare interface IComponent extends Page.PageInstance {
     getTabBar?(): any,
 }
 
-declare const Component: (options: IComponent) => void;
+declare const Component: (options: IComponent<any>) => void;
+
+declare class WxPage<T> implements IPage<T> {
+  public route: string;
+
+  public setData<K extends keyof T>(
+    data: T| Pick<T, K> | IAnyObject,
+    callback?: () => void
+  ): void;
+}
+
+declare class WxComponent<T> extends WxPage<T> implements IComponent<T> {
+  public triggerEvent(name: string, detail: any, options: any): void;
+  public createSelectorQuery(): any;
+  public createIntersectionObserver?(): any;
+  public selectComponent(selector: string): any;
+  public selectAllComponents(selector: string): any;
+  public getRelationNodes(relationKey: string): any;
+  public groupSetData(callback: Function): any;
+  public getTabBar(): any;
+}

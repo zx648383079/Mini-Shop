@@ -63,10 +63,8 @@ interface IPageData {
     category: ICategory | null,
     subtotal: ISubtotal| null
 }
-interface Index extends IPage {
-}
 
-class Index {
+export class Index extends WxPage<IPageData> {
     public data: IPageData = {
         categories: [],
         subtotal: null,
@@ -76,7 +74,7 @@ class Index {
     onLoad() {
         app.getSubtotal().then(res => {
             this.setData({
-                subtotal: res
+                subtotal: res,
             });
         });
         app.getCategories().then(res => {
@@ -109,8 +107,6 @@ class Index {
         });
     }
 }
-
-Page(new Index());
 </script>
 <style lang="scss" scoped>
 
