@@ -178,7 +178,7 @@ export function htmlToJson(content: string): IElement[] {
                     moveEndTag(tag);
                     return {
                         node: 'element',
-                        tag,
+                        tag: tag.trim(),
                         attrs,
                     };
                 }
@@ -186,13 +186,13 @@ export function htmlToJson(content: string): IElement[] {
                 if (children.length < 1) {
                     return {
                         node: 'element',
-                        tag,
+                        tag: tag.trim(),
                         attrs,
                     }
                 }
                 return {
                     node: 'element',
-                    tag,
+                    tag: tag.trim(),
                     attrs,
                     children
                 }
@@ -273,7 +273,7 @@ export function htmlToJson(content: string): IElement[] {
         }
         return {
             node: 'element',
-            tag,
+            tag: tag.trim(),
             attrs,
         };
     },

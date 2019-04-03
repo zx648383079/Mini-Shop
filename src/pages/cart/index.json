@@ -1,0 +1,5 @@
+{
+    "usingComponents": {
+        "BackHeader": "/components/BackHeader/index"
+    }
+}

@@ -8,7 +8,7 @@
 	"libVersion": "2.4.0",
 	"projectname": "Mini-Shop",
 	"scripts": {
-		"beforeCompile": "npm run start",
+		"beforeCompile": "",
 		"beforePreview": "npm run start",
 		"beforeUpload": "npm run build"
 	},

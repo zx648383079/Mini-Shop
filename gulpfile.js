@@ -68,6 +68,11 @@ gulp.task('md5', async() => {
         .pipe(gulp.dest('dist/utils/'));
 });
 
+gulp.task('watch', async() => {
+    await gulp.watch('src/**/*.ts', gulp.series('ts'));
+    await gulp.watch('src/**/*.{vue,html}', gulp.series('vue'));
+});
+
 gulp.task('default', gulp.series('ts', 'sass', 'md5', async() => {
     await gulp.src('src/**/*.{js,json,wxml,wxss,png,jpg,jpeg}')
             .pipe(gulp.dest('dist/'));

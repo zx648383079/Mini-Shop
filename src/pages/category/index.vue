@@ -1,91 +1,50 @@
 <template>
     <div>
-        <header class="top top-search-box">
-            <a href="" class="logo">
-                <img :src="'/assets/images/wap_logo.png' | assets" alt="">
-            </a>
-            <a class="search-entry" @click="tapSearch">
+        <header class="top">
+            <a class="search-entry" @click="$router.push('/search')">
                 <i class="fa fa-search"></i>
-                <span>搜索商品, 共{{ subtotal ? subtotal.goods : 0 }}款好物</span>
-            </a>
-            <a v-if="isGuest" @click="tapLogin">登录</a>
-            <a v-if="!isGuest" @click="tapMessage">
-                <i class="fa fa-comment-dots"></i>
+                <span>搜索商品, 共 {{ subtotal ? subtotal.goods : 0 }} 款好物</span>
             </a>
         </header>
+        <div class="has-header category-page">
+            <scroll-view  class="category-menu" scroll-y="true"> 
+                    <div v-for="(item, index) in categories" :key="index" class="menu-item {{ category && item.id == category.id ? 'active' : '' }}" @click="tapSelectedItem" id="{{index}}">{{ item.name }}</div>
+            </scroll-view>
 
-        <div class="has-header">
-
-            <div class="banner">
-                <mt-swipe :auto="4000">
-                    <mt-swipe-item v-for="(item, index) in banners" :key="index">
-                        <img :src="item.content" width="100%" alt="">
-                    </mt-swipe-item>
-                </mt-swipe>
-            </div>
-
-            <div class="menu-box">
-                <a v-for="(item, index) in categories" :key="index" class="menu-item">
-                    <img class="menu-icon" :src="item.icon" alt="">
-                    <div class="menu-name">{{ item.name }}</div>
-                </a>
-            </div>
-            <div class="home-panel" v-if="items && items.length > 0">
-                <div class="panel-header">最新商品</div>
-                <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart">
-                        <div class="item-img">
-                            <a @click="tapProduct"><img :src="item.thumb" alt=""></a>
-                        </div>
-                        <div class="item-title">
-                            {{ item.name }}
-                        </div>
-                        <div class="item-actions">
-                            <span class="item-price">{{ item.price | price }}
-                            </span>
-                            <span @click="tapAddCart">加入购物车</span>
+            <scroll-view class="category-main" v-if="category" scroll-y="true"> 
+                <div class="item active">
+                    <div class="banner">
+                        <img :src="category.banner" mode="widthFix">
+                    </div>
+                    <div class="header">
+                        <a @click="tapSearch(category)">{{ category.name }}</a>
+                    </div>
+                    <div class="goods-list" v-if="category.goods_list && category.goods_list.length > 0">
+                        <div class="item-view" v-for="(item, index) in category.goods_list" :key="index">
+                            <div class="item-img">
+                                <a  @click="tapProduct(item)"><img :src="item.thumb" mode="widthFix"></a>
+                            </div>
+                            <div class="item-title">
+                                {{item.name}}
+                            </div>
+                            <div class="item-actions">
+                                <span class="item-price">{{ item.price }}</span>
+                                
+                            </div>
                         </div>
                     </div>
+                    <ul class="tree-grid" v-if="category.children && category.children.length > 0">
+                        <li class="tree-item" v-for="(item, index) in category.children" :key="index">
+                            <a  @click="tapSearch(item)">{{ item.name }}</a>
+                            <ul class="tree-item-chidren" v-if="item.children && item.children.length > 0">
+                                <li class="tree-item" v-for="(it, i) in item.children" :key="i">
+                                    <a  @click="tapSearch(it)">{{ it.name }}</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
-            </div>
-
-            <div class="home-panel" v-if="items && items.length > 0">
-                <div class="panel-header">热门商品</div>
-                <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart">
-                        <div class="item-img">
-                            <a @click="tapProduct"><img :src="item.thumb" alt=""></a>
-                        </div>
-                        <div class="item-title">
-                            {{ item.name }}
-                        </div>
-                        <div class="item-actions">
-                            <span class="item-price">{{ item.price | price }}
-                            </span>
-                            <span @click="tapAddCart">加入购物车</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="home-panel" v-if="items && items.length > 0">
-                <div class="panel-header">推荐商品</div>
-                <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart">
-                        <div class="item-img">
-                            <a @click="tapProduct"><img :src="item.thumb" alt=""></a>
-                        </div>
-                        <div class="item-title">
-                            {{ item.name }}
-                        </div>
-                        <div class="item-actions">
-                            <span class="item-price">{{ item.price | price }}
-                            </span>
-                            <span @click="tapAddCart">加入购物车</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </scroll-view>
 
         </div>
     </div>
@@ -94,14 +53,60 @@
 import {
     IMyApp
 } from '../../app';
+import { ICategory, ISubtotal } from '../../api/model';
+import { getCategory } from '../../api/category';
 
 const app = getApp<IMyApp>();
 
-class Index implements IPage {
-    data: any;
+interface IPageData {
+    categories: ICategory[],
+    category: ICategory | null,
+    subtotal: ISubtotal| null
+}
+interface Index extends IPage {
+}
+
+class Index {
+    public data: IPageData = {
+        categories: [],
+        subtotal: null,
+        category: null,
+    };
 
     onLoad() {
-        app.globalData;
+        app.getSubtotal().then(res => {
+            this.setData({
+                subtotal: res
+            });
+        });
+        app.getCategories().then(res => {
+            this.setData({
+                categories: res
+            });
+            this.tapSelected(res[0], 0);
+        });
+    }
+
+    public tapSelectedItem(e: any) {
+        const index: number = e.currentTarget.id || 0;
+        this.tapSelected(this.data.categories[index], index);
+    }
+
+    public tapSelected(item: ICategory, index: number) {
+        if (item.goods_list) {
+            this.setData({
+                category: item
+            });
+            return;
+        }
+        getCategory(item.id, 'goods_list,children').then(res => {
+            let categories = this.data.categories;
+            categories[index] = res;
+            this.setData({
+                category: res,
+                categories: categories
+            });
+        });
     }
 }
 
