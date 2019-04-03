@@ -18,26 +18,26 @@
         "color": "#666",
         "list": [{
                 "pagePath": "pages/index/index",
-                "iconPath": "images/ic_menu_choice_nor.png",
-                "selectedIconPath": "images/ic_menu_choice_pressed.png",
+                "iconPath": "images/icon/home.png",
+                "selectedIconPath": "images/icon/home_red.png",
                 "text": "首页"
             },
             {
                 "pagePath": "pages/category/index",
-                "iconPath": "images/ic_menu_sort_nor.png",
-                "selectedIconPath": "images/ic_menu_sort_pressed.png",
+                "iconPath": "images/icon/th.png",
+                "selectedIconPath": "images/icon/th_red.png",
                 "text": "分类"
             },
             {
                 "pagePath": "pages/cart/index",
-                "iconPath": "images/ic_menu_shoping_nor.png",
-                "selectedIconPath": "images/ic_menu_shoping_pressed.png",
+                "iconPath": "images/icon/cart.png",
+                "selectedIconPath": "images/icon/cart_red.png",
                 "text": "购物车"
             },
             {
                 "pagePath": "pages/member/index",
-                "iconPath": "images/ic_menu_me_nor.png",
-                "selectedIconPath": "images/ic_menu_me_pressed.png",
+                "iconPath": "images/icon/user.png",
+                "selectedIconPath": "images/icon/user_red.png",
                 "text": "我的"
             }
         ]

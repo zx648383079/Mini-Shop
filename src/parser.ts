@@ -13,9 +13,15 @@ interface IElement {
     children?: IElement[],
     attrs?: {[key: string]: string| boolean}
 }
-
+/**
+ * html 转json
+ * @param content 
+ */
 export function htmlToJson(content: string): IElement[] {
-    let pos = -1, 
+    let pos = -1,
+    /**
+     * 判断是否是标签的开始
+     */
     isNodeBegin = function() {
         let po = pos, code: string, status = BLOCK_TYPE.TAG, attrTag: string = '';
         while (po < content.length) {
@@ -40,30 +46,50 @@ export function htmlToJson(content: string): IElement[] {
         }
         return false;
     },
-    isNodeEnd = function() {
-        let po = pos, code: string;
-        code = content.charAt(++po);
+    /**
+     * 获取结束标签的tag, 可能包含空格
+     */
+    getNodeEndTag = function(i: number): string|boolean {
+        let code: string, tag = '';
+        code = content.charAt(++ i);
         if (code !== '/') {
             return false;
         }
-        while (po < content.length) {
-            code = content.charAt(++ po);
+        while (i < content.length) {
+            code = content.charAt(++ i);
             if (code === '>') {
-                pos = po;
-                return true;
+                return tag;
             }
             if (['<', '"', '\'', '(', ')', '{', '}', '='].indexOf(code) >= 0) {
                 return false;
             }
+            tag += code;
         }
         return false;
     },
+    /**
+     * 判断是否是结束标签，是则移动位置
+     */
+    isNodeEnd = function() {
+        let tag = getNodeEndTag(pos);
+        if (typeof tag !== 'string') {
+            return false;
+        }
+        pos += 2 + tag.length;
+        return true;
+    },
+    /**
+     * 判断是否是评论
+     */
     isComment = function() {
         if (content.substr(pos, 3) !== '!--') {
             return false;
         }
         return content.indexOf('-->', pos + 3) > 0;
     },
+    /**
+     * 获取评论元素，并移动位置
+     */
     getCommentElement = function(): IElement {
         let start = pos + 3;
         let end = content.indexOf('-->', start);
@@ -71,6 +97,9 @@ export function htmlToJson(content: string): IElement[] {
         pos += end + 3;
         return {node: 'comment', text};
     },
+    /**
+     * 获取文本元素，并移动位置
+     */
     getTextElement = function(): IElement | boolean {
         let text = '', code: string;
         while (pos < content.length) {
@@ -86,6 +115,9 @@ export function htmlToJson(content: string): IElement[] {
         }
         return {node: 'text', text: text.trim()};
     },
+    /**
+     * 向前获取 \ 的数量
+     */
     backslashedCount = function() {
         let po = pos, code: string, count = 0;
         while (po < content.length) {
@@ -98,6 +130,38 @@ export function htmlToJson(content: string): IElement[] {
         }
         return count;
     },
+    /**
+     * 判断字符是否为空
+     */
+    isEmpty = function (code: string) {
+        return code === ' ' || code === "\r" || code === "\n" || code === "\t";
+    },
+    /**
+     * 移除为单标签的内容及结束符 例如 <br>123</br> 只获取 br 并移动位置忽略 123</br> 
+     */
+    moveEndTag = function(tag: string) {
+        let po = pos, code: string;
+        while (po < content.length) {
+            code = content.charAt(++ po);
+            if (isEmpty(code)) {
+                continue;
+            }
+            if (code === '<') {
+                break;
+            }
+        }
+        let endTag = getNodeEndTag(po);
+        if (typeof endTag !== 'string') {
+            return;
+        }
+        if (endTag.trim() !== tag) {
+            return;
+        }
+        pos = po + 2 + endTag.length;
+    },
+    /**
+     * 获取元素
+     */
     getElement = function(): IElement {
         let tag = '', 
             attrs: {[key: string]: string| boolean} = {}, 
@@ -109,6 +173,15 @@ export function htmlToJson(content: string): IElement[] {
         while (pos < content.length) {
             code = content.charAt(++ pos);
             if (code === '>' && (status === BLOCK_TYPE.TAG || status === BLOCK_TYPE.ATTR)) {
+                if (['area', 'base', 'basefont', 'br', 'col', 'frame', 'hr', 'img', 'input', 'link', 'meta', 'param', 'embed', 'command', 'keygen', 'source', 'track', 'wbr'].indexOf(tag) >= 0) {
+                    // 排除可能结尾
+                    moveEndTag(tag);
+                    return {
+                        node: 'element',
+                        tag,
+                        attrs,
+                    };
+                }
                 const children = parserElements();
                 if (children.length < 1) {
                     return {
@@ -204,11 +277,14 @@ export function htmlToJson(content: string): IElement[] {
             attrs,
         };
     },
+    /**
+     * 转化根据第一个非空字符获取元素
+     */
     parserElement = function(): IElement | boolean {
         let code: string;
         while (pos < content.length) {
             code = content.charAt(++pos);
-            if (code === ' ' || code === "\r" || code === "\n" || code === "\t") {
+            if (isEmpty(code)) {
                 continue;
             }
             if (code !== '<') {
@@ -229,6 +305,9 @@ export function htmlToJson(content: string): IElement[] {
         }
         return false;
     },
+    /**
+     * 获取元素集合
+     */
     parserElements = function () {
         let items: IElement[] = [];
         while (pos < content.length) {
@@ -244,7 +323,10 @@ export function htmlToJson(content: string): IElement[] {
     };
     return parserElements();
 }
-
+/**
+ * json 转 wxml
+ * @param json 
+ */
 export function jsonToWxml(json: IElement | IElement[]): string {
     if (json instanceof Array) {
         return json.map(item => {
@@ -362,7 +444,11 @@ export function jsonToWxml(json: IElement | IElement[]): string {
     function q(v: any) {
         return '"' + v + '"';
     }
-
+    /**
+     * 转化属性
+     * @param attrs 
+     * @param tag 
+     */
     function parseNodeAttr(attrs?: any, tag: string = 'view'): string {
         let str = '';
         if (!attrs) {

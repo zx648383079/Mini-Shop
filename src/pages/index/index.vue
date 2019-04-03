@@ -1,16 +1,16 @@
 <template>
     <div>
         <header class="top top-search-box">
-            <a href="" class="logo">
-                <img :src="'/assets/images/wap_logo.png' | assets" alt="">
-            </a>
+            <div class="logo">
+                <img src="/images/wap_logo.png" alt="">
+            </div>
             <a class="search-entry" @click="tapSearch">
                 <i class="fa fa-search"></i>
                 <span>搜索商品, 共{{ subtotal ? subtotal.goods : 0 }}款好物</span>
             </a>
-            <a v-if="isGuest" @click="tapLogin">登录</a>
-            <a v-if="!isGuest" @click="tapMessage">
-                <i class="fa fa-comment-dots"></i>
+            <a v-if="isGuest" href="pages/member/login">登录</a>
+            <a v-if="!isGuest">
+                <img src="/images/icon/message.png" alt="">
             </a>
         </header>
 
