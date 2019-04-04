@@ -1,0 +1,34 @@
+<template>
+    <div @click="tapGo" class="item">
+        <i class="fa {{icon}}"></i>
+        {{ title }}
+        <i class="fa fa-chevron-right"></i>
+    </div>
+</template>
+<script lang="ts">
+export class MenuLargeItem extends WxComponent<any>  {
+    public options = {
+        addGlobalClass: true
+    }
+    
+    public properties = {
+        title: String,
+        icon: String,
+        uri: String,
+    }
+
+    public tapGo() {
+        if (this.data.uri) {
+            wx.navigateTo({
+                url: this.data.uri
+            });
+            return;
+        }
+        this.triggerEvent('click');
+    }
+}
+
+</script>
+<style lang="scss" scoped>
+
+</style>

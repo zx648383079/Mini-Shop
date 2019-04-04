@@ -25,7 +25,7 @@ export interface IMyApp {
         user: IUser | null,
     },
     getSubtotal(): Promise<ISubtotal>,
-    getUser(): Promise<IUser>,
+    getUser(): Promise<IUser|null>,
     setToken(token?: string): void,
     loginUser(params: ILogin): Promise<IUser| void>,
     logoutUser(): Promise<void>;
@@ -91,7 +91,7 @@ App<IMyApp>({
             }
             const token = wx.getStorageSync<string>(TOKEN_KEY);
             if (!token) {
-                resolve();
+                resolve(null);
                 return;
             }
             getProfile().then((res: IUser) => {

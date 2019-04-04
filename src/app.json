@@ -7,13 +7,14 @@
     ],
     "window": {
         "backgroundTextStyle": "light",
-        "navigationBarBackgroundColor": "#fff",
+        "backgroundColor": "#f4f4f4",
+        "navigationBarBackgroundColor": "#05a6b1",
         "navigationBarTitleText": "ZoDream Shop",
-        "navigationBarTextStyle": "black"
+        "navigationBarTextStyle": "white"
     },
     "tabBar": {
         "backgroundColor": "#fff",
-        "borderStyle": "white",
+        "borderStyle": "black",
         "selectedColor": "#b4282d",
         "color": "#666",
         "list": [{

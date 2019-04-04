@@ -354,6 +354,9 @@ declare class WxPage<T> implements IPage<T> {
 }
 
 declare class WxComponent<T> extends WxPage<T> implements IComponent<T> {
+
+  public data: T;
+
   public triggerEvent(name: string, detail?: any, options?: any): void;
   public createSelectorQuery(): any;
   public selectComponent(selector: string): any;

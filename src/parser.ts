@@ -173,6 +173,11 @@ export function htmlToJson(content: string): IElement[] {
         while (pos < content.length) {
             code = content.charAt(++ pos);
             if (code === '>' && (status === BLOCK_TYPE.TAG || status === BLOCK_TYPE.ATTR)) {
+                // 修复只有属性名就结算
+                if (status === BLOCK_TYPE.ATTR && name !== '') {
+                    attrs[name] = true;
+                    name = '';
+                }
                 if (['area', 'base', 'basefont', 'br', 'col', 'frame', 'hr', 'img', 'input', 'link', 'meta', 'param', 'embed', 'command', 'keygen', 'source', 'track', 'wbr'].indexOf(tag) >= 0) {
                     // 排除可能结尾
                     moveEndTag(tag);
@@ -198,8 +203,8 @@ export function htmlToJson(content: string): IElement[] {
                 }
             }
             if (code === '/') {
-                if (status == BLOCK_TYPE.ATTR || status == BLOCK_TYPE.TAG) {
-                    if (content.charAt(pos + 1) == '>') {
+                if (status === BLOCK_TYPE.ATTR || status === BLOCK_TYPE.TAG) {
+                    if (content.charAt(pos + 1) === '>') {
                         pos ++;
                         break;
                     }
@@ -327,7 +332,7 @@ export function htmlToJson(content: string): IElement[] {
  * json 转 wxml
  * @param json 
  */
-export function jsonToWxml(json: IElement | IElement[]): string {
+export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\-A-Z].+$/): string {
     if (json instanceof Array) {
         return json.map(item => {
             return jsonToWxml(item);
@@ -442,6 +447,10 @@ export function jsonToWxml(json: IElement | IElement[]): string {
         return `<text${attr}>${child}</text>`;
     }
     const attr = parseNodeAttr(json.attrs);
+    // 默认将有 - 分隔符或含大写的作为自定义部件
+    if (json.tag && exclude.test(json.tag)) {
+        return `<${json.tag}${attr}>${child}</${json.tag}>`;
+    }
     return `<view${attr}>${child}</view>`;
 
     function q(v: any) {

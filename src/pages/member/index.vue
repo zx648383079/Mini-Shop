@@ -1,118 +1,127 @@
 <template>
     <div>
-        <header class="top top-search-box">
-            <a href="" class="logo">
-                <img :src="'/assets/images/wap_logo.png' | assets" alt="">
-            </a>
-            <a class="search-entry" @click="tapSearch">
-                <i class="fa fa-search"></i>
-                <span>搜索商品, 共{{ subtotal ? subtotal.goods : 0 }}款好物</span>
-            </a>
-            <a v-if="isGuest" @click="tapLogin">登录</a>
-            <a v-if="!isGuest" @click="tapMessage">
-                <i class="fa fa-comment-dots"></i>
-            </a>
-        </header>
-
-        <div class="has-header">
-
-            <div class="banner">
-                <mt-swipe :auto="4000">
-                    <mt-swipe-item v-for="(item, index) in banners" :key="index">
-                        <img :src="item.content" width="100%" alt="">
-                    </mt-swipe-item>
-                </mt-swipe>
+        <div class="user-header">
+            <div class="avatar">
+                <img :src="user ? user.avatar : '/images/avatar.png'">
             </div>
+            <div class="name">
+                欢迎您，
+                <a v-if="user" @click="tapProfile">{{ user.name }}</a>
+                <a v-else @click="tapLogin">请登陆</a>
+                ~
+            </div>
+        </div>
+        <div class="menu-grid">
+            <a @click="$router.push('/order')" class="item">
+                <i class="fa fa-users" aria-hidden="true"></i>
+                订单
+            </a>
+            <a @click="$router.push('/collect')" class="item">
+                <i class="fa fa-collect" aria-hidden="true"></i>
+                关注
+            </a>
+            <a @click="$router.push('/message')" class="item">
+                <i class="fa fa-message" aria-hidden="true"></i>
+                消息
+            </a>
+            <a @click="$router.push('/account/center')" class="item">
+                <i class="fa fa-shield" aria-hidden="true"></i>
+                安全
+            </a>
+            <a @click="tapProfile" class="item">
+                <i class="fa fa-set" aria-hidden="true"></i>
+                设置
+            </a>
+        </div>
+        <div class="menu-large">
+            <MenuLargeItem title="待付款" icon="fa-money" :uri="'/order?status=' + ORDER_STATUS.UN_PAY" :count="order_subtotal.un_pay"/>
+            <MenuLargeItem title="待收货" icon="fa-shipping-fast" :uri="'/order?status=' + ORDER_STATUS.SHIPPED" :count="order_subtotal.shipped"/>
+            <MenuLargeItem title="待评价" icon="fa-comment" uri="/comment" :count="order_subtotal.uncomment"/>
+            <MenuLargeItem title="退换货" icon="fa-exchange" uri="/refund" :count="order_subtotal.refunding"/>
+        </div>
 
-            <div class="menu-box">
-                <a v-for="(item, index) in categories" :key="index" class="menu-item">
-                    <img class="menu-icon" :src="item.icon" alt="">
-                    <div class="menu-name">{{ item.name }}</div>
+        <div class="menu-panel">
+            <a @click="$router.push('/account')" class="panel-header">
+                <i class="fa fa-wallet" aria-hidden="true"></i>
+                我的钱包
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            </a>
+            <div class="panel-body">
+                <a @click="$router.push('/account')" class="item">
+                    <span class="menu-item-icon">0
+                    </span>
+                    余额
+                </a><a href="" class="item">
+                    <span class="menu-item-icon">0
+                    </span>
+                    积分
+                </a><a href="" class="item">
+                    <span class="menu-item-icon">0
+                    </span>
+                    红包
+                </a><a @click="$router.push('/coupon/my')" class="item">
+                    <span class="menu-item-icon">0
+                    </span>
+                    优惠券
                 </a>
             </div>
-            <div class="home-panel" v-if="items && items.length > 0">
-                <div class="panel-header">最新商品</div>
-                <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart">
-                        <div class="item-img">
-                            <a @click="tapProduct"><img :src="item.thumb" alt=""></a>
-                        </div>
-                        <div class="item-title">
-                            {{ item.name }}
-                        </div>
-                        <div class="item-actions">
-                            <span class="item-price">{{ item.price | price }}
-                            </span>
-                            <span @click="tapAddCart">加入购物车</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="home-panel" v-if="items && items.length > 0">
-                <div class="panel-header">热门商品</div>
-                <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart">
-                        <div class="item-img">
-                            <a @click="tapProduct"><img :src="item.thumb" alt=""></a>
-                        </div>
-                        <div class="item-title">
-                            {{ item.name }}
-                        </div>
-                        <div class="item-actions">
-                            <span class="item-price">{{ item.price | price }}
-                            </span>
-                            <span @click="tapAddCart">加入购物车</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="home-panel" v-if="items && items.length > 0">
-                <div class="panel-header">推荐商品</div>
-                <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart">
-                        <div class="item-img">
-                            <a @click="tapProduct"><img :src="item.thumb" alt=""></a>
-                        </div>
-                        <div class="item-title">
-                            {{ item.name }}
-                        </div>
-                        <div class="item-actions">
-                            <span class="item-price">{{ item.price | price }}
-                            </span>
-                            <span @click="tapAddCart">加入购物车</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
+
+        <div class="menu-list">
+            <MenuItem title="签到" icon="fa-et-checking-in" uri="/checkin"/>
+            <MenuItem title="我的收货地址" icon="fa-map" uri="/address"/>
+            <MenuItem title="浏览历史" icon="fa-history" uri="/product/history"/>
+            <MenuItem title="我的推荐" icon="fa-share" uri="/affiliate"/>
+            <MenuItem title="帮助" icon="fa-help" uri="/article"/>
+        </div>
+        
     </div>
 </template>
 <script lang="ts">
 import {
     IMyApp
 } from '../../app';
+import { IUser, ORDER_STATUS, IOrderCount } from '../../api/model';
+import { getOrderSubtotal } from '../../api/order';
 
 const app = getApp<IMyApp>();
 
 interface IPageData {
-    items: number[];
+    user: IUser | null,
+    ORDER_STATUS: any,
+    order_subtotal: IOrderCount | null,
 }
 
 export class Index extends WxPage<IPageData> {
     public data: IPageData = {
-        items: [],
+        user: null,
+        ORDER_STATUS: ORDER_STATUS,
+        order_subtotal: {},
     };
 
     onLoad() {
-        this.setData({
-            items: []
+        app.getUser().then(res => {
+            this.setData({
+                user: res
+            });
+        });
+        getOrderSubtotal().then(res => {
+            this.setData({
+                order_subtotal: res
+            });
         });
     }
 }
 </script>
 <style lang="scss" scoped>
-
+page {
+    background-color: #f4f4f4;
+}
+.user-header {
+    .name {
+        navigator {
+            display: inline;
+        }
+    }
+}
 </style>
