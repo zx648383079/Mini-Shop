@@ -15,3 +15,4 @@ export class Index extends WxPage<any> {
 }
 
 Page(new Index());
+

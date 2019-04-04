@@ -1,5 +1,5 @@
 <template>
-    <header class="top {{ this.fixed ? : '' : 'fixed' }}">
+    <header class="top {{ this.fixed ?  '' : 'fixed' }}">
         <div class="back" @click="tapBack">
             <i class="fa fa-chevron-left"></i>
         </div>

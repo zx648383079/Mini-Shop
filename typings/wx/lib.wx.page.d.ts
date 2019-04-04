@@ -177,7 +177,7 @@ declare namespace Page {
   }
 }
 
-declare interface IPage<T> extends Page.PageInstance<T> {
+declare interface IPage<T> extends Page.PageInstance<T>, wx.WxComponent {
   
 }
 
@@ -221,7 +221,7 @@ declare interface IBehavior {
 
 declare const Behavior: (options: IBehavior) => IBehavior;
 
-declare interface IComponent<T> extends Page.PageInstance<T> {
+declare interface IComponent<T> extends Page.PageInstance<T>, wx.WxComponent {
     /**
      * 组件的对外属性，是属性名到属性设置的映射表
      */
@@ -267,7 +267,6 @@ declare interface IComponent<T> extends Page.PageInstance<T> {
 
     triggerEvent?(name: string, detail: any, options: any): void,
     createSelectorQuery?(): any,
-    createIntersectionObserver?(): any,
     selectComponent?(selector: string): any,
     selectAllComponents?(selector: string): any,
     getRelationNodes?(relationKey: string): any,
@@ -284,15 +283,123 @@ declare class WxPage<T> implements IPage<T> {
     data: T| Pick<T, K> | IAnyObject,
     callback?: () => void
   ): void;
+
+  canvasGetImageData(option: wx.CanvasGetImageDataOption): void;
+    /** [wx.canvasPutImageData(Object object, Object this)](wx.canvasPutImageData.md)
+     *
+     * 将像素数据绘制到画布。在自定义组件下，第二个参数传入自定义组件实例 this，以操作组件内 <canvas> 组件
+     *
+     * 最低基础库： `1.9.0` */
+    canvasPutImageData(option: wx.CanvasPutImageDataOption): void;
+    /** [wx.canvasToTempFilePath(Object object, Object this)](wx.canvasToTempFilePath.md)
+     *
+     * 把当前画布指定区域的内容导出生成指定大小的图片。在 `draw()` 回调里调用该方法才能保证图片导出成功。 */
+    canvasToTempFilePath(option: wx.CanvasToTempFilePathOption): void;
+    /** [[CanvasContext]((CanvasContext)) wx.createCanvasContext(string canvasId, Object this)](wx.createCanvasContext.md)
+     *
+     * 创建 canvas 的绘图上下文 `CanvasContext` 对象 */
+    createCanvasContext(
+      /** 要获取上下文的 `<canvas>` 组件 canvas-id 属性 */
+      canvasId: string,
+    ): wx.CanvasContext;
+
+    createAudioContext(
+      /** `<audio/>` 组件的 id */
+      id: string,
+    ): wx.AudioContext;
+    /** [[CameraContext]((CameraContext)) wx.createCameraContext()](wx.createCameraContext.md)
+     *
+     * 创建 `camera` 上下文 `CameraContext` 对象。
+     *
+     * 最低基础库： `1.6.0` */
+    createCameraContext():  wx.CameraContext;
+    /** [[InnerAudioContext]((InnerAudioContext)) wx.createInnerAudioContext()](wx.createInnerAudioContext.md)
+     *
+     * 创建内部 `audio` 上下文 `InnerAudioContext` 对象。
+     *
+     * 最低基础库： `1.6.0` */
+    createInnerAudioContext():  wx.InnerAudioContext;
+    /** [[LivePlayerContext]((LivePlayerContext)) wx.createLivePlayerContext(string id, Object this)](wx.createLivePlayerContext.md)
+     *
+     * 创建 `live-player` 上下文 `LivePlayerContext` 对象。
+     *
+     * 最低基础库： `1.7.0` */
+    createLivePlayerContext(
+      /** `<live-player/>` 组件的 id */
+      id: string,
+    ):  wx.LivePlayerContext;
+    /** [[LivePusherContext]((LivePusherContext)) wx.createLivePusherContext()](wx.createLivePusherContext.md)
+     *
+     * 创建 `live-pusher` 上下文 `LivePusherContext` 对象。
+     *
+     * 最低基础库： `1.7.0` */
+    createLivePusherContext():  wx.LivePusherContext;
+    /** [[MapContext]((MapContext)) wx.createMapContext(string mapId, Object this)](wx.createMapContext.md)
+     *
+     * 创建 `map` 上下文 `MapContext` 对象。 */
+    createMapContext(
+      /** `<map/>` 组件的 id */
+      mapId: string,
+    ):  wx.MapContext;
+    /** [[VideoContext]((VideoContext)) wx.createVideoContext(string id, Object this)](wx.createVideoContext.md)
+     *
+     * 创建 `video` 上下文 `VideoContext` 对象。 */
+    createVideoContext(
+      /** `<video/>` 组件的 id */
+      id: string,
+    ):  wx.VideoContext;
+
+    public createIntersectionObserver(options: wx.CreateIntersectionObserverOption,
+      ): wx.IntersectionObserver;
 }
 
 declare class WxComponent<T> extends WxPage<T> implements IComponent<T> {
-  public triggerEvent(name: string, detail: any, options: any): void;
+  public triggerEvent(name: string, detail?: any, options?: any): void;
   public createSelectorQuery(): any;
-  public createIntersectionObserver?(): any;
   public selectComponent(selector: string): any;
   public selectAllComponents(selector: string): any;
-  public getRelationNodes(relationKey: string): any;
+  public getRelationNodes<T>(relationKey: string): T[];
   public groupSetData(callback: Function): any;
   public getTabBar(): any;
+}
+
+declare interface BaseEvent {
+  type:           string;
+  timeStamp:      number;
+  target:         Target;
+  currentTarget:  Target;
+}
+
+declare interface CustomEvent extends BaseEvent {
+  detail:         Detail;
+}
+
+declare interface TouchEvent extends BaseEvent {
+  touches:        Touch[] | CanvasTouch[];
+  changedTouches: Touch[] | CanvasTouch[];
+}
+
+interface Touch {
+  identifier: number;
+  pageX:      number;
+  pageY:      number;
+  clientX:    number;
+  clientY:    number;
+}
+
+interface CanvasTouch {
+  identifier: number;
+  x: number;
+  y: number;
+}
+
+interface Target {
+  id:      string| number;
+  tagName: string;
+  dataset: {[key: string]: string|number};
+}
+
+interface Detail {
+  x: number;
+  y: number;
 }

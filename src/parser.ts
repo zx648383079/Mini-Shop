@@ -375,6 +375,9 @@ export function jsonToWxml(json: IElement | IElement[]): string {
             '@click': 'bindtap',
             'v-on:click': 'bindtap',
             '(click)': 'bindtap',
+            '@touchstart': 'bindtouchstart',
+            '@touchmove': 'bindtouchmove',
+            '@touchend': 'bindtouchend',
         };
 
     if (json.node === 'root') {

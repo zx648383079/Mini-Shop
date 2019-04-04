@@ -22,6 +22,7 @@ module.exports = function (tag) {
                 return new RegExp('lang=["\']?'+lang).test(attr);
             }
             function parserPage(content) {
+                content = content.replace(/import[\s\S]+?from\s+.+?\.vue["'];/, '');
                 var match = content.match(/(export\s+)?class\s+(\S+)\s+extends\s(WxPage|WxComponent)[^\s\{]+/);
                 if (!match) {
                     return content;
@@ -36,6 +37,16 @@ module.exports = function (tag) {
             function doReplace() {
                 if (!file.isBuffer()) {
                     return callback({stack: 'error file'}, file);
+                }
+                if (file.extname === '.ts') {
+                    if (tag !== 'ts') {
+                        return callback(null, file);
+                    }
+                    if (!/(pages|components)/.test(file.path)) {
+                        return callback(null, file);
+                    }
+                    file.contents = Buffer.from(parserPage(String(file.contents)));
+                    return callback(null, file);
                 }
                 var html = String(file.contents);
                 var maps = {

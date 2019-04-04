@@ -85,8 +85,8 @@ export class Index extends WxPage<IPageData> {
         });
     }
 
-    public tapSelectedItem(e: any) {
-        const index: number = e.currentTarget.id || 0;
+    public tapSelectedItem(e: TouchEvent) {
+        const index: number = e.currentTarget.id as number || 0;
         this.tapSelected(this.data.categories[index], index);
     }
 

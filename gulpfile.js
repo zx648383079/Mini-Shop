@@ -16,6 +16,7 @@ gulp.task('clean', function() {
 
 gulp.task('ts', async() => {
     await gulp.src('src/**/*.ts')
+        .pipe(template('ts'))
         .pipe(tsProject())
         .pipe(gulp.dest('dist/'));
 });
