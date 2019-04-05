@@ -3,6 +3,8 @@
 
 ## 本项目自带转化工具
 
+[转化核心](https://github.com/zx648383079/Mini-Shop/blob/master/src/parser.ts)
+
 支持 ts sass
 
 支持拆解html js ts sass css 写在一个文件上的情况
