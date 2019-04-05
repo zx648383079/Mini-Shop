@@ -56,12 +56,28 @@ gulp.task('vuesass', async() => {
         .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('vue', gulp.series('vuejs', 'vuets', 'vuecss', 'vuesass', async() => {
+gulp.task('vuejson', async() => {
+    await gulp.src('src/**/*.{vue,html}')
+        .pipe(template('json'))
+        .pipe(rename({extname: '.json'}))
+        .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('vue', gulp.series('vuejs', 'vuets', 'vuecss', 'vuesass', 'vuejson', async() => {
     await gulp.src('src/**/*.{vue,html}')
         .pipe(template('tpl'))
         .pipe(rename({extname: '.wxml'}))
         .pipe(gulp.dest('dist/'));
 }));
+
+gulp.task('test', async() => {
+    await gulp.src('src/pages/member/Child/EmailLogin.vue')
+    .pipe(template('ts'))
+    .pipe(rename({extname: '.ts'}))
+    .pipe(tsProject())
+    .pipe(rename({extname: '.js'}))
+    .pipe(gulp.dest('dist/'));
+});
 
 gulp.task('md5', async() => {
     await gulp.src('node_modules/ts-md5/dist/md5.js')

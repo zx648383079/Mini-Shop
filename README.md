@@ -11,6 +11,8 @@ sass 引用模式未做处理
 
 自动转化html 为 wxml, 自动转化 v-if v-for v-else v-show
 
+支持json自动生成，支持 属性合并
+
 ## 更新
 
 定义`WxPage` `WxCommpent` 两个类，增强 `setData` 的智能提示，
@@ -19,18 +21,55 @@ sass 引用模式未做处理
 
 增加自动添加 `Page(new Index())` `Commpent(new Index())` 到末尾
 
-## 考虑加入
-
-增加模块导入
+增加json配置生成
 ```ts
 
-@Component({
-    'dialog': '/components/dialog/index'
+@WxJson({
+    usingComponents: {
+        MenuLargeItem: "/components/MenuLargeItem/index",
+        MenuItem: "/components/MenuItem/index"
+    },
+    navigationBarTitleText: "个人中心",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 
 ```
 
-自动生成 index.json 引入组件
+自动合并页面相关的json文件
+
+支持自动合并 `methods` `lifetimes` `pageLifetimes`， 如果已有 属性会自动合并
+
+    methods  @WxMethod
+    lifetimes @WxLifeTime
+    pageLifetimes @WxPageLifeTime
+
+自定义部件自动合并方法到`methods`属性中
+
+```ts
+methods = {
+    aa() {
+
+    }
+}
+
+@WxMethod()
+tapChange(mode: number) {
+}
+
+```
+
+最终生成
+
+```ts
+methods = {
+    tapChange(mode: number) {
+    },
+    aa() {
+        
+    }
+}
+```
 
 ## 标准模板
 

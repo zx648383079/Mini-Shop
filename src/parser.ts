@@ -13,6 +13,9 @@ interface IElement {
     children?: IElement[],
     attrs?: {[key: string]: string| boolean}
 }
+
+const LINE_SPLITE = "\r\n";
+
 /**
  * html 转json
  * @param content 
@@ -376,6 +379,7 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
             'v-show': function(value: string) {
                 return ['hidden', '{{ !' +value + ' }}'];
             },
+            'href': 'url',
             ':key': false,
             '@click': 'bindtap',
             'v-on:click': 'bindtap',
@@ -384,7 +388,6 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
             '@touchmove': 'bindtouchmove',
             '@touchend': 'bindtouchend',
         };
-
     if (json.node === 'root') {
         return child;
     }
@@ -415,9 +418,7 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
         const attr = parseNodeAttr(json.attrs, json.tag);
         return `<${json.tag}${attr}/>`;
     }
-    if (json.children && json.children.length == 1 && json.children[0].node == 'text') {
-        child = json.children[0].text + '';
-    }
+    child = parseChildren(json);
     if (['label', 'style', 
         'script', 'template', 'view', 'scroll-view', 'swiper', 'block', 
         'swiper-item', 'movable-area', 'movable-view', 'cover-view', 'video',
@@ -436,9 +437,6 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
     }
     if (json.tag == 'a') {
         let attr = parseNodeAttr(json.attrs, 'navigator');
-        if (json.attrs && json.attrs.href) {
-            attr += ' url='+ q(json.attrs.href);
-        }
         return `<navigator${attr}>${child}</navigator>`;
     }
     if (['i', 'span', 'strong', 'block', 'font'].indexOf(json.tag + '') >= 0 
@@ -456,6 +454,16 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
     function q(v: any) {
         return '"' + v + '"';
     }
+    function parseChildren(node: IElement) {
+        if (!node.children) {
+            return '';
+        }
+        if (node.children.length == 1 && node.children[0].node == 'text') {
+            return node.children[0].text + '';
+        }
+        return jsonToWxml(node.children);
+    }
+
     /**
      * 转化属性
      * @param attrs 
@@ -471,9 +479,6 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
                 continue;
             }
             if (disallow_attrs.indexOf(key) >= 0) {
-                continue;
-            }
-            if (key.indexOf('@') >= 0) {
                 continue;
             }
             let value = attrs[key];
@@ -493,7 +498,7 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
                     key = attr;
                 }
             }
-            if (!key) {
+            if (!key || key.indexOf('@') >= 0) {
                 continue;
             }
             if (value === true) {
@@ -513,7 +518,8 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
         if (node.attrs && ['reset', 'submit'].indexOf(node.attrs.type + '') >= 0) {
             attr += ' form-type='+ q(node.attrs.type);
         }
-        return `<button type="default"${attr}>${node.text}</button>`;
+        let text = parseChildren(node);
+        return `<button type="default"${attr}>${text}</button>`;
     }
 
     function parseInput(node: IElement) {
@@ -549,8 +555,119 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
 
 export function htmlToWxml(content: string): string {
     if (content.indexOf('<view') >= 0) {
+        console.log('跳过。。。');
         return content;
     }
     let elements = htmlToJson(content);
     return jsonToWxml(elements);
+}
+
+/**
+ * 处理ts文件
+ * @param content 
+ */
+export function parsePage(content: string): string {
+    content = content.replace(/import[\s\S]+?from\s+.+?\.vue["'];/, '')
+    .replace(/import[\s\S]+?from\s+.+?typings.+?;/, '').replace(/@WxJson\([\s\s]+?\)/, '');
+    var match = content.match(/(export\s+)?class\s+(\S+)\s+extends\s(WxPage|WxComponent)[^\s\{]+/);
+    if (!match) {
+        return content;
+    }
+    content = parseMethodToObject(content, {
+        'methods': '@WxMethod',
+        'lifetimes': '@WxLifeTime',
+        'pageLifetimes': '@WxPageLifeTime',
+    }).replace(match[0], 'class ' + match[2]);
+    var reg = new RegExp('(Page|Component)\\(new\\s+'+ match[2]);
+    if (reg.test(content)) {
+        return content;
+    }
+    return content + LINE_SPLITE + (match[3].indexOf('Page') > 0 ? 'Page' : 'Component') + '(new '+ match[2] +'());';
+}
+
+export function parseJson(content: string, append: any): string| null {
+    let match = content.match(/@WxJson(\([\s\S]+?\))/);
+    if (!match) {
+        return null;
+    }
+    return JSON.stringify(Object.assign({}, append, eval(match[1].trim())));
+}
+
+export function parseMethodToObject(content: string, maps: {[key: string]: string}): string {
+    let str_count = function(search: string, line: string): number {
+            return line.split(search).length - 1;
+        }, get_tag = function(line: string) {
+            for (const key in maps) {
+                if (maps.hasOwnProperty(key) && line.indexOf(maps[key]) >= 0) {
+                    return key;
+                }
+            }
+            return;
+        }, lines = content.split(LINE_SPLITE),
+        num = 0, inMethod = 0, method: string | undefined, data: {[key: string]: any} = {}, block: string[] = [];
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (inMethod === 0) {
+            method = get_tag(line);
+            if (!method) {
+                continue;
+            }
+            num = 0;
+            inMethod = 1;
+            lines[i] = '';
+            block = [];
+            if (!data.hasOwnProperty(method)) {
+                data[method] = {
+                    i,
+                    items: []
+                }
+            }
+            continue;
+        }
+        if (inMethod < 1) {
+            continue;
+        }
+        let leftNum = str_count('{', line);
+        num += leftNum - str_count('}', line);
+        if (inMethod === 1) {
+            block.push(line.replace(/public\s/, ''));
+            lines[i] = '';
+            if (leftNum > 0) {
+                if (num === 0) {
+                    data[method + ''].items.push(block.join(LINE_SPLITE));
+                    inMethod = 0;
+                    continue;
+                }
+                inMethod = 2;
+                continue;
+            }
+            continue;
+        }
+        block.push(line);
+        lines[i] = '';
+        if (num === 0) {
+            data[method + ''].items.push(block.join(LINE_SPLITE));
+            inMethod = 0;
+            continue;
+        }
+    }
+    for (const key in data) {
+        if (!data.hasOwnProperty(key)) {
+            continue;
+        }
+        let reg = new RegExp(key + '[^=\\{\\}\\(\\)]*=\\s*\\{');
+        if (!reg.test(content)) {
+            lines[data[key].i] = key + '={' + data[key].items.join(',') + '}';
+            delete data[key];
+        }
+    }
+    content = lines.join(LINE_SPLITE);
+    for (const key in data) {
+        if (!data.hasOwnProperty(key)) {
+            continue;
+        }
+        let reg = new RegExp(key + '[^=\\{\\}\\(\\)]*=\\s*\\{');
+        content = content.replace(reg, key + '={' + data[key].items.join(',') + ',');
+    }
+    return content;
 }

@@ -10,7 +10,7 @@
             </a>
             <a v-if="isGuest" href="pages/member/login">登录</a>
             <a v-if="!isGuest">
-                <img src="/images/icon/message.png" alt="">
+                <i class="fa fa-message"></i>
             </a>
         </header>
 
@@ -100,6 +100,7 @@ import {
 import { IAd, ICategory, IProduct, ISubtotal, IHomeProduct } from '../../api/model';
 import { getHome } from '../../api/product';
 import { getBanners } from '../../api/ad';
+import { WxPage } from '../../../typings/wx/lib.wx.page';
 
 const app = getApp<IMyApp>();
 
@@ -166,5 +167,6 @@ export class Index extends WxPage<IPageData> {
 }
 .has-header {
     background-color: #f4f4f4;
+    margin-top:46px;
 }
 </style>

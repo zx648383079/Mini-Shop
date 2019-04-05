@@ -5,16 +5,14 @@ import {
     ISubtotal, ICategory, ICart, IAddress, IOrder, IUser, ILogin
 } from "./api/model";
 import { getSubtotal } from "./api/product";
-import { getProfile, login, logout } from "./api/user";
+import { getProfile, login, logout, authLogin } from "./api/user";
 import { getCategories } from "./api/category";
 import { getAddressList } from "./api/address";
 import { getOrderInfo } from "./api/order";
 
 //app.ts
 export interface IMyApp {
-    userInfoReadyCallback ? (res: wx.UserInfo) : void
     globalData: {
-        userInfo ? : wx.UserInfo,
         token: string | null,
         subtotal: ISubtotal | null,
         categories: ICategory[],
@@ -28,6 +26,7 @@ export interface IMyApp {
     getUser(): Promise<IUser|null>,
     setToken(token?: string): void,
     loginUser(params: ILogin): Promise<IUser| void>,
+    authloginUser(params: any): Promise<IUser| void>;
     logoutUser(): Promise<void>;
     setCart(cart: ICart[]): void,
     getCategories(): Promise<ICategory[]>,
@@ -38,38 +37,13 @@ export interface IMyApp {
     setAddressIfEmpty(address: IAddress): void,
     setOrder(order: IOrder): void,
     getOrder(id: number): Promise<IOrder>,
+
 }
 
 App<IMyApp>({
     onLaunch() {
         // 展示本地存储能力
         this.globalData.token = wx.getStorageSync(TOKEN_KEY);
-        // 登录
-        wx.login({
-            success(_res) {
-                // console.log(_res.code)
-                // 发送 _res.code 到后台换取 openId, sessionKey, unionId
-            }
-        })
-        // 获取用户信息
-        wx.getSetting({
-            success: (res) => {
-                if (res.authSetting['scope.userInfo']) {
-                    // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-                    wx.getUserInfo({
-                        success: res => {
-                            // 可以将 res 发送给后台解码出 unionId
-                            this.globalData.userInfo = res.userInfo
-                            // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-                            // 所以此处加入 callback 以防止这种情况
-                            if (this.userInfoReadyCallback) {
-                                this.userInfoReadyCallback(res.userInfo)
-                            }
-                        }
-                    })
-                }
-            }
-        })
     },
     getSubtotal() {
         return new Promise((resolve, reject) => {
@@ -111,6 +85,12 @@ App<IMyApp>({
     },
     loginUser(params: ILogin) {
         return login(params).then((res: IUser) => {
+            this.setToken(res.token);
+            this.globalData.user = res;
+        });
+    },
+    authloginUser(params: any) {
+        return authLogin(params).then((res: IUser) => {
             this.setToken(res.token);
             this.globalData.user = res;
         });

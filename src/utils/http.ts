@@ -53,8 +53,7 @@ export function request<T>(method: 'OPTIONS'| 'GET' | 'HEAD' | 'POST' | 'PUT' | 
                     duration: 2000
                 });
                 if (statusCode === 401) {
-                    app.globalData.userInfo = undefined;
-                    wx.removeStorageSync(TOKEN_KEY);
+                    app.setToken();
                     wx.navigateTo({
                         url: 'page/member/login'
                     });

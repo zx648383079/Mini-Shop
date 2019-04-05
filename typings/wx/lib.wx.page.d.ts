@@ -221,6 +221,81 @@ declare interface IBehavior {
 
 declare const Behavior: (options: IBehavior) => IBehavior;
 
+declare interface IMethod {
+  [key: string]: (this: Page.PageInstance, e:any) => void
+}
+
+export declare function WxMethod(): MethodDecorator;
+
+export declare function WxLifeTime(): MethodDecorator;
+export declare function WxPageLifeTime(): MethodDecorator;
+
+interface IPageJson {
+  [key: string]: any;
+  /**
+   * 使用的自定义部件
+   */
+  usingComponents?: {[tag: string]: string},
+  /**
+   * 导航栏标题内容
+   */
+  navigationBarTitleText?: string,
+  /**
+   * 导航栏背景
+   */
+  navigationBarBackgroundColor?: string,
+  /**
+   * 导航栏字体颜色
+   */
+  navigationBarTextStyle?: string,
+  /**
+   * 导航栏样式
+   */
+  navigationStyle?: 'default' | 'custom',
+  /**
+   * 是否是自定义部件
+   */
+  component?: boolean,
+  /**
+   * 窗口的背景色
+   */
+  backgroundColor?: string,
+  /**
+   * 下拉 loading 的样式，仅支持 dark / light
+   */
+  backgroundTextStyle?: 'dark' | 'light',
+  /**
+   * 顶部窗口的背景色，仅 iOS 支持
+   */
+  backgroundColorTop?: string,
+  /**
+   * 底部窗口的背景色，仅 iOS 支持
+   */
+  backgroundColorBottom?: string,
+  /**
+   * 是否开启当前页面下拉刷新。
+   */
+  enablePullDownRefresh?: boolean,
+  /**
+   * 页面上拉触底事件触发时距页面底部距离，单位为px。
+   */
+  onReachBottomDistance?: number,
+  /**
+   * 屏幕旋转设置
+   */
+  pageOrientation?: 'auto' | 'portrait' | 'landscape',
+  /**
+   * 设置为 true 则页面整体不能上下滚动。 只在页面配置中有效，无法在 app.json 中设置
+   */
+  disableScroll?: boolean,
+  /**
+   * 禁止页面右滑手势返回
+   */
+  disableSwipeBack?: boolean,
+}
+
+export declare function WxJson(options: IPageJson): ClassDecorator;
+
 declare interface IComponent<T> extends Page.PageInstance<T>, wx.WxComponent {
     /**
      * 组件的对外属性，是属性名到属性设置的映射表
@@ -251,7 +326,7 @@ declare interface IComponent<T> extends Page.PageInstance<T>, wx.WxComponent {
     /**
      * 组件生命周期声明对象
      */
-    methods?: {[key: string]: Function},
+    methods?: IMethod,
     /**
      * 类似于mixins和traits的组件间代码复用机制
      */
@@ -277,7 +352,78 @@ declare interface IComponent<T> extends Page.PageInstance<T>, wx.WxComponent {
 declare const Component: (options: IComponent<any>) => void;
 
 declare class WxPage<T> implements IPage<T> {
+
+  public data: T;
   public route: string;
+
+  onLoad?(
+    /** 打开当前页面路径中的参数 */
+    query?: { [queryKey: string]: string }
+  ): void
+  /** 生命周期回调—监听页面显示
+   *
+   * 页面显示/切入前台时触发。
+   */
+  onShow?(): void
+  /** 生命周期回调—监听页面初次渲染完成
+   * 
+   * 页面初次渲染完成时触发。一个页面只会调用一次，代表页面已经准备妥当，可以和视图层进行交互。
+   * 
+ 
+   * 注意：对界面内容进行设置的 API 如`wx.setNavigationBarTitle`，请在`onReady`之后进行。
+  */
+  onReady?(): void
+  /** 生命周期回调—监听页面隐藏
+   *
+   * 页面隐藏/切入后台时触发。 如 `navigateTo` 或底部 `tab` 切换到其他页面，小程序切入后台等。
+   */
+  onHide?(): void
+  /** 生命周期回调—监听页面卸载
+   *
+   * 页面卸载时触发。如`redirectTo`或`navigateBack`到其他页面时。
+   */
+  onUnload?(): void
+  /** 监听用户下拉动作
+   *
+   * 监听用户下拉刷新事件。
+   * - 需要在`app.json`的`window`选项中或页面配置中开启`enablePullDownRefresh`。
+   * - 可以通过`wx.startPullDownRefresh`触发下拉刷新，调用后触发下拉刷新动画，效果与用户手动下拉刷新一致。
+   * - 当处理完数据刷新后，`wx.stopPullDownRefresh`可以停止当前页面的下拉刷新。
+   */
+  onPullDownRefresh?(): void
+  /** 页面上拉触底事件的处理函数
+   *
+   * 监听用户上拉触底事件。
+   * - 可以在`app.json`的`window`选项中或页面配置中设置触发距离`onReachBottomDistance`。
+   * - 在触发距离内滑动期间，本事件只会被触发一次。
+   */
+  onReachBottom?(): void
+  /** 用户点击右上角转发
+   *
+   * 监听用户点击页面内转发按钮（`<button>` 组件 `open-type="share"`）或右上角菜单“转发”按钮的行为，并自定义转发内容。
+   *
+   * **注意：只有定义了此事件处理函数，右上角菜单才会显示“转发”按钮**
+   *
+   * 此事件需要 return 一个 Object，用于自定义转发内容
+   */
+  onShareAppMessage?(
+    /** 分享发起来源参数 */
+    options?: Page.IShareAppMessageOption
+  ): Page.ICustomShareContent
+  /** 页面滚动触发事件的处理函数
+   *
+   * 监听用户滑动页面事件。
+   */
+  onPageScroll?(
+    /** 页面滚动参数 */
+    options?: Page.IPageScrollOption
+  ): void
+
+  /** 当前是 tab 页时，点击 tab 时触发，最低基础库： `1.9.0` */
+  onTabItemTap?(
+    /** tab 点击参数 */
+    options?: Page.ITabItemTapOption
+  ): void
 
   public setData<K extends keyof T>(
     data: T| Pick<T, K> | IAnyObject,
@@ -355,7 +501,48 @@ declare class WxPage<T> implements IPage<T> {
 
 declare class WxComponent<T> extends WxPage<T> implements IComponent<T> {
 
-  public data: T;
+      /**
+     * 组件的对外属性，是属性名到属性设置的映射表
+     */
+    properties?: {[key: string]: IComponentProperty|Object | String | Number};
+    /**
+     * 组件生命周期声明对象
+     */
+    lifetimes?: IComponentLefeTime;
+    /**
+     * 组件生命周期函数，在组件实例进入页面节点树时执行
+     */
+    attached?(): void;
+    ready?(): void;
+    options?: any;
+    /**
+     * 组件接受的外部样式类
+     */
+    externalClasses?: string|string[];
+    /**
+     * 组件所在页面的生命周期声明对象，支持页面的 show 、 hide 等生命周期
+     */
+    pageLifetimes?: IComponentPageLefeTime;
+    /**
+     * 定义段过滤器
+     */
+    definitionFilter?(): void;
+    /**
+     * 组件生命周期声明对象
+     */
+    methods?: IMethod;
+    /**
+     * 类似于mixins和traits的组件间代码复用机制
+     */
+    behaviors?: IBehavior[];
+    /**
+     * 组件数据字段监听器
+     */
+    observers?: {[key: string]: (args: any)=>void};
+    /**
+     * 组件间关系定义
+     */
+    relations?: {[key: string]: IComponentRelation};
 
   public triggerEvent(name: string, detail?: any, options?: any): void;
   public createSelectorQuery(): any;

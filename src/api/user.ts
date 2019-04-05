@@ -17,6 +17,8 @@ export const removeCollect = (id: number) => deleteRequest<IDataOne<boolean>>('s
 
 export const login = (param: ILogin) => post<IUser>('auth/login', param);
 
+export const authLogin = (param: any) => post<IUser>('auth/oauth/mini', param);
+
 export const logout = () => fetch('auth/logout');
 
 export const register = (email: string, password: string) => post<IUser>('auth/register', {

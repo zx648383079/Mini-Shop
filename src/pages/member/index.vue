@@ -6,8 +6,8 @@
             </div>
             <div class="name">
                 欢迎您，
-                <a v-if="user" @click="tapProfile">{{ user.name }}</a>
-                <a v-else @click="tapLogin">请登陆</a>
+                <a v-if="user" href="profile">{{ user.name }}</a>
+                <a v-else href="login">请登陆</a>
                 ~
             </div>
         </div>
@@ -28,7 +28,7 @@
                 <i class="fa fa-shield" aria-hidden="true"></i>
                 安全
             </a>
-            <a @click="tapProfile" class="item">
+            <a href="profile" class="item">
                 <i class="fa fa-set" aria-hidden="true"></i>
                 设置
             </a>
@@ -83,6 +83,7 @@ import {
 } from '../../app';
 import { IUser, ORDER_STATUS, IOrderCount } from '../../api/model';
 import { getOrderSubtotal } from '../../api/order';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 
 const app = getApp<IMyApp>();
 
@@ -91,7 +92,15 @@ interface IPageData {
     ORDER_STATUS: any,
     order_subtotal: IOrderCount | null,
 }
-
+@WxJson({
+    usingComponents: {
+        MenuLargeItem: "/components/MenuLargeItem/index",
+        MenuItem: "/components/MenuItem/index"
+    },
+    navigationBarTitleText: "个人中心",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
+})
 export class Index extends WxPage<IPageData> {
     public data: IPageData = {
         user: null,

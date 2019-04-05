@@ -1,0 +1,87 @@
+<template>
+    <div>
+        <div class="profile-box" v-if="user">
+                <div class="line-item avatar-item">
+                    <span>头像</span>
+                    <span class="avatar">
+                        <img :src="user.avatar" alt="">
+                    </span>
+                    <i class="fa fa-chevron-right"></i>
+                </div>
+                <div class="line-item">
+                    <span>昵称</span>
+                    <span>{{user.name}}</span>
+                    <i class="fa fa-chevron-right"></i>
+                </div>
+                <div class="line-item">
+                    <span>性别</span>
+                    <span>{{user.sex}}</span>
+                    <i class="fa fa-chevron-right"></i>
+                </div>
+                <DatePicker v-model="user.birthday" format="yyyy-mm-dd">
+                    <div class="line-item">
+                        <span>生日</span>
+                        <span>{{user.birthday}}</span>
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                </DatePicker>
+            </div>
+
+            
+            <div class="menu-list">
+                <a @click="$router.push('/address')">
+                    我的收货地址
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+                <a @click="$router.push('/address')">
+                    修改密码
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+                <a @click="$router.push('/address')">
+                    实名认证
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+                
+            </div>
+
+            <div class="btn del-btn" @click="tapLogout">
+                退出
+            </div>
+    </div>
+</template>
+<script lang="ts">
+import {
+    IMyApp
+} from '../../app';
+import { IUser } from '../../api/model';
+const app = getApp<IMyApp>();
+
+interface IPageData {
+    user: IUser|null
+}
+
+export class Index extends WxPage<IPageData> {
+    public data: IPageData = {
+        user: null
+    };
+
+    public created() {
+        app.getUser().then(res => {
+            this.setData({
+                user: res
+            });
+        });
+    }
+
+    public tapLogout() {
+        app.logoutUser().then(() => {
+            wx.switchTab({
+                url: '/pages/index/index'
+            });
+        });
+    }
+}
+</script>
+<style lang="scss" scoped>
+
+</style>

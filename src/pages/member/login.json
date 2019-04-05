@@ -1,0 +1,12 @@
+{
+  "usingComponents": {
+    "EmailLogin": "/pages/member/Child/EmailLogin",
+    "EmailRegister": "/pages/member/Child/EmailRegister",
+    "MobileCodeLogin": "/pages/member/Child/MobileCodeLogin",
+    "MobileLogin": "/pages/member/Child/MobileLogin",
+    "MobileRegister": "/pages/member/Child/MobileRegister"
+  },
+  "navigationBarTitleText": "登录",
+  "navigationBarBackgroundColor": "#05a6b1",
+  "navigationBarTextStyle": "white"
+}
