@@ -10,7 +10,7 @@
                 <span @click="tapMode" data-mode="4">手机号快捷注册</span>
 
                 <div class="login-oauth-box">
-                    <span @click="tapAuth()"><i class="fa fa-weixin"></i></span>
+                    <button open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="tapAuth"><i class="fa fa-weixin"></i></button>
                 </div>
             </div>
             <div class="login-box" v-if="mode > 0 && mode < 4">
@@ -30,12 +30,24 @@
 import {
     IMyApp
 } from '../../app';
+import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
     mode: number
 }
-
+@WxJson({
+    usingComponents: {
+        "EmailLogin": "/pages/member/Child/EmailLogin",
+        "EmailRegister": "/pages/member/Child/EmailRegister",
+        "MobileCodeLogin": "/pages/member/Child/MobileCodeLogin",
+        "MobileLogin": "/pages/member/Child/MobileLogin",
+        "MobileRegister": "/pages/member/Child/MobileRegister"
+    },
+    navigationBarTitleText: "登录",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
+})
 export class Index extends WxPage<IPageData> {
 
     public data: IPageData = {
@@ -71,9 +83,9 @@ export class Index extends WxPage<IPageData> {
     /**
      * tapAuth
      */
-    public tapAuth() {
+    public tapAuth(e: any) {
         let code: string| null = null,
-            userInfo: wx.UserInfo | null = null,
+            userInfo: wx.UserInfo | null = e.detail.userInfo,
             that = this;
         wx.login({
             success(res) {
@@ -82,22 +94,33 @@ export class Index extends WxPage<IPageData> {
             }
         })
         // 获取用户信息
-        wx.getSetting({
-            success: (res) => {
-                if (res.authSetting['scope.userInfo']) {
-                    // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-                    wx.getUserInfo({
-                        success: res => {
-                            userInfo = res.userInfo;
-                           code && that.authLogin(code, userInfo.nickName, userInfo.avatarUrl, userInfo.gender);
-                        }
-                    });
-                }
-            }
-        })
+        // wx.getSetting({
+        //     success: (res) => {
+        //         if (res.authSetting['scope.userInfo']) {
+        //             // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+        //             wx.getUserInfo({
+        //                 success: res => {
+        //                     userInfo = res.userInfo;
+        //                    code && that.authLogin(code, userInfo.nickName, userInfo.avatarUrl, userInfo.gender);
+        //                 }
+        //             });
+        //         }
+        //     }
+        // })
     }
 }
 </script>
 <style lang="scss" scoped>
-
+.login-oauth-box {
+    button {
+        display: inline-block;
+        background-color: transparent;
+        border: none;
+        width: auto;
+        color: #333;
+    }
+    .fa {
+        font-size: 2rem;
+    }
+}
 </style>

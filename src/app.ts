@@ -92,7 +92,7 @@ App<IMyApp>({
     authloginUser(params: any) {
         return authLogin(params).then((res: IUser) => {
             this.setToken(res.token);
-            this.globalData.user = res;
+            return this.globalData.user = res;
         });
     },
     logoutUser() {

@@ -71,7 +71,7 @@ gulp.task('vue', gulp.series('vuejs', 'vuets', 'vuecss', 'vuesass', 'vuejson', a
 }));
 
 gulp.task('test', async() => {
-    await gulp.src('src/pages/member/Child/EmailLogin.vue')
+    await gulp.src('src/pages/member/index.vue')
     .pipe(template('ts'))
     .pipe(rename({extname: '.ts'}))
     .pipe(tsProject())

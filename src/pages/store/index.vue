@@ -59,6 +59,7 @@
 import {
     IMyApp
 } from '../../app';
+import { WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {

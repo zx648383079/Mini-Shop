@@ -3,6 +3,7 @@
         "pages/index/index",
         "pages/cart/index",
         "pages/category/index",
+        "pages/message/index",
         "pages/member/index",
         "pages/member/profile",
         "pages/member/login"

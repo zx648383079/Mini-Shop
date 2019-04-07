@@ -1,32 +1,44 @@
 <template>
-    <div class="swipe-row" :style="{left: left + 'px'}">
-        <div class="actions-left" ref="left">
-            <slot name="left"></slot>
-        </div>
-        <div class="swipe-content {{name}}"  
-            @touchstart='touchStart'
-            @touchmove='touchMove'
-            @touchend='touchEnd'>
-            <slot></slot>
-        </div>
-        <div class="actions-right" ref="right">
-            <slot name="right">
-                <i class="fa fa-trash" @click="tapRemove"></i>
-            </slot>
-        </div>
-    </div>
+    <movable-area style="width: {{width}}rpx; height: {{height}}rpx;">
+        <movable-view class="swipe-row" direction="horizontal"  out-of-bounds="{{out}}" damping="20" x="{{left}}" style="width: {{width + leftWidth + rightWidth}}rpx; height: {{height}}rpx;" inertia  @touchstart='touchStart'
+                bindchange='touchMove'
+                @touchend='touchEnd'>
+            <div class="actions-left">
+                <slot name="left"></slot>
+            </div>
+            <div class="swipe-content {{name}}">
+                <slot name="content"></slot>
+            </div>
+            <div class="actions-right">
+                <slot name="right">
+                    
+                </slot>
+            </div>
+        </movable-view>
+
+    </movable-area>
 </template>
 <script lang="ts">
+import { WxComponent, WxJson, WxMethod, TouchEvent, Touch, CustomEvent } from "../../../typings/wx/lib.wx.page";
+
 
 interface IComponentData {
+    viewWidth: number,
     left: number,
     name?: string,
-    index?: number
+    index?: number,
+    out: boolean
 }
 
+const _windowWidth = wx.getSystemInfoSync().windowWidth // (px)
+
+@WxJson({
+    component: true
+})
 export class SwipeRow extends WxComponent<IComponentData> {
 
-    options = {
+    public options = {
+        addGlobalClass: true,
         multipleSlots: true // 在组件定义时的选项中启用多slot支持
     };
 
@@ -47,11 +59,34 @@ export class SwipeRow extends WxComponent<IComponentData> {
 
     public properties = {
         name: String,
-        index: Number
+        index: Number,
+        //  组件显示区域的宽度 (rpx)
+        width: {
+            type: Number,
+            value: 750 // 750rpx 即整屏宽
+        },
+        //  组件显示区域的高度 (rpx)
+        height: {
+            type: Number,
+            value: 80,
+        },
+        //  组件滑动显示区域的宽度 (rpx)
+        leftWidth: {
+            type: Number,
+            value: 0
+        },
+        rightWidth: {
+            type: Number,
+            value: 0
+        }
     }
 
     public data: IComponentData = {
-        left: 0
+        viewWidth: _windowWidth, // (rpx)
+        //  movable-view偏移量
+        left: 0,
+        //  movable-view是否可以出界
+        out: false,
     };
 
     oldLeft: number = 0;
@@ -63,114 +98,77 @@ export class SwipeRow extends WxComponent<IComponentData> {
     ready() {
         this.updateWidth();
     }
-
+    @WxMethod()
     updateWidth() {
         const query = wx.createSelectorQuery().in(this);
-        query.select('.left').boundingClientRect((res) => {
+        query.select('.actions-left').boundingClientRect((res) => {
             this.leftWidth = res.width;
         }).exec();
-        query.select('.right').boundingClientRect(res => {
+        query.select('.actions-right').boundingClientRect(res => {
             this.rightWidth = res.width;
         }).exec();
     }
-
+    @WxMethod()
     getLeftWidth(): number {
         return this.leftWidth;
     }
-
+    @WxMethod()
     getRightWidth(): number {
         return this.rightWidth;
     }
-
+    @WxMethod()
     tapRemove(item: any) {
         this.triggerEvent('remove', item);
     }
-
+    @WxMethod()
     touchStart(e: TouchEvent) {
         this.resetOther();
         this.oldLeft = this.data.left;
         this.isTouch = false;
         this.startX = (e.changedTouches[0] as Touch).clientX;
     }
-
-    touchMove(e: TouchEvent) {
-        this.isTouch = true;
-        const diff = (e.changedTouches[0] as Touch).clientX - this.startX;
-        if (this.oldLeft == 0) {
-            if (diff < 0) {
-                this.setData({
-                    left: Math.max(diff, -this.getRightWidth())
-                });
-                return;
-            }
-            this.setData({
-                left: Math.min(diff, this.getLeftWidth())
-            });
-            return;
-        }
-        if (this.oldLeft > 0) {
-            if (diff > 0) {
-                return;
-            }
-            this.setData({
-                left: Math.max(this.oldLeft + diff, 0)
-            });
-            return;
-        }
-        if (diff < 0) {
-            return;
-        }
+    @WxMethod()
+    touchMove(e: CustomEvent) {
+        if (!this.data.out && e.detail.x < -this._threshold) {
         this.setData({
-            left: Math.min(this.oldLeft + diff, 0)
-        });
+          out: true
+        })
+      } else if (this.data.out && e.detail.x >= -this._threshold) {
+        this.setData({
+          out: false
+        })
+      }
     }
-
+    @WxMethod()
     touchEnd() {
-        if (!this.isTouch) {
-            this.animation(this.data.left, 0);
-            this.triggerEvent('click');
-            return;
-        }
-        //const diff = e.changedTouches[0].clientX - this.startX;
-        if (this.data.left == 0) {
-            return;
-        }
-        if (this.data.left > 0) {
-            const width = this.getLeftWidth();
-            this.animation(this.data.left, this.data.left * 3 > width ? width : 0);
-            return;
-        }
-        const width = - this.getRightWidth();
-        this.animation(this.data.left, this.data.left * 3 < width ? width : 0);
+        this._endX = e.changedTouches[0].pageX
+      const {_endX, _startX, _threshold} = this
+      if (_endX > _startX && this.data.out === false) return
+      if (_startX - _endX >= _threshold) {
+        this.setData({
+          x: -this._slideWidth
+        })
+      } else if (_startX - _endX < _threshold && _startX - _endX > 0) {
+        this.setData({
+          x: 0
+        })
+      } else if (_endX - _startX >= _threshold) {
+        this.setData({
+          x: 0
+        })
+      } else if (_endX - _startX < _threshold && _endX - _startX > 0) {
+        this.setData({
+          x: -this._slideWidth
+        })
+      }
     }
-
-    animation(
-        start: number, end: number, endHandle?: Function) {
-        const diff = start > end ? -1 : 1;
-        let step = 1;
-        let handle = setInterval(() => {
-            start += (step ++) * diff;
-            if ((diff > 0 && start >= end) || (diff < 0 && start <= end)) {
-                clearInterval(handle);
-                this.setData({
-                    left: end
-                });
-                endHandle && endHandle();
-                return;
-            }
-            this.setData({
-                left: start
-            });
-        }, 16);
-    }
-
+    @WxMethod()
     public reset() {
         if (this.data.left === 0) {
             return;
         }
-        this.animation(this.data.left, 0);
     }
-
+    @WxMethod()
     resetOther() {
         if (typeof this.data.index == 'undefined') {
             return;

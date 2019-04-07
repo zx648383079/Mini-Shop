@@ -8,8 +8,8 @@
                 <i class="fa fa-search"></i>
                 <span>搜索商品, 共{{ subtotal ? subtotal.goods : 0 }}款好物</span>
             </a>
-            <a v-if="isGuest" href="pages/member/login">登录</a>
-            <a v-if="!isGuest">
+            <a v-if="isGuest" href="/pages/member/login">登录</a>
+            <a v-if="!isGuest" href="/pages/message/index">
                 <i class="fa fa-message"></i>
             </a>
         </header>
@@ -100,7 +100,7 @@ import {
 import { IAd, ICategory, IProduct, ISubtotal, IHomeProduct } from '../../api/model';
 import { getHome } from '../../api/product';
 import { getBanners } from '../../api/ad';
-import { WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 
 const app = getApp<IMyApp>();
 
@@ -113,7 +113,11 @@ interface IPageData {
     goods: IProduct | null,
     isGuest: boolean;
 }
-
+@WxJson({
+    navigationBarTitleText: "首页",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Index extends WxPage<IPageData> {
     public data: IPageData = {
         banners: [],

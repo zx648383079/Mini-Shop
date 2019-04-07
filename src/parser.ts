@@ -419,7 +419,7 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
         return `<${json.tag}${attr}/>`;
     }
     child = parseChildren(json);
-    if (['label', 'style', 
+    if (['label', 'slot', 'style', 
         'script', 'template', 'view', 'scroll-view', 'swiper', 'block', 
         'swiper-item', 'movable-area', 'movable-view', 'cover-view', 'video',
         'rich-text', 'picker', 'picker-view', 'picker-view-column', 'checkbox-group', 'radio-group', 'navigator', 'functional-page-navigator', 'audio', 'image', 'camera', 'map', 'canvas',
@@ -567,8 +567,8 @@ export function htmlToWxml(content: string): string {
  * @param content 
  */
 export function parsePage(content: string): string {
-    content = content.replace(/import[\s\S]+?from\s+.+?\.vue["'];/, '')
-    .replace(/import[\s\S]+?from\s+.+?typings.+?;/, '').replace(/@WxJson\([\s\s]+?\)/, '');
+    content = content.replace(/import.+?from\s+.+?\.vue["'];/, '')
+    .replace(/import.+?from\s+.+?typings.+?;/, '').replace(/@WxJson\([\s\S]+?\)/, '');
     var match = content.match(/(export\s+)?class\s+(\S+)\s+extends\s(WxPage|WxComponent)[^\s\{]+/);
     if (!match) {
         return content;

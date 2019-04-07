@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "MenuLargeItem": "/components/MenuLargeItem/index",
-    "MenuItem": "/components/MenuItem/index"
-  }
-}

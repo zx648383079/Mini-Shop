@@ -1,20 +1,24 @@
 <template>
     <div>
-        <BackHeader title="我的消息"/>
-        <div class="has-header">
-            <div class="swipe-box address-list">
-                <SwipeRow name="address-item" v-for="(item, index) in items" :key="index" @remove="tapRemove(item)" :index="index" ref="swiperow">
-                    <div class="address-first">
-                        <span>系</span>
+        <div class="address-list">
+            <SwipeRowBox>
+                <SwipeRow name="address-item" right-width="100" v-for="(item, index) in items" :key="index" bind:remove="tapRemove(item)" index="index">
+                    <div slot="content">
+                        <div class="address-first">
+                            <span>系</span>
+                        </div>
+                        <div class="address-info">
+                            <h3>213213213123</h3>
+                            <p>
+                                2019-29
+                            </p>
+                        </div>
                     </div>
-                    <div class="address-info">
-                        <h3>213213213123</h3>
-                        <p>
-                            2019-29
-                        </p>
+                    <div slot="right">
+                        <i class="fa fa-trash" @click="tapRemove"></i>
                     </div>
                 </SwipeRow>
-            </div>
+            </SwipeRowBox>
         </div>
     </div>
 </template>
@@ -22,13 +26,23 @@
 import {
     IMyApp
 } from '../../app';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    items: any[];
 }
-
+@WxJson({
+    navigationBarTitleText: '我的消息',
+    usingComponents: {
+        'SwipeRowBox': '/components/SwipeRow/box',
+        'SwipeRow': '/components/SwipeRow/index'
+    }
+})
 export class Index extends WxPage<IPageData> {
-    public items = ['1231231', 1002];
+    public data: IPageData = {
+        items: ['1231231', 1002]
+    };
 
     public tapRemove(item: any) {
         console.log(item)

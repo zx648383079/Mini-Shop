@@ -5,15 +5,23 @@
 </template>
 <script lang="ts">
 import { SwipeRow } from "./index.vue";
+import { WxComponent, WxJson } from "../../../typings/wx/lib.wx.page";
 
-
+@WxJson({
+    component: true
+})
 export class SwipeBox extends WxComponent<any> {
+
+    public options = {
+        addGlobalClass: true,
+    };
 
     public relations = {
         './index': {
             type: 'child', // 关联的目标节点应为子节点
-            linked(target: SwipeRow) {
+            linked(this: SwipeBox, target: SwipeRow) {
                 // 每次有custom-li被插入时执行，target是该节点实例对象，触发在该节点attached生命周期之后
+                
             },
             linkChanged(target: SwipeRow) {
 
