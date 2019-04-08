@@ -22,6 +22,7 @@
 <script lang="ts">
 import { ICard } from '../../api/model';
 import { getBankCardList } from '../../api/user';
+import { WxPage } from '../../../typings/wx/lib.wx.page';
 
 interface IPageData {
     items: ICard[],

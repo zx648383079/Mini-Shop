@@ -13,6 +13,8 @@
     </div>
 </template>
 <script lang="ts">
+import { WxPage } from "../../../typings/wx/lib.wx.page";
+
 interface IPageData {
 }
 

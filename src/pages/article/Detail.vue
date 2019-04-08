@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="has-header" v-if="article">
+        <div v-if="article">
             <div class="article-title">{{ article.title }}</div>
             <div class="article-status">
                 <span class="author"><i class="fa fa-edit"></i><b>admin</b></span>
@@ -18,22 +18,32 @@
 import {
     IMyApp
 } from '../../app';
+import { WxPage } from '../../../typings/wx/lib.wx.page';
+import { IArticle } from '../../api/model';
+import { getArticle } from '../../api/article';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    article: IArticle|null
 }
 
 export class Detail extends WxPage<IPageData> {
-    public article: IArticle|null = null;
+    public data = {
+        article: null
+    };
 
-    created() {
-        const id = parseInt(this.$route.params.id);
+    onLoad(option: any) {
+        const id = parseInt(option.id);
         if (!id) {
-            this.$router.push('/');
+            wx.navigateBack({
+                delta: 0
+            });
             return;
         }
         getArticle(id).then(res => {
-            this.article = res;
+            this.setData({
+                article: res
+            });
         });   
     }
 }

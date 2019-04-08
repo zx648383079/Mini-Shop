@@ -41,13 +41,13 @@
         </div>
 
         <div class="menu-panel">
-            <a @click="$router.push('/account')" class="panel-header">
+            <a href="/pages/account/index" class="panel-header">
                 <i class="fa fa-wallet" aria-hidden="true"></i>
                 我的钱包
                 <i class="fa fa-chevron-right" aria-hidden="true"></i>
             </a>
             <div class="panel-body">
-                <a @click="$router.push('/account')" class="item">
+                <a href="/pages/account/index" class="item">
                     <span class="menu-item-icon">0
                     </span>
                     余额
@@ -68,11 +68,11 @@
         </div>
 
         <div class="menu-list">
-            <MenuItem title="签到" icon="fa-et-checking-in" uri="/checkin"/>
-            <MenuItem title="我的收货地址" icon="fa-map" uri="/address"/>
+            <MenuItem title="签到" icon="fa-et-checking-in" uri="/pages/checkin/index"/>
+            <MenuItem title="我的收货地址" icon="fa-map" uri="/pages/address/index"/>
             <MenuItem title="浏览历史" icon="fa-history" uri="/product/history"/>
-            <MenuItem title="我的推荐" icon="fa-share" uri="/affiliate"/>
-            <MenuItem title="帮助" icon="fa-help" uri="/article"/>
+            <MenuItem title="我的推荐" icon="fa-share" uri="/pages/affiliate/index"/>
+            <MenuItem title="帮助" icon="fa-help" uri="/pages/article/index"/>
         </div>
         
     </div>

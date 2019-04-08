@@ -1,8 +1,6 @@
 <template>
     <div>
-        <div class="has-header">
-            <CatItem :items="items" @click="tapCategory"/>
-        </div>
+        <CatItem :items="items" @click="tapCategory"/>
     </div>
 </template>
 <script lang="ts">

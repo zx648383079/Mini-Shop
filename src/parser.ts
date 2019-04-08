@@ -569,7 +569,7 @@ export function htmlToWxml(content: string): string {
 export function parsePage(content: string): string {
     content = content.replace(/import.+?from\s+.+?\.vue["'];/, '')
     .replace(/import.+?from\s+.+?typings.+?;/, '').replace(/@WxJson\([\s\S]+?\)/, '');
-    var match = content.match(/(export\s+)?class\s+(\S+)\s+extends\s(WxPage|WxComponent)[^\s\{]+/);
+    var match = content.match(/(export\s+(default\s+)?)?class\s+(\S+)\s+extends\s(WxPage|WxComponent)[^\s\{]+/);
     if (!match) {
         return content;
     }
@@ -577,12 +577,12 @@ export function parsePage(content: string): string {
         'methods': '@WxMethod',
         'lifetimes': '@WxLifeTime',
         'pageLifetimes': '@WxPageLifeTime',
-    }).replace(match[0], 'class ' + match[2]);
-    var reg = new RegExp('(Page|Component)\\(new\\s+'+ match[2]);
+    }).replace(match[0], 'class ' + match[3]);
+    var reg = new RegExp('(Page|Component)\\(new\\s+'+ match[3]);
     if (reg.test(content)) {
         return content;
     }
-    return content + LINE_SPLITE + (match[3].indexOf('Page') > 0 ? 'Page' : 'Component') + '(new '+ match[2] +'());';
+    return content + LINE_SPLITE + (match[4].indexOf('Page') > 0 ? 'Page' : 'Component') + '(new '+ match[3] +'());';
 }
 
 export function parseJson(content: string, append: any): string| null {

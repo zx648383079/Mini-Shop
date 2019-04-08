@@ -17,6 +17,7 @@ import {
 } from '../../app';
 import { IConnect } from '../../api/model';
 import { getConnect } from '../../api/user';
+import { WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {

@@ -1,9 +1,7 @@
 <template>
     <div>
-        <div class="has-header">
-            <div class="share-box">
-                <img src="" alt="">
-            </div>
+        <div class="share-box">
+            <img src="" alt="">
         </div>
     </div>
 </template>
@@ -11,6 +9,7 @@
 import {
     IMyApp
 } from '../../app';
+import { WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
