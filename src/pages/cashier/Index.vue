@@ -49,6 +49,7 @@
 import {
     IMyApp
 } from '../../app';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
@@ -58,6 +59,11 @@ interface ICartBox {
     type: number,
     goods: ICartItem[] | number[];
 }
+@WxJson({
+    navigationBarTitleText: "结算",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Index extends WxPage<IPageData> {
     public address: IAddress | null = null;
     address_list?: IAddress[];

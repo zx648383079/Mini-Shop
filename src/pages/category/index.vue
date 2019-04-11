@@ -55,6 +55,7 @@ import {
 } from '../../app';
 import { ICategory, ISubtotal } from '../../api/model';
 import { getCategory } from '../../api/category';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 
 const app = getApp<IMyApp>();
 
@@ -63,7 +64,11 @@ interface IPageData {
     category: ICategory | null,
     subtotal: ISubtotal| null
 }
-
+@WxJson({
+    navigationBarTitleText: "分类",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Index extends WxPage<IPageData> {
     public data: IPageData = {
         categories: [],

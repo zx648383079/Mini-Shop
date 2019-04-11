@@ -64,11 +64,16 @@
 import {
     IMyApp
 } from '../../app';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
 }
-
+@WxJson({
+    navigationBarTitleText: "订单详情",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Index extends WxPage<IPageData> {
     public order: IOrder | null = null;
     public ORDER_STATUS = ORDER_STATUS;

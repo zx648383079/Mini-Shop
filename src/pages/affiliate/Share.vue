@@ -9,12 +9,16 @@
 import {
     IMyApp
 } from '../../app';
-import { WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
 }
-
+@WxJson({
+    navigationBarTitleText: "售后",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Share extends WxPage<IPageData> {
 
 }

@@ -17,13 +17,12 @@ import {
 } from '../../app';
 import { IConnect } from '../../api/model';
 import { getConnect } from '../../api/user';
-import { WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
     items: IConnect[]
 }
-
 interface IConnectMapItem {
     name?: string;
     icon?: string;
@@ -32,7 +31,11 @@ interface IConnectMapItem {
 interface IConnectMap {
     [key: string]: IConnectMapItem
 }
-
+@WxJson({
+    navigationBarTitleText: "分类",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Center extends WxPage<IPageData> {
 
     public data: IPageData = {

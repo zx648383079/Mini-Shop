@@ -59,13 +59,17 @@
 import {
     IMyApp
 } from '../../app';
-import { WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
     items: any[]
 }
-
+@WxJson({
+    navigationBarTitleText: "店铺",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Index extends WxPage<IPageData> {
     
 }

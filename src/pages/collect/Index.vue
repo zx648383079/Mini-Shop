@@ -24,11 +24,16 @@
 import {
     IMyApp
 } from '../../app';
+import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
 }
-
+@WxJson({
+    navigationBarTitleText: "我的收藏",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Index extends WxPage<IPageData> {
     public items: ICollect[] = [];
 

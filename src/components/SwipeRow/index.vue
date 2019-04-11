@@ -1,5 +1,5 @@
 <template>
-    <movable-area style="width: {{width}}rpx; height: {{height}}rpx;">
+    <movable-area class="swipe-container" style="width: {{width}}rpx; height: {{height}}rpx;">
         <movable-view class="swipe-row" direction="horizontal"  out-of-bounds="{{out}}" damping="20" x="{{left}}" style="width: {{width + leftWidth + rightWidth}}rpx; height: {{height}}rpx;" inertia  @touchstart='touchStart'
                 bindchange='touchMove'
                 @touchend='touchEnd'>
@@ -10,9 +10,7 @@
                 <slot name="content"></slot>
             </div>
             <div class="actions-right">
-                <slot name="right">
-                    
-                </slot>
+                <slot name="right"></slot>
             </div>
         </movable-view>
 
@@ -25,6 +23,8 @@ import { WxComponent, WxJson, WxMethod, TouchEvent, Touch, CustomEvent } from ".
 interface IComponentData {
     viewWidth: number,
     left: number,
+    leftWidth?: number,
+    rightWidth?: number,
     name?: string,
     index?: number,
     out: boolean
@@ -68,7 +68,7 @@ export class SwipeRow extends WxComponent<IComponentData> {
         //  组件显示区域的高度 (rpx)
         height: {
             type: Number,
-            value: 80,
+            value: 200,
         },
         //  组件滑动显示区域的宽度 (rpx)
         leftWidth: {
@@ -94,6 +94,7 @@ export class SwipeRow extends WxComponent<IComponentData> {
     isTouch = false;
     leftWidth = 0;
     rightWidth = 0;
+    public moveCallback = (i: any) => {i};
 
     ready() {
         this.updateWidth();
@@ -103,6 +104,9 @@ export class SwipeRow extends WxComponent<IComponentData> {
         const query = wx.createSelectorQuery().in(this);
         query.select('.actions-left').boundingClientRect((res) => {
             this.leftWidth = res.width;
+            this.setData({
+                left: -this.leftWidth
+            });
         }).exec();
         query.select('.actions-right').boundingClientRect(res => {
             this.rightWidth = res.width;
@@ -122,71 +126,111 @@ export class SwipeRow extends WxComponent<IComponentData> {
     }
     @WxMethod()
     touchStart(e: TouchEvent) {
-        this.resetOther();
+        this.moveCallback && this.moveCallback(this);
         this.oldLeft = this.data.left;
         this.isTouch = false;
-        this.startX = (e.changedTouches[0] as Touch).clientX;
+        this.startX = (e.changedTouches[0] as Touch).pageX;
     }
+
+    
+
     @WxMethod()
     touchMove(e: CustomEvent) {
-        if (!this.data.out && e.detail.x < -this._threshold) {
+        this.isTouch = true;
+        const diff = e.detail.x;
+        if (diff >= 0) {
+            this.setData({
+                out: false
+            });
+            return;
+        }
+        const left = this.getLeftWidth();
+        const right = this.getRightWidth();
+        if (diff >= 0 || diff <= -left - right) {
+            this.setData({
+                out: false
+            });
+            return;
+        }
+        if (this.oldLeft > -left) {
+            this.setData({
+                out: diff > -left && diff < -left - right
+            });
+            return;
+        }
+        if (this.oldLeft < -left) {
+            this.setData({
+                out: diff > -left - right && diff < -left
+            });
+            return;
+        }
+        if (diff > -left) {
+            this.setData({
+                out: diff >= 0
+            });
+            return;
+        }
         this.setData({
-          out: true
-        })
-      } else if (this.data.out && e.detail.x >= -this._threshold) {
-        this.setData({
-          out: false
-        })
-      }
+            out: diff > -left - right
+        });
     }
     @WxMethod()
-    touchEnd() {
-        this._endX = e.changedTouches[0].pageX
-      const {_endX, _startX, _threshold} = this
-      if (_endX > _startX && this.data.out === false) return
-      if (_startX - _endX >= _threshold) {
+    touchEnd(e: TouchEvent) {
+        const left = this.getLeftWidth();
+        const right = this.getRightWidth();
+        if (!this.isTouch) {
+            this.setData({
+                left: -left,
+            })
+            this.triggerEvent('tap');
+            return;
+        }
+        const diff = (e.changedTouches[0] as Touch).pageX - this.startX;
+        if (this.oldLeft > -left) {
+            this.setData({
+                left: - diff > left / 3 ? -left : 0
+            });
+            return;
+        }
+        if (this.oldLeft > -left) {
+            this.setData({
+                left: diff > right / 3 ? -left : (-left - right)
+            });
+            return;
+        }
+        if (diff === 0) {
+            this.setData({
+                left: -left
+            });
+            return;
+        }
+        if (diff > 0) {
+            this.setData({
+                left: diff > left / 3 ? 0 : -left
+            });
+            return;
+        }
         this.setData({
-          x: -this._slideWidth
-        })
-      } else if (_startX - _endX < _threshold && _startX - _endX > 0) {
-        this.setData({
-          x: 0
-        })
-      } else if (_endX - _startX >= _threshold) {
-        this.setData({
-          x: 0
-        })
-      } else if (_endX - _startX < _threshold && _endX - _startX > 0) {
-        this.setData({
-          x: -this._slideWidth
-        })
-      }
+            left: -diff > right / 3 ? (-left - right) : -left
+        });
     }
     @WxMethod()
     public reset() {
-        if (this.data.left === 0) {
-            return;
-        }
-    }
-    @WxMethod()
-    resetOther() {
-        if (typeof this.data.index == 'undefined') {
-            return;
-        }
-        // const items: SwipeRow[] = this.$parent.$refs.swiperow as SwipeRow[];
-        // if (!items || items.length < 1) {
-        //     return;
-        // }
-        // for (let i = 0; i < items.length; i++) {
-        //     if (items[i].index == this.data.index) {
-        //         continue;
-        //     }
-        //     items[i].reset();
-        // }
+        this.setData({
+            left: -this.getLeftWidth()
+        });
     }
 }
 
 </script>
 <style lang="scss" scoped>
+.swipe-row {
+    display: flex;
+    direction: row;
+    overflow: hidden;
+}
+.swipe-container {
+    overflow: hidden;
+}
 
 </style>

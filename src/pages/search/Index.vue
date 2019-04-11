@@ -30,6 +30,7 @@ import {
     IMyApp
 } from '../../app';
 import { IProduct } from '../../api/model';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
@@ -41,7 +42,11 @@ interface ISearch {
     brand: number,
     page: number,
 }
-
+@WxJson({
+    navigationBarTitleText: "搜索",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Index extends WxPage<IPageData> {
 
     public items: IProduct[] = [];

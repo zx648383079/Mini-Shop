@@ -35,12 +35,17 @@
 import {
     IMyApp
 } from '../../app';
+import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
 }
-
-export class Index extends WxPage<IPageData> {
+@WxJson({
+    navigationBarTitleText: "售后",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
+export class Comment extends WxPage<IPageData> {
     public comment: ICommentSubtotal | null = null;
     public items: IComment[] = [];
     public item_id: number = 0;

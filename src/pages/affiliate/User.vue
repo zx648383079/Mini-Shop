@@ -21,9 +21,14 @@
     </div>
 </template>
 <script lang="ts">
-import { WxPage } from "../../../typings/wx/lib.wx.page";
+import { WxPage, WxJson } from "../../../typings/wx/lib.wx.page";
 interface IPageData {
 }
+@WxJson({
+    navigationBarTitleText: "售后",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export default class User extends WxPage<IPageData> {
     public items = [1];
 }

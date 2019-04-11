@@ -17,7 +17,7 @@
 import {
     IMyApp
 } from '../../app';
-import { WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 import { IArticleCategory, IArticle } from '../../api/model';
 import { getCategories, getArticleList } from '../../api/article';
 const app = getApp<IMyApp>();
@@ -29,7 +29,11 @@ interface IPageData {
     items: IArticle[],
     isExpand: boolean
 }
-
+@WxJson({
+    navigationBarTitleText: "分类",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Index extends WxPage<IPageData> {
 
     public data: IPageData = {

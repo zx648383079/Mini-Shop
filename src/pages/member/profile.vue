@@ -54,13 +54,18 @@ import {
     IMyApp
 } from '../../app';
 import { IUser } from '../../api/model';
+import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
     user: IUser|null
 }
-
-export class Index extends WxPage<IPageData> {
+@WxJson({
+    navigationBarTitleText: "售后",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
+export class Profile extends WxPage<IPageData> {
     public data: IPageData = {
         user: null
     };

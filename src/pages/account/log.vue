@@ -23,13 +23,17 @@ import {
     IMyApp
 } from '../../app';
 import { IAccountLog } from '../../api/model';
-import { WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
     items: IAccountLog[],
 }
-
+@WxJson({
+    navigationBarTitleText: "分类",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Card extends WxPage<IPageData> {
     
     public data: IPageData = {

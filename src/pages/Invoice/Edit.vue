@@ -83,12 +83,17 @@
 import {
     IMyApp
 } from '../../app';
+import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
 }
-
-export class Index extends WxPage<IPageData> {
+@WxJson({
+    navigationBarTitleText: "售后",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
+export class Edit extends WxPage<IPageData> {
 
 }
 </script>

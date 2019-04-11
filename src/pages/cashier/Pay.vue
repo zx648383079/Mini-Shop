@@ -45,11 +45,16 @@
 import {
     IMyApp
 } from '../../app';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
 }
-
+@WxJson({
+    navigationBarTitleText: "支付",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Pay extends WxPage<IPageData> {
     public order: IOrder | null = null;
     public payment: IPayment | null = null;

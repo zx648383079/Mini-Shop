@@ -53,6 +53,7 @@ import {
 } from '../../app';
 import { ICart, ICartItem } from '../../api/model';
 import { getCart } from '../../api/cart';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 
 const app = getApp<IMyApp>();
 
@@ -61,7 +62,11 @@ interface IPageData {
     checkedAll: boolean,
     isGuest: boolean,
 }
-
+@WxJson({
+    navigationBarTitleText: "购物车",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Index extends WxPage<IPageData> {
     data: IPageData = {
         items: [],

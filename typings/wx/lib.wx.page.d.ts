@@ -500,7 +500,7 @@ declare class WxPage<T> implements IPage<T> {
 }
 
 declare class WxComponent<T> extends WxPage<T> implements IComponent<T> {
-
+    __wxExparserNodeId__: string;
       /**
      * 组件的对外属性，是属性名到属性设置的映射表
      */

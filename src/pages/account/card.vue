@@ -22,12 +22,16 @@
 <script lang="ts">
 import { ICard } from '../../api/model';
 import { getBankCardList } from '../../api/user';
-import { WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 
 interface IPageData {
     items: ICard[],
 }
-
+@WxJson({
+    navigationBarTitleText: "分类",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
 export class Card extends WxPage<IPageData> {
     
     public data: IPageData = {
