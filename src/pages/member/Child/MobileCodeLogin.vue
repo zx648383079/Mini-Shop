@@ -21,6 +21,11 @@
     </div>
 </template>
 <script lang="ts">
+import { WxJson, WxComponent } from "../../../../typings/wx/lib.wx.page";
+
+@WxJson({
+    component: true
+})
 export class MobileCodeLogin extends WxComponent<any>  {
     public options = {
         addGlobalClass: true

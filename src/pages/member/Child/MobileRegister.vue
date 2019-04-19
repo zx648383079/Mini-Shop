@@ -27,11 +27,18 @@
     </div>
 </template>
 <script lang="ts">
+import { WxJson, WxComponent } from "../../../../typings/wx/lib.wx.page";
+
+@WxJson({
+    component: true
+})
 export class MobileRegister extends WxComponent<any>  {
     public options = {
         addGlobalClass: true
     }
     agree = true;
+
+    
 }
 </script>
 <style lang="scss" scoped>

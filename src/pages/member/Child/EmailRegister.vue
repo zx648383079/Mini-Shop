@@ -19,6 +19,12 @@
     </div>
 </template>
 <script lang="ts">
+import { WxComponent, WxJson, TouchEvent } from "../../../../typings/wx/lib.wx.page";
+
+
+@WxJson({
+    component: true
+})
 export class EmailRegister extends WxComponent<any>  {
 
     public options = {
@@ -29,7 +35,7 @@ export class EmailRegister extends WxComponent<any>  {
 
     public password: string = '';
 
-    public tapKey(e: KeyboardEvent) {
+    public tapKey(e: TouchEvent) {
         if (e.which !== 13) {
             return;
         }

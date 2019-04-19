@@ -113,7 +113,13 @@ export class Index extends WxPage<IPageData> {
             this.setData({
                 user: res
             });
+            if (res) {
+                this.tapSubtotal();
+            }
         });
+    }
+
+    tapSubtotal() {
         getOrderSubtotal().then(res => {
             this.setData({
                 order_subtotal: res

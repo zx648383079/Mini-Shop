@@ -12,18 +12,33 @@
             </div>
             <div class="unlogin">
                 <a href="">忘记密码</a>
-                <a @click="mode = 1">使用短信验证登录</a>
+                <a @click="tapMode" data-mode="1">使用短信验证登录</a>
             </div>
             <button>登录</button>
-            <a @click="mode = 0" class="btn btn-none">其他登录方式</a>
+            <a @click="tapMode" data-mode="0" class="btn btn-none">其他登录方式</a>
         </div>
     </div>
 </template>
 <script lang="ts">
+import { WxComponent, WxJson, WxMethod, TouchEvent } from "../../../../typings/wx/lib.wx.page";
+
+@WxJson({
+    component: true
+})
 export class MobileLogin extends WxComponent<any>  {
     public options = {
         addGlobalClass: true
     }
+
+    @WxMethod()
+    tapMode(e: TouchEvent) {
+        this.tapChange(e.currentTarget.dataset.mode as number);
+    }
+    @WxMethod()
+    tapChange(mode: number) {
+        this.triggerEvent('click', mode);
+    }
+    
 }
 </script>
 <style lang="scss" scoped>

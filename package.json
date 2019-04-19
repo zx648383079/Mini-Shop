@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "scripts": {
     "start": "gulp && gulp vue",
+    "watch": "gulp && gulp vue && gulp watch",
     "build": "gulp cleanall && gulp && gulp vue && gulp clean"
   },
   "devDependencies": {

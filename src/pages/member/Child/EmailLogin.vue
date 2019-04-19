@@ -25,19 +25,17 @@
 import {
     IMyApp
 } from '../../../app';
-import { WxMethod, TouchEvent, WxComponent } from '../../../../typings/wx/lib.wx.page';
+import { WxMethod, TouchEvent, WxComponent, WxJson } from '../../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
+
+@WxJson({
+    component: true
+})
 export class EmailLogin extends WxComponent<any>  {
     public options = {
         addGlobalClass: true
     }
 
-    methods = {
-        aa() {
-            
-        }
-    }
-    
     @WxMethod()
     tapMode(e: TouchEvent) {
         this.tapChange(e.currentTarget.dataset.mode as number);
@@ -63,6 +61,8 @@ export class EmailLogin extends WxComponent<any>  {
             return;
         }
         app.loginUser({email, password}).then(_ => {
+            console.log(_);
+            
             this.triggerEvent('back');
         });
     }

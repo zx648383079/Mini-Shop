@@ -64,8 +64,8 @@ interface IPageData {
 }
 @WxJson({
     navigationBarTitleText: "购物车",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Index extends WxPage<IPageData> {
     data: IPageData = {
