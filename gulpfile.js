@@ -5,13 +5,21 @@ var gulp = require('gulp'),
     clean = require('gulp-clean'),
     template = require('./gulp-tempate'),
     tsProject = ts.createProject('tsconfig.json'),
-    tsInstance = undefined;
+    tsInstance = undefined,
+    sassInstance = undefined;
 
 function getTs() { 
     if (!tsInstance) {
         tsInstance = tsProject();
     }
     return tsInstance;
+}
+
+function getSass() { 
+    if (!sassInstance) {
+        sassInstance = sass();
+    }
+    return sassInstance;
 }
 
 function getDistPath(path) {
@@ -49,7 +57,7 @@ gulp.task('ts', async() => {
 
 gulp.task('sass', async() => {
     await gulp.src('src/**/*.{scss,sass}')
-        .pipe(sass())
+        .pipe(getSass())
         .pipe(rename({extname: '.wxss'}))
         .pipe(gulp.dest('dist/'));
 });
@@ -77,7 +85,7 @@ gulp.task('vuecss', async() => {
 gulp.task('vuesass', async() => {
     await gulp.src('src/**/*.{vue,html}')
         .pipe(template('sass'))
-        .pipe(sass())
+        .pipe(getSass())
         .pipe(rename({extname: '.wxss'}))
         .pipe(gulp.dest('dist/'));
 });
@@ -118,6 +126,14 @@ gulp.task('watch', async() => {
         createTak(path, task => {
             task.pipe(template('ts'))
             .pipe(getTs())
+        }).on('end', () => {
+            debug('SUCCESS ' + path);
+        });
+    });
+    await gulp.watch(['src/**/*.{sass,scss}']).on('change', function(path, stats) {
+        createTak(path, task => {
+            task.pipe(getSass())
+            .pipe(rename({extname: '.wxss'}))
         }).on('end', () => {
             debug('SUCCESS ' + path);
         });
