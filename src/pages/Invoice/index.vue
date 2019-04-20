@@ -1,22 +1,26 @@
 <template>
     <div>
+        <BackHeader title="发票管理"/>
         <div class="has-header">
             <div class="account-header">
-                <p>余额账户(元)</p>
+                <p>可开发票总金额(元)</p>
                 <div class="money">0.00</div>
             </div>
 
             <div class="menu-list">
-                <RechargePanel/>
-                <WithdrawPanel/>
-                <a @click="$router.push('/account/card')">
-                    <i class="fa fa-credit-card" aria-hidden="true"></i>
-                    银行卡
+                <a @click="$router.push('/invoice/apply')">
+                    <i class="fa fa-money-check-alt" aria-hidden="true"></i>
+                    申请开票
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
-                <a @click="$router.push('/invoice')">
+                <a @click="$router.push('/invoice/title')">
+                    <i class="fa fa-wallet" aria-hidden="true"></i>
+                    发票抬头
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+                <a @click="$router.push('/invoice/log')">
                     <i class="fa fa-bookmark" aria-hidden="true"></i>
-                    发票管理
+                    近期开票
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
             </div>
@@ -28,20 +32,20 @@
 import {
     IMyApp
 } from '../../app';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
-    
 }
 @WxJson({
-    navigationBarTitleText: "分类",
+    navigationBarTitleText: "售后",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"
 })
 export class Index extends WxPage<IPageData> {
-    
+
 }
 </script>
 <style lang="scss" scoped>
+
 </style>
