@@ -1,27 +1,31 @@
 <template>
     <div>
-        <SearchBar v-show="isSearch" v-model="keywords" @search="tapSearch"></SearchBar>
-        <div v-show="!isSearch">
-            <header class="top">
-                <div class="search-box under-search">
-                    <a class="home-btn" @click="tapHome">
-                        <i class="fa fa-home"></i>
-                    </a>
-                    <form @click="tapEnterSearch">
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                        <input type="text" readonly="" name="keywords" :value="searchParams.keywords">
-                        <i class="fa fa-times-circle" @click="tapNewSearch"></i>
-                    </form>
-                </div>
-            </header>
-            <div class="has-header">
-                <PullToRefresh :loading="isLoading" :more="has_more"   @refresh="tapRefresh" @more="tapMore">
-                    <div class="goods-list">
-                        <GoodsItem v-for="(item, index) in items" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart"></GoodsItem>
+        <block v-show="isSearch">
+            <SearchBar v-model="keywords" @search="tapSearch"></SearchBar>
+        </block>
+        <block v-show="!isSearch">
+            <div>
+                <header class="header top">
+                    <div class="search-box under-search">
+                        <a class="home-btn" href="/pages/index/index">
+                            <i class="fa fa-home"></i>
+                        </a>
+                        <div class="form-box" @click="tapEnterSearch">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                            <input type="text" readonly="" name="keywords" :value="searchParams.keywords">
+                            <i class="fa fa-close" @click="tapNewSearch"></i>
+                        </div>
                     </div>
-                </PullToRefresh>
+                </header>
+                <div class="has-header">
+                    <PullToRefresh :loading="isLoading" :more="has_more"   @refresh="tapRefresh" @more="tapMore">
+                        <div class="goods-list">
+                            <GoodsItem v-for="(item, index) in items" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart"></GoodsItem>
+                        </div>
+                    </PullToRefresh>
+                </div>
             </div>
-        </div>
+        </block>
         <CartDialog :mode="mode" :product="goods" @close="mode = 0"/>
     </div>
 </template>
@@ -31,6 +35,7 @@ import {
 } from '../../app';
 import { IProduct } from '../../api/model';
 import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { getList, getInfo } from '../../api/product';
 const app = getApp<IMyApp>();
 
 interface IPageData {
@@ -43,6 +48,9 @@ interface ISearch {
     page: number,
 }
 @WxJson({
+    usingComponents: {
+        "SearchBar": "/pages/search/Child/SearchBar",
+    },
     navigationBarTitleText: "搜索",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"
@@ -63,9 +71,9 @@ export class Index extends WxPage<IPageData> {
     public mode: number = 0;
     public goods: IProduct | null = null;
 
-    public created() {
-        this.isSearch = Object.keys(this.$route.query).length === 0;
-        this.searchParams = Object.assign(this.searchParams, this.$route.query);
+    public onLoad(query?: any) {
+        this.isSearch = query && Object.keys(query).length === 0;
+        this.searchParams = Object.assign(this.searchParams, query || {});
         if (!this.isSearch) {
             this.tapRefresh();
         }
@@ -104,7 +112,7 @@ export class Index extends WxPage<IPageData> {
         });
     }
     public tapProduct(item: IProduct) {
-        this.$router.push({name: 'product', params: {id: item.id + ''}});
+        wx.navigateTo({url: 'product?id=' + item.id});
     }
     public tapAddCart(item: IProduct) {
         if (this.goods && this.goods.id == item.id) {
@@ -121,9 +129,7 @@ export class Index extends WxPage<IPageData> {
         this.isSearch = false;
         this.tapRefresh();
     }
-    public tapHome() {
-        this.$router.push('/');
-    }
+
     public tapEnterSearch() {
         this.keywords = this.searchParams.keywords;
         this.isSearch = true;
@@ -134,3 +140,10 @@ export class Index extends WxPage<IPageData> {
     }
 }
 </script>
+<style lang="scss" scoped>
+.home-btn {
+    .fa {
+        font-size: 28px;
+    }
+}
+</style>

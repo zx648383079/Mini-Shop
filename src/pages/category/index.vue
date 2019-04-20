@@ -8,7 +8,7 @@
         </header>
         <div class="has-header category-page">
             <scroll-view  class="category-menu" scroll-y="true"> 
-                    <div v-for="(item, index) in categories" :key="index" class="menu-item {{ category && item.id == category.id ? 'active' : '' }}" @click="tapSelectedItem" id="{{index}}">{{ item.name }}</div>
+                    <div v-for="(item, index) in categories" :key="index" wx:key="id" class="menu-item {{ category && item.id == category.id ? 'active' : '' }}" @click="tapSelectedItem" id="{{index}}">{{ item.name }}</div>
             </scroll-view>
 
             <scroll-view class="category-main" v-if="category" scroll-y="true"> 
@@ -20,7 +20,7 @@
                         <a @click="tapSearch(category)">{{ category.name }}</a>
                     </div>
                     <div class="goods-list" v-if="category.goods_list && category.goods_list.length > 0">
-                        <div class="item-view" v-for="(item, index) in category.goods_list" :key="index">
+                        <div class="item-view" v-for="(item, index) in category.goods_list" :key="index" wx:key="id">
                             <div class="item-img">
                                 <a  @click="tapProduct(item)"><img :src="item.thumb" mode="widthFix"></a>
                             </div>
@@ -34,10 +34,10 @@
                         </div>
                     </div>
                     <ul class="tree-grid" v-if="category.children && category.children.length > 0">
-                        <li class="tree-item" v-for="(item, index) in category.children" :key="index">
+                        <li class="tree-item" v-for="(item, index) in category.children" :key="index" wx:key="id">
                             <a  @click="tapSearch(item)">{{ item.name }}</a>
                             <ul class="tree-item-chidren" v-if="item.children && item.children.length > 0">
-                                <li class="tree-item" v-for="(it, i) in item.children" :key="i">
+                                <li class="tree-item" v-for="(it, i) in item.children" :key="i" wx:key="id">
                                     <a  @click="tapSearch(it)">{{ it.name }}</a>
                                 </li>
                             </ul>

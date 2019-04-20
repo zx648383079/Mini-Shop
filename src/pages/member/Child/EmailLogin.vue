@@ -50,7 +50,7 @@ export class EmailLogin extends WxComponent<any>  {
         const password = e.detail.value.password;
         if (!email || !/.+@.+/.test(email)) {
             wx.showToast({
-                title: '请输入账号'
+                title: '请输入邮箱'
             });
             return;
         }
@@ -61,8 +61,6 @@ export class EmailLogin extends WxComponent<any>  {
             return;
         }
         app.loginUser({email, password}).then(_ => {
-            console.log(_);
-            
             this.triggerEvent('back');
         });
     }

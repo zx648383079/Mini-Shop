@@ -1,5 +1,5 @@
 <template>
-    <div @click="tapGo" class="item">
+    <div @click="tapGo">
         <i class="fa {{icon}}"></i>
         {{ title }}
         <i class="fa fa-chevron-right"></i>

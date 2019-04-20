@@ -26,6 +26,9 @@ module.exports = function (tag) {
                 if (!file.isBuffer()) {
                     return callback();
                 }
+                if (/src[\\\/](parser|utils|api)/.test(file.path)) {
+                    return callback(null, file);
+                }
                 if (tag === 'json') {
                     var path = file.path.replace(file.extname, '.json');
                     var data = {};

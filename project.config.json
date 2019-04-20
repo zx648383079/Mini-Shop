@@ -41,8 +41,16 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": -1,
-			"list": []
+			"current": 0,
+			"list": [
+				{
+					"id": 0,
+					"name": "test",
+					"pathName": "pages/search/index",
+					"query": "",
+					"scene": null
+				}
+			]
 		}
 	}
 }

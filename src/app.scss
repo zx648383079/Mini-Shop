@@ -451,13 +451,13 @@ header,
         display: grid;
         grid-template-columns: 1fr 54px;
 
-        form {
+        .form-box {
             position: relative;
         }
 
         .fa {
             position: absolute;
-            top: 10px;
+            top: 0px;
             z-index: 99;
             color: #666;
 
@@ -465,7 +465,7 @@ header,
                 left: 5px;
             }
 
-            &.fa-times-circle {
+            &.fa-close {
                 right: 5px;
             }
         }
@@ -473,11 +473,14 @@ header,
         input {
             margin-top: 0.125rem;
             width: 100%;
-            font-size: 1.25rem;
+            font-size: 20px;
             padding: 4px 29px;
             box-sizing: border-box;
             background-color: $bg;
             border: 0;
+            height: 2rem;
+            color: #333;
+            text-align: left;
         }
 
         .cancel-btn {

@@ -1,15 +1,15 @@
 <template>
     <div>
-        <header class="top">
+        <div class="header top">
             <div class="search-box">
-                <form onsubmit="return false;">
+                <div class="form-box">
                     <i class="fa fa-search" aria-hidden="true"></i>
                     <input type="text" name="keywords" :value="value" @input="tapUpdateVal($event.target.value)" @keyup="onKeyUp" placeholder="搜索" autocomplete="off">
-                    <i class="fa fa-times-circle" v-if="value && value.length > 0" @click="tapClearSearch"></i>
-                </form>
+                    <i class="fa fa-close" v-if="value && value.length > 0" @click="tapClearSearch"></i>
+                </div>
                 <a class="cancel-btn" @click="tapBack">取消</a>
             </div>
-        </header>
+        </div>
         <div class="has-header">
             <div class="search-recommend-box" v-if="!tip_list || tip_list.length == 0">
                 <div class="panel" v-if="history_list && history_list.length > 0">
@@ -18,7 +18,7 @@
                         <i class="fa fa-trash" @click="tapClearHistory"></i>
                     </div>
                     <div class="panel-body">
-                        <a v-for="(item, index) in history_list" :key="index" @click="tapSearch(item)">{{ item }}</a>
+                        <span v-for="(item, index) in history_list" :key="index" wx:key="*this" @click="tapSearch(item)">{{ item }}</span>
                     </div>
                 </div>
                 <div class="panel" v-if="hot_keywords && hot_keywords.length > 0">
@@ -26,13 +26,13 @@
                         <span>热门搜索</span>
                     </div>
                     <div class="panel-body">
-                        <a v-for="(item, index) in hot_keywords" :key="index" @click="tapSearch(item)">{{ item }}</a>
+                        <span v-for="(item, index) in hot_keywords" :key="index" wx:key="*this" @click="tapSearch(item)">{{ item }}</span>
                     </div>
                 </div>
             </div>
             <ul class="search-tip-box" v-else>
-                <li v-for="(item, index) in tip_list" :key="index">
-                    <a @click="tapSearch(item)">{{ item }}</a>
+                <li v-for="(item, index) in tip_list" :key="index" wx:key="*this">
+                    <span @click="tapSearch(item)">{{ item }}</span>
                 </li>
             </ul>
 
@@ -40,23 +40,28 @@
     </div>
 </template>
 <script lang="ts">
-import { getHotKeywords } from "../../../api/product";
+import { getHotKeywords, getTips } from "../../../api/product";
+import { WxComponent, WxJson, WxMethod } from "../../../../typings/wx/lib.wx.page";
 
 interface IComponentData {
     hot_keywords: string[],
     tip_list: string[],
     history_list: string[],
+    value?: string,
 }
 
 const KEYWORDS_HISTORY = 'KEYWORDS_HISTORY';
 
+@WxJson({
+    component: true
+})
 export class SearchBar extends WxComponent<IComponentData>  {
 
     public options = {
         addGlobalClass: true
     }
 
-    data:IComponentData = {
+    public data: IComponentData = {
         hot_keywords: [],
         tip_list: [],
         history_list: [],
@@ -64,7 +69,7 @@ export class SearchBar extends WxComponent<IComponentData>  {
     public properties = {
         value: String,
     }
-    created() {
+    ready() {
         this.setData({
             history_list: wx.getStorageSync(KEYWORDS_HISTORY) || []
         });
@@ -75,49 +80,64 @@ export class SearchBar extends WxComponent<IComponentData>  {
         });
     }
 
+    @WxMethod()
     tapBack() {
-        if (window.history.length <= 1) {
-            this.$router.push('/')
-            return;
-        }
-        this.$router.go(-1)
+        
     }
+    @WxMethod()
     tapUpdateVal(val: string) {
-        this.$emit('input', val);
+        this.triggerEvent('input', val);
     }
+
+    @WxMethod()
     tapClearHistory() {
-        this.history_list = []
-        removeLocalStorage(KEYWORDS_HISTORY)
+        this.setData({
+            history_list: []
+        });
+        wx.removeStorageSync(KEYWORDS_HISTORY);
     }
+    @WxMethod()
     tapClearSearch() {
         this.tapUpdateVal('');
-        this.tip_list = [];
+        this.setData({
+            tip_list: []
+        });
     }
+    @WxMethod()
     addHistory(keywords: string) {
-        if (this.history_list.indexOf(keywords) >= 0) {
+        let history_list = this.data.history_list || [];
+        if (history_list.indexOf(keywords) >= 0) {
             return;
         }
-        this.history_list.push(keywords);
-        if (this.history_list.length > 8) {
-            this.history_list.splice(8);
+        history_list.push(keywords);
+        if (history_list.length > 8) {
+            history_list.splice(8);
         }
-        setLocalStorage(KEYWORDS_HISTORY, this.history_list)
+        this.setData({
+            history_list
+        });
+        wx.setStorageSync(KEYWORDS_HISTORY, history_list);
     }
+
+    @WxMethod()
     onKeyUp(event: any) {
-        if (!this.value || this.value.trim().length === 0) {
+        if (!this.data.value || this.data.value.trim().length === 0) {
             return;
         }
         if (event.which === 13) {
-            this.addHistory(this.value);
-            this.tapSearch(this.value);
+            this.addHistory(this.data.value);
+            this.tapSearch(this.data.value);
             return;
         }
-        getTips(this.value).then(res => {
-            this.tip_list = res.data ? res.data : [];
+        getTips(this.data.value).then(res => {
+            this.setData({
+                tip_list: res.data ? res.data : []
+            });
         });
     }
+    @WxMethod()
     tapSearch(keywords: string) {
-        this.$emit('search', keywords);
+        this.triggerEvent('search', keywords);
     }
-});
+}
 </script>

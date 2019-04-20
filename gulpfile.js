@@ -24,13 +24,15 @@ function getSass() {
 
 function getDistPath(path) {
     path = path.replace(/\\/g, '/');
-    return [path, 'dist' + path.match(/src([\/].+[\/])[^\/]+/)[1]];
+    return [path, 'dist' + path.match(/src([\/].*?)[^\/]+$/)[1]];
 }
 
 function createTak(path, callback) {
     const [src, dist] = getDistPath(path);
-    const task = gulp.src(src);
-    callback && callback(task);
+    let task = gulp.src(src);
+    if (callback) {
+        task = callback(task);
+    }
     return task.pipe(gulp.dest(dist));
 }
 
@@ -46,6 +48,12 @@ gulp.task('cleanall', function() {
 gulp.task('clean', function() {
     return gulp.src('dist/parser.js')
         .pipe(clean());
+});
+
+gulp.task('parser', async() => {
+    await gulp.src('src/parser.ts')
+        .pipe(getTs())
+        .pipe(gulp.dest('dist/'));
 });
 
 gulp.task('ts', async() => {
@@ -124,15 +132,20 @@ gulp.task('watch', async() => {
     // await gulp.watch('src/**/*.{vue,html}', gulp.series('vue'));
     await gulp.watch(['src/**/*.ts']).on('change', function(path, stats) {
         createTak(path, task => {
-            task.pipe(template('ts'))
+            return task.pipe(template('ts'))
             .pipe(getTs())
         }).on('end', () => {
             debug('SUCCESS ' + path);
         });
     });
+    await gulp.watch(['src/**/*.json']).on('change', function(path, stats) {
+        createTak(path).on('end', () => {
+            debug('SUCCESS ' + path);
+        });
+    });
     await gulp.watch(['src/**/*.{sass,scss}']).on('change', function(path, stats) {
         createTak(path, task => {
-            task.pipe(getSass())
+            return task.pipe(getSass())
             .pipe(rename({extname: '.wxss'}))
         }).on('end', () => {
             debug('SUCCESS ' + path);
@@ -167,7 +180,7 @@ gulp.task('watch', async() => {
     });
 });
 
-gulp.task('default', gulp.series('ts', 'sass', 'md5', async() => {
+gulp.task('default', gulp.series('parser', 'ts', 'sass', 'md5', async() => {
     await gulp.src('src/**/*.{js,json,wxml,wxss,png,jpg,jpeg}')
             .pipe(gulp.dest('dist/'));
 }));

@@ -1,5 +1,5 @@
 <template>
-    <div @click="tapGo" class="item">
+    <div @click="tapGo">
         <i class="fa {{icon}}"></i>
         <span>{{ title }}</span>
         <i class="tip" v-if="count && count > 0">{{ count }}</i>

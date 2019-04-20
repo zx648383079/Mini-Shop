@@ -34,10 +34,10 @@
             </a>
         </div>
         <div class="menu-large">
-            <MenuLargeItem title="待付款" icon="fa-money" :uri="'/order?status=' + ORDER_STATUS.UN_PAY" :count="order_subtotal.un_pay"/>
-            <MenuLargeItem title="待收货" icon="fa-shipping-fast" :uri="'/order?status=' + ORDER_STATUS.SHIPPED" :count="order_subtotal.shipped"/>
-            <MenuLargeItem title="待评价" icon="fa-comment" uri="/comment" :count="order_subtotal.uncomment"/>
-            <MenuLargeItem title="退换货" icon="fa-exchange" uri="/refund" :count="order_subtotal.refunding"/>
+            <MenuLargeItem class="item" title="待付款" icon="fa-money" :uri="'/order?status=' + ORDER_STATUS.UN_PAY" :count="order_subtotal.un_pay"/>
+            <MenuLargeItem  class="item" title="待收货" icon="fa-shipping-fast" :uri="'/order?status=' + ORDER_STATUS.SHIPPED" :count="order_subtotal.shipped"/>
+            <MenuLargeItem  class="item" title="待评价" icon="fa-comment" uri="/comment" :count="order_subtotal.uncomment"/>
+            <MenuLargeItem  class="item" title="退换货" icon="fa-exchange" uri="/refund" :count="order_subtotal.refunding"/>
         </div>
 
         <div class="menu-panel">
@@ -68,11 +68,11 @@
         </div>
 
         <div class="menu-list">
-            <MenuItem title="签到" icon="fa-et-checking-in" uri="/pages/checkin/index"/>
-            <MenuItem title="我的收货地址" icon="fa-map" uri="/pages/address/index"/>
-            <MenuItem title="浏览历史" icon="fa-history" uri="/product/history"/>
-            <MenuItem title="我的推荐" icon="fa-share" uri="/pages/affiliate/index"/>
-            <MenuItem title="帮助" icon="fa-help" uri="/pages/article/index"/>
+            <MenuItem class="item" title="签到" icon="fa-et-checking-in" uri="/pages/checkin/index"/>
+            <MenuItem class="item" title="我的收货地址" icon="fa-map" uri="/pages/address/index"/>
+            <MenuItem class="item" title="浏览历史" icon="fa-history" uri="/product/history"/>
+            <MenuItem class="item" title="我的推荐" icon="fa-share" uri="/pages/affiliate/index"/>
+            <MenuItem class="item" title="帮助" icon="fa-help" uri="/pages/article/index"/>
         </div>
         
     </div>

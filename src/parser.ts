@@ -377,7 +377,13 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
                 return ['wx:for', '{{ ' + match[4] + ' }}', `wx:for-index="${index}" wx:for-item="${item}"`];
             },
             'v-show': function(value: string) {
-                return ['hidden', '{{ !' +value + ' }}'];
+                value = value.trim();
+                if (value.charAt(0) == '!') {
+                    value = value.substr(1);
+                } else {
+                    value = '!' + value;
+                }
+                return ['hidden', '{{ ' +value + ' }}'];
             },
             'href': 'url',
             ':key': false,
@@ -554,10 +560,10 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
 }
 
 export function htmlToWxml(content: string): string {
-    if (content.indexOf('<view') >= 0) {
-        console.log('跳过。。。');
-        return content;
-    }
+    // if (content.indexOf('<view') >= 0) {
+    //     console.log('跳过。。。');
+    //     return content;
+    // }
     let elements = htmlToJson(content);
     return jsonToWxml(elements);
 }

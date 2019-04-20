@@ -4,7 +4,7 @@
             <div class="logo">
                 <img src="/images/wap_logo.png" alt="">
             </div>
-            <a class="search-entry" href="pages/search/index">
+            <a class="search-entry" href="/pages/search/index">
                 <i class="fa fa-search"></i>
                 <span>搜索商品, 共{{ subtotal ? subtotal.goods : 0 }}款好物</span>
             </a>
@@ -19,7 +19,7 @@
                 <swiper autoplay="{{ true }}"
                     interval="{{ 3000 }}"
                     duration="{{ 500 }}">
-                    <block wx:for="{{ banners }}">
+                    <block wx:for="{{ banners }}" wx:key="id">
                         <swiper-item>
                             <image src="{{ item.content }}" class="slide-image"/>
                         </swiper-item>
@@ -28,7 +28,7 @@
             </div>
 
             <div class="menu-box">
-                <a v-for="(item, index) in categories" :key="index" class="menu-item">
+                <a v-for="(item, index) in categories" :key="index" class="menu-item" wx:key="id">
                     <img class="menu-icon" :src="item.icon" alt="">
                     <div class="menu-name">{{ item.name }}</div>
                 </a>
@@ -36,7 +36,7 @@
             <div class="home-panel" v-if="data.new_products && data.new_products.length > 0">
                 <div class="panel-header">最新商品</div>
                 <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.new_products" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart">
+                    <div class="item-view" v-for="(item, index) in data.new_products" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
                         <div class="item-img">
                             <a @click="tapProduct"><img :src="item.thumb" alt="" mode="widthFix"></a>
                         </div>
@@ -55,7 +55,7 @@
             <div class="home-panel" v-if="data.hot_products && data.hot_products.length > 0">
                 <div class="panel-header">热门商品</div>
                 <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.hot_products" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart">
+                    <div class="item-view" v-for="(item, index) in data.hot_products" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
                         <div class="item-img">
                             <a @click="tapProduct"><img :src="item.thumb" alt="" mode="widthFix"></a>
                         </div>
@@ -74,7 +74,7 @@
             <div class="home-panel" v-if="data.best_products && data.best_products.length > 0">
                 <div class="panel-header">推荐商品</div>
                 <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart">
+                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
                         <div class="item-img">
                             <a @click="tapProduct"><img :src="item.thumb" alt="" mode="widthFix"></a>
                         </div>
