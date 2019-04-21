@@ -45,12 +45,12 @@ gulp.task('cleanall', function() {
     return gulp.src('dist/*', {read: false})
         .pipe(clean());
 });
-gulp.task('clean', function() {
+gulp.task('cleanparser', function() {
     return gulp.src('dist/parser.js')
         .pipe(clean());
 });
 
-gulp.task('parser', async() => {
+gulp.task('initparser', async() => {
     await gulp.src('src/parser.ts')
         .pipe(getTs())
         .pipe(gulp.dest('dist/'));
@@ -180,7 +180,7 @@ gulp.task('watch', async() => {
     });
 });
 
-gulp.task('default', gulp.series('parser', 'ts', 'sass', 'md5', async() => {
+gulp.task('default', gulp.series('sass', 'md5', 'ts', async() => {
     await gulp.src('src/**/*.{js,json,wxml,wxss,png,jpg,jpeg}')
             .pipe(gulp.dest('dist/'));
 }));

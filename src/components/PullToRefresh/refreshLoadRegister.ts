@@ -1,4 +1,3 @@
-import { WxComponent } from "typings/wx/lib.wx.page";
 
 /**
  * 注册下拉刷新上拉加载更多
@@ -35,10 +34,10 @@ export interface IComponentData {
     distance?: number,
 }
 
-let o: IComponentData = {}
+let o: IComponentData = {};
 let transition = '0.2s'
 
-export function setOptions(context: WxComponent<IComponentData>, options: IComponentData) {
+export function setOptions(context: any, options: IComponentData) {
     o = Object.assign(options, o)
     context.setData({
         loadEnd: o.loadEnd,
@@ -46,7 +45,7 @@ export function setOptions(context: WxComponent<IComponentData>, options: ICompo
     })
 }
 
-export function register(context: WxComponent<IComponentData>, options: IComponentData) {
+export function register(context: any, options: IComponentData) {
   o = options
   context.setData({
     pull: true, //true 下拉刷新状态或者上拉加载更多状态   false 释放
@@ -90,13 +89,13 @@ export function register(context: WxComponent<IComponentData>, options: ICompone
     move(context, e);
   }
   context.scroll = function (e: any) {
-    scroll(context, e);
+    scroll(context);
   }
   context.lower = function (e: any) {
-    lower(context, e);
+    lower(context);
   }
   context.upper = function (e: any) {
-    upper(context, e);
+    upper(context);
   }
   context.start = function (e: any) {
     start(context, e);
@@ -106,7 +105,7 @@ export function register(context: WxComponent<IComponentData>, options: ICompone
   }
 }
 
-function scroll(context: WxComponent<IComponentData>) {
+function scroll(context: any) {
   // console.log("scroll...");
   if (context.data.end && context.data.isLower) { //如果快速拖动 然后释放 会在end后继续scroll 
     //可能出现scroll到顶点后依然走scroll方法
@@ -121,7 +120,7 @@ function scroll(context: WxComponent<IComponentData>) {
 
 }
 //上拉  滚动条 滚动到底部时触发
-function lower(context: WxComponent<IComponentData>) {
+function lower(context: any) {
   // console.log("lower...")
   context.data.end = true;
   context.data.isLower = true;
@@ -129,14 +128,14 @@ function lower(context: WxComponent<IComponentData>) {
 
 }
 //下拉  滚动条 滚动顶底部时触发
-function upper(context: WxComponent<IComponentData>) {
+function upper(context: any) {
   // console.log("upper....");
   context.data.end = true;
   context.data.isUpper = true;
   context.data.scrolling = false;
 }
 
-function start(context: WxComponent<IComponentData>, e) {
+function start(context: any, e) {
   context.data.end = false;
   // console.log('start ');
   if (context.data.scrolling || context.data.loading) {
@@ -155,7 +154,7 @@ function start(context: WxComponent<IComponentData>, e) {
   });
 }
 
-function end(context: WxComponent<IComponentData>, e) {
+function end(context: any, e) {
   context.data.end = true;
   context.data.scrolling = false;
   if (context.data.refreshing) {
@@ -193,7 +192,7 @@ function end(context: WxComponent<IComponentData>, e) {
 
 }
 
-export function loadFinish(context: WxComponent<IComponentData>, success: boolean) {
+export function loadFinish(context: any, success: boolean) {
   if (!context) {
     // console.log('please add context');
     return;
@@ -224,7 +223,7 @@ export function loadFinish(context: WxComponent<IComponentData>, success: boolea
   // }, 500);
 }
 
-function move(context: WxComponent<IComponentData>, e: any) {
+function move(context: any, e: any) {
   // console.log("move:", "isUpper = "+context.data.isUpper + "  isLower = "+context.data.isLower+ " scrolling = "+context.data.scrolling);
   if (context.data.scrolling) {
     return;
