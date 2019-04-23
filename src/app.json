@@ -8,6 +8,7 @@
         "pages/affiliate/user",
         "pages/cart/index",
         "pages/search/index",
+        "pages/search/result",
         "pages/category/index",
         "pages/message/index",
         "pages/member/index",

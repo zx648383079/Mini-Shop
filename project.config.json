@@ -46,8 +46,8 @@
 				{
 					"id": 0,
 					"name": "test",
-					"pathName": "pages/search/index",
-					"query": "",
+					"pathName": "pages/search/result",
+					"query": "keywords=1",
 					"scene": null
 				}
 			]

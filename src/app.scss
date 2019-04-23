@@ -900,7 +900,7 @@ footer,
     padding-left: 10px;
     background-color: $white;
 
-    li {
+    view {
         height: 30px;
         line-height: 30px;
 
@@ -927,7 +927,7 @@ footer,
         }
 
         .panel-body {
-            navigator {
+            text {
                 border: $hr;
                 border-radius: 2px;
                 color: #333;

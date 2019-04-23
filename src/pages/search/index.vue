@@ -1,142 +1,144 @@
 <template>
     <div>
-        <block v-show="isSearch">
-            <SearchBar v-model="keywords" @search="tapSearch"></SearchBar>
-        </block>
-        <block v-show="!isSearch">
-            <div>
-                <header class="header top">
-                    <div class="search-box under-search">
-                        <a class="home-btn" href="/pages/index/index">
-                            <i class="fa fa-home"></i>
-                        </a>
-                        <div class="form-box" @click="tapEnterSearch">
-                            <i class="fa fa-search" aria-hidden="true"></i>
-                            <input type="text" readonly="" name="keywords" :value="searchParams.keywords">
-                            <i class="fa fa-close" @click="tapNewSearch"></i>
-                        </div>
+        <div class="header top">
+            <div class="search-box">
+                <div class="form-box">
+                    <i class="fa fa-search" @click="tapConfirm"></i>
+                    <input type="text" name="keywords" value="{{ keywords }}" bindinput="onKeyUp" placeholder="搜索" autocomplete="off">
+                    <i class="fa fa-close" v-if="keywords && keywords.length > 0" @click="tapClearSearch" confirm-type="search" bindconfirm="tapConfirm"></i>
+                </div>
+                <a class="cancel-btn" href="/pages/index/index" open-type="switchTab">取消</a>
+            </div>
+        </div>
+        <div class="has-header">
+            <div class="search-recommend-box" v-if="!tip_list || tip_list.length == 0">
+                <div class="panel" v-if="history_list && history_list.length > 0">
+                    <div class="panel-header">
+                        <span>历史记录</span>
+                        <i class="fa fa-trash" @click="tapClearHistory"></i>
                     </div>
-                </header>
-                <div class="has-header">
-                    <PullToRefresh :loading="isLoading" :more="has_more"   @refresh="tapRefresh" @more="tapMore">
-                        <div class="goods-list">
-                            <GoodsItem v-for="(item, index) in items" :key="index" @enter="tapProduct" :item="item" @addCart="tapAddCart"></GoodsItem>
-                        </div>
-                    </PullToRefresh>
+                    <div class="panel-body">
+                        <span v-for="(item, index) in history_list" :key="index" wx:key="*this" @click="tapSearch" data-value="{{ item }}">{{ item }}</span>
+                    </div>
+                </div>
+                <div class="panel" v-if="hot_keywords && hot_keywords.length > 0">
+                    <div class="panel-header">
+                        <span>热门搜索</span>
+                    </div>
+                    <div class="panel-body">
+                        <span v-for="(item, index) in hot_keywords" :key="index" wx:key="*this" @click="tapSearch" data-value="{{ item }}">{{ item }}</span>
+                    </div>
                 </div>
             </div>
-        </block>
-        <CartDialog :mode="mode" :product="goods" @close="mode = 0"/>
+            <ul class="search-tip-box" v-else>
+                <li v-for="(item, index) in tip_list" :key="index" wx:key="*this">
+                    <span @click="tapSearch" data-value="{{ item }}">{{ item }}</span>
+                </li>
+            </ul>
+
+        </div>
     </div>
 </template>
 <script lang="ts">
 import {
     IMyApp
 } from '../../app';
-import { IProduct } from '../../api/model';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
-import { getList, getInfo } from '../../api/product';
+import { WxPage, WxJson, InputEvent, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { getHotKeywords, getTips } from '../../api/product';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    keywords: string,
+    hot_keywords: string[],
+    tip_list: string[],
+    history_list: string[],
 }
 
-interface ISearch {
-    keywords: string,
-    category: number,
-    brand: number,
-    page: number,
-}
+const KEYWORDS_HISTORY = 'KEYWORDS_HISTORY';
+
 @WxJson({
-    usingComponents: {
-        "SearchBar": "/pages/search/Child/SearchBar",
-    },
     navigationBarTitleText: "搜索",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"
 })
 export class Index extends WxPage<IPageData> {
 
-    public items: IProduct[] = [];
-    public isSearch = true;
-    public keywords = '';
-    public has_more = true;
-    public isLoading = false;
-    public searchParams: ISearch = {
+    public data: IPageData = {
         keywords: '',
-        category: 0,
-        brand: 0,
-        page: 1,
+        hot_keywords: [],
+        tip_list: [],
+        history_list: [],
     };
-    public mode: number = 0;
-    public goods: IProduct | null = null;
 
     public onLoad(query?: any) {
-        this.isSearch = query && Object.keys(query).length === 0;
-        this.searchParams = Object.assign(this.searchParams, query || {});
-        if (!this.isSearch) {
-            this.tapRefresh();
-        }
-    }
-
-    public tapRefresh() {
-        this.goPage(1);
-    }
-
-    public tapMore() {
-        if (!this.has_more) {
-            return;
-        }  
-        this.goPage(this.searchParams.page + 1);
-    }
-
-    public goPage(page: number) {
-        if (this.isLoading) {
-            return;
-        }
-        this.isLoading = true;
-        getList({
-            page: page,
-            keywords: this.searchParams.keywords,
-            category: this.searchParams.category,
-            brand: this.searchParams.brand,
-        }).then(res => {
-            this.searchParams.page = page;
-            this.has_more = res.paging.more;
-            this.isLoading = false;
-            if (page < 2) {
-                this.items = res.data;
-                return;
-            }
-            this.items = [].concat(this.items as never[], res.data as never[]);
+        this.setData({
+            keywords: query && query.keywords ? query.keywords : '',
+            history_list: wx.getStorageSync(KEYWORDS_HISTORY) || []
+        });
+        getHotKeywords().then(res => {
+            this.setData({
+                hot_keywords: res.data ? res.data : []
+            });
         });
     }
-    public tapProduct(item: IProduct) {
-        wx.navigateTo({url: 'product?id=' + item.id});
+
+    tapClearHistory() {
+        this.setData({
+            history_list: []
+        });
+        wx.removeStorageSync(KEYWORDS_HISTORY);
     }
-    public tapAddCart(item: IProduct) {
-        if (this.goods && this.goods.id == item.id) {
-            this.mode = 1;
+    tapClearSearch() {
+        this.setData({
+            tip_list: []
+        });
+    }
+    addHistory(keywords: string) {
+        let history_list = this.data.history_list || [];
+        if (history_list.indexOf(keywords) >= 0) {
             return;
         }
-        getInfo(item.id).then(res => {
-            this.goods = res;
-            this.mode = 1;
-        }); 
+        history_list.push(keywords);
+        if (history_list.length > 8) {
+            history_list.splice(8);
+        }
+        this.setData({
+            history_list
+        });
+        wx.setStorageSync(KEYWORDS_HISTORY, history_list);
     }
-    public tapSearch(keywords: string) {
-        this.searchParams.keywords = keywords;
-        this.isSearch = false;
-        this.tapRefresh();
+    onKeyUp(event: InputEvent) {
+        this.setData({
+            keywords: event.detail.value
+        });
+        if (!event.detail.value || event.detail.value.trim().length === 0) {
+            return;
+        }
+        getTips(event.detail.value).then(res => {
+            this.setData({
+                tip_list: res.data ? res.data : []
+            });
+        });
     }
 
-    public tapEnterSearch() {
-        this.keywords = this.searchParams.keywords;
-        this.isSearch = true;
+    tapConfirm() {
+        console.log(arguments);
+        
+        if (!this.data.keywords || this.data.keywords.trim().length === 0) {
+            return;
+        }
+        this.addHistory(this.data.keywords);
+        this.tapEnterSearch(this.data.keywords);
     }
-    public tapNewSearch() {
-        this.searchParams.keywords = this.keywords = '';
-        this.isSearch = true;
+
+    tapSearch(e: TouchEvent) {
+        this.tapEnterSearch(e.currentTarget.dataset.value + '');
+    }
+
+    tapEnterSearch(keywords: string) {
+        wx.navigateTo({
+            url: 'result?keywords=' + keywords
+        });
     }
 }
 </script>

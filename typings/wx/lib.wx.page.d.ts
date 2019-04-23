@@ -564,6 +564,10 @@ declare interface CustomEvent extends BaseEvent {
   detail:         Detail;
 }
 
+declare interface InputEvent extends BaseEvent {
+  detail:         any;
+}
+
 declare interface TouchEvent extends BaseEvent {
   touches:        Touch[] | CanvasTouch[];
   changedTouches: Touch[] | CanvasTouch[];

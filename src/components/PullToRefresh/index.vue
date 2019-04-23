@@ -18,11 +18,11 @@
 </template>
 <script lang="ts">
 import { WxJson, WxComponent, WxMethod } from "../../../typings/wx/lib.wx.page";
-import * as scroller from './refreshLoadRegister';
+import * as scroller from '../../components/PullToRefresh/refreshLoadRegister';
 
 
 /***
- * 使用  bind:refresh="refresh" bind:loadMore="loadMore"
+ * 使用  bind:refresh="refresh" bind:more="more"
  */
 @WxJson({
     component: true
@@ -133,7 +133,7 @@ export default class PullToRefresh extends WxComponent<scroller.IComponentData> 
                 currentSize: currentSize
             });
             console.log('上拉加载')
-            this.triggerEvent("loadMore", scroller)
+            this.triggerEvent("more", scroller)
         }
     }
 

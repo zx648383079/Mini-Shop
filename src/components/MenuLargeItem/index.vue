@@ -6,7 +6,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent } from "../../../typings/wx/lib.wx.page";
+import { WxJson, WxComponent, WxMethod } from "../../../typings/wx/lib.wx.page";
 
 @WxJson({
     component: true
@@ -22,7 +22,7 @@ export class MenuLargeItem extends WxComponent<any>  {
         uri: String,
         count: Number,
     }
-
+    @WxMethod()
     public tapGo() {
         if (this.data.uri) {
             wx.navigateTo({
