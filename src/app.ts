@@ -119,7 +119,7 @@ App<IMyApp>({
             }
             getCategories().then(res => {
                 this.globalData.categories = res.data ? res.data : [];
-                resolve(res.data);
+                resolve(this.globalData.categories);
             }).catch(reject);
         });
     },

@@ -116,6 +116,8 @@ export class Index extends WxPage<IPageData> {
             if (res) {
                 this.tapSubtotal();
             }
+        }).catch(_ => {
+            app.setToken();
         });
     }
 

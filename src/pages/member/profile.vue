@@ -61,16 +61,16 @@ interface IPageData {
     user: IUser|null
 }
 @WxJson({
-    navigationBarTitleText: "售后",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "个人信息",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Profile extends WxPage<IPageData> {
     public data: IPageData = {
         user: null
     };
 
-    public created() {
+    public onLoad() {
         app.getUser().then(res => {
             this.setData({
                 user: res
@@ -88,5 +88,21 @@ export class Profile extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
-
+.profile-box {
+    .avatar-item {
+        border-top: none;
+        .avatar {
+            float: right;
+            margin-right: 1.25rem;
+        }
+    }
+    .line-item {
+        text {
+            &:nth-child(2) {
+                float: right;
+                margin-right: 1.25rem;
+            }
+        }
+    }
+}
 </style>
