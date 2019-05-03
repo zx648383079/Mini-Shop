@@ -7,14 +7,14 @@
     "build": "gulp initparser && gulp cleanall && gulp && gulp vue && gulp cleanparser"
   },
   "devDependencies": {
-    "@types/node": "^11.13.6",
-    "gulp": "^4.0.0",
+    "@types/node": "^11.13.9",
+    "gulp": "^4.0.1",
     "gulp-clean": "^0.4.0",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-typescript": "^5.0.1",
-    "typescript": "^3.4.4"
+    "typescript": "^3.4.5"
   },
   "dependencies": {
     "ts-md5": "^1.2.4"
