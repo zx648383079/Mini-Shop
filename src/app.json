@@ -1,12 +1,14 @@
 {
     "pages": [
         "pages/index/index",
+        "pages/account/index",
         "pages/affiliate/index",
         "pages/affiliate/order",
         "pages/affiliate/rule",
         "pages/affiliate/share",
         "pages/affiliate/user",
         "pages/cart/index",
+        "pages/checkin/index",
         "pages/search/index",
         "pages/search/result",
         "pages/category/index",

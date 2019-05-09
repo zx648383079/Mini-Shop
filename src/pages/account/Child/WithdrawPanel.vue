@@ -32,7 +32,15 @@
     </DialogPanel>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
+import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
+
+@WxJson({
+    usingComponents: {
+        DialogPanel: '/components/DialogPanel/index'
+    },
+    component: true
+})
+export class WithdrawPanel extends WxComponent<any>  {
 
 }
 </script>

@@ -55,7 +55,7 @@ export function request<T>(method: 'OPTIONS'| 'GET' | 'HEAD' | 'POST' | 'PUT' | 
                 if (statusCode === 401) {
                     app && app.setToken();
                     wx.navigateTo({
-                        url: 'page/member/login'
+                        url: '/pages/member/login'
                     });
                 }
                 // 处理数据

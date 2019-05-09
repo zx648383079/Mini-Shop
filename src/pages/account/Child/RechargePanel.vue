@@ -18,7 +18,9 @@
     </DialogPanel>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
+import { WxComponent } from "../../../../typings/wx/lib.wx.page";
+
+export class RechargePanel extends WxComponent<any>  {
 
 }
 </script>

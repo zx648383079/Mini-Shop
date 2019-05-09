@@ -10,7 +10,12 @@
     </header>
 </template>
 <script lang="ts">
+import { WxJson, WxComponent, WxMethod } from "../../../typings/wx/lib.wx.page";
 
+
+@WxJson({
+    component: true,
+})
 export class BackHeader extends WxComponent<any>  {
     public properties = {
         title: String,
@@ -20,6 +25,7 @@ export class BackHeader extends WxComponent<any>  {
         }
     }
 
+    @WxMethod()
     public tapBack() {
         wx.navigateBack({ delta: 1 });
     }

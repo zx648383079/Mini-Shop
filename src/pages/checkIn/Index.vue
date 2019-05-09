@@ -1,33 +1,33 @@
 <template>
     <div>
-        <div class="has-header">
-            <div class="top-header">
-                <div v-if="!checked" class="check-btn" @click="tapCheck">
-                    签到
-                </div>
-                <div v-else class="checked-btn">
-                    <i class="fa fa-calendar-check" aria-hidden="true"></i>
-                    已签到
-                </div>
-                <div v-if="checked" class="checked-tip">已连续签到{{ checked.running }}天，继续加油</div>
+        <div class="top-header">
+            <div v-if="!checked" class="check-btn" @click="tapCheck">
+                签到
             </div>
-            <div class="date-grid">
-                <div class="title">{{ title }}</div>
-                <div class="day-grid">
-                    <ol><li>日</li><li>一</li><li>二</li><li>三</li><li>四</li><li>五</li><li>六</li></ol>
-                    <ul>
-                        <li v-for="(item, index) in day_list" :key="index" :class="{disable: item.disable, active: item.active}">{{ item.val }}</li>
-                    </ul>
-                </div>
+            <div v-else class="checked-btn">
+                <i class="fa fa-calendar-check" aria-hidden="true"></i>
+                已签到
+            </div>
+            <div v-if="checked" class="checked-tip">已连续签到{{ checked.running }}天，继续加油</div>
+        </div>
+        <div class="date-grid">
+            <div class="title">{{ title }}</div>
+            <div class="day-grid">
+                <ol class="gird-header"><li>日</li><li>一</li><li>二</li><li>三</li><li>四</li><li>五</li><li>六</li></ol>
+                <ul class="gird-body">
+                    <block v-for="(item, index) in day_list" :key="index">
+                        <li class="{{ item.disable ? 'disable' : ''}} {{item.active ? 'active': ''}}">{{ item.val }}</li>
+                    </block>
+                </ul>
             </div>
         </div>
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-const app = getApp<IMyApp>();
+import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { ICheckIn } from '../../api/model';
+import { getCanCheckIn, getMonth, checkIn } from '../../api/check';
+import { twoPad } from '../../utils/util';
 
 interface IPageData {
 }
@@ -39,31 +39,31 @@ interface IDay {
     active?: boolean,
 }
 
-import {
-    IMyApp
-} from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
-const app = getApp<IMyApp>();
-
 interface IPageData {
+    checked: ICheckIn | null,
+    day_list: IDay[],
+    title: string
 }
 @WxJson({
     navigationBarTitleText: "签到",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Index extends WxPage<IPageData> {
-    public checked: ICheckIn | null = null;
 
-    public day_list: IDay[] = [];
+    public data: IPageData = {
+        checked: null,
+        day_list: [],
+        title: ''
+    };
 
-    public title = '';
-
-    public created() {
+    public onLoad() {
         this.refreshGrid(new Date());
         getCanCheckIn().then(res => {
             if (res.data) {
-                this.checked = res.data;
+                this.setData({
+                    checked: res.data
+                });
             }
         });
         getMonth().then(res => {
@@ -81,20 +81,23 @@ export class Index extends WxPage<IPageData> {
     public refreshGrid(current: Date) {
         const year = current.getFullYear();
         const month = current.getMonth() + 1;
-        this.title = year + '-' + twoPad(month);
         const date = new Date(year, month, 0);
         const count = date.getDate();
         date.setDate(1);
         const start = date.getDay();
-        this.day_list = [];
+        let day_list = [];
         for (let i = 0; i < count + start; i++) {
-            this.day_list.push(i < start ? {
+            day_list.push(i < start ? {
                 val: '',
             } : {
                 val: twoPad(i - start + 1),
                 day: i - start + 1,
             });
         }
+        this.setData({
+            title: year + '-' + twoPad(month),
+            day_list
+        });
     }
 
     /**
@@ -103,7 +106,9 @@ export class Index extends WxPage<IPageData> {
     public tapCheck() {
         checkIn().then(res => {
             if (res.data) {
-                this.checked = res.data;
+                this.setData({
+                    checked: res.data
+                });
                 this.checkDay(new Date().getDate());
             }
         });
@@ -117,16 +122,19 @@ export class Index extends WxPage<IPageData> {
         if (len < 1) {
             return;
         }
-        for (let i = 0; i < this.day_list.length; i++) {
-            if (this.day_list[i].day && days.indexOf(this.day_list[i].day) >= 0) {
-                this.day_list[i].active = true;
+        let day_list = this.data.day_list;
+        for (let i = 0; i < day_list.length; i++) {
+            if (day_list[i].day && days.indexOf(day_list[i].day) >= 0) {
+                day_list[i].active = true;
                 len --;
             }
             if (len < 1) {
                 break;
             }
         }
-        this.$forceUpdate();
+        this.setData({
+            day_list
+        });
     }
 
 }
@@ -167,29 +175,32 @@ export class Index extends WxPage<IPageData> {
         text-align: center;
     }
     .day-grid {
-        ol {
+        .gird-header,
+        .gird-body {
+            view {
+                display: inline-block;
+                width: 40px;
+                line-height: 40px;
+                text-align: center;
+                box-sizing: border-box;
+                list-style: none;
+                color: #333;
+            }
+        }
+        .gird-header {
             background: #eee;
         }
-        li {
-            display: inline-block;
-            width: 40px;
-            line-height: 40px;
-            text-align: center;
-            box-sizing: border-box;
-            list-style: none;
-            color: #333;
-        }
-        ul {
-            li {
+        .gird-body {
+            view {
                 cursor: pointer;
                 &.active {
                     background: #006cff;
                     color: #fff;
                     border-radius: 50%;
                     &:before {
-                        font-family: "Font Awesome 5 Free";
+                        font-family: "iconfont" !important;
                         font-weight: 900;
-                        content: "\f00c";
+                        content: "\ef65";
                         color: rgba(255, 255, 255, .3);
                         font-size: 30px;
                         position: absolute;
