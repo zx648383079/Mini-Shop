@@ -1,10 +1,10 @@
 <template>
     <DialogPanel title="提现">
-        <a>
-            <i class="fa fa-wallet" aria-hidden="true"></i>
-            提现
-            <i class="fa fa-chevron-right" aria-hidden="true"></i>
-        </a>
+        <div class="item line" slot="input">
+            <i class="fa fa-withdrawal" aria-hidden="true"></i>
+                提现
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+        </div>
         <div slot="panel">
             <p>充值金额</p>
             <div class="money-input">
@@ -41,7 +41,9 @@ import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
     component: true
 })
 export class WithdrawPanel extends WxComponent<any>  {
-
+    public options = {
+        addGlobalClass: true,
+    };
 }
 </script>
 <style lang="scss">

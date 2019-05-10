@@ -12,19 +12,19 @@
             </div>
         </div>
         <div class="menu-grid">
-            <a @click="$router.push('/order')" class="item">
+            <a href="/pages/order/index" class="item">
                 <i class="fa fa-users" aria-hidden="true"></i>
                 订单
             </a>
-            <a @click="$router.push('/collect')" class="item">
+            <a href="/pages/collect/index" class="item">
                 <i class="fa fa-collect" aria-hidden="true"></i>
                 关注
             </a>
-            <a @click="$router.push('/message')" class="item">
+            <a href="/pages/message/index" class="item">
                 <i class="fa fa-message" aria-hidden="true"></i>
                 消息
             </a>
-            <a @click="$router.push('/account/center')" class="item">
+            <a href="/pages/account/center" class="item">
                 <i class="fa fa-shield" aria-hidden="true"></i>
                 安全
             </a>
@@ -35,9 +35,9 @@
         </div>
         <div class="menu-large">
             <MenuLargeItem class="item" title="待付款" icon="fa-money" :uri="'/order?status=' + ORDER_STATUS.UN_PAY" :count="order_subtotal.un_pay"/>
-            <MenuLargeItem  class="item" title="待收货" icon="fa-shipping-fast" :uri="'/order?status=' + ORDER_STATUS.SHIPPED" :count="order_subtotal.shipped"/>
-            <MenuLargeItem  class="item" title="待评价" icon="fa-comment" uri="/comment" :count="order_subtotal.uncomment"/>
-            <MenuLargeItem  class="item" title="退换货" icon="fa-exchange" uri="/refund" :count="order_subtotal.refunding"/>
+            <MenuLargeItem class="item" title="待收货" icon="fa-shipping-fast" :uri="'/order?status=' + ORDER_STATUS.SHIPPED" :count="order_subtotal.shipped"/>
+            <MenuLargeItem class="item" title="待评价" icon="fa-comment" uri="/comment" :count="order_subtotal.uncomment"/>
+            <MenuLargeItem class="item" title="退换货" icon="fa-exchange" uri="/refund" :count="order_subtotal.refunding"/>
         </div>
 
         <div class="menu-panel">

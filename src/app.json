@@ -2,6 +2,10 @@
     "pages": [
         "pages/index/index",
         "pages/account/index",
+        "pages/account/card",
+        "pages/account/cardNew",
+        "pages/account/log",
+        "pages/account/center",
         "pages/affiliate/index",
         "pages/affiliate/order",
         "pages/affiliate/rule",
@@ -15,7 +19,8 @@
         "pages/message/index",
         "pages/member/index",
         "pages/member/profile",
-        "pages/member/login"
+        "pages/member/login",
+        "pages/order/index"
     ],
     "window": {
         "backgroundTextStyle": "light",

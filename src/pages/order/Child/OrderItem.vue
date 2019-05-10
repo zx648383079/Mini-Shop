@@ -34,41 +34,66 @@
     </div>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
+import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
+import { ORDER_STATUS, IOrder } from "../../../api/model";
+
+interface IComponentPage {
+    item: IOrder
+}
+
+@WxJson({
+    component: true,
+})
+export class OrderItem extends WxComponent<IComponentPage>  {
     public ORDER_STATUS = ORDER_STATUS;
-    @Prop(Object) readonly item?: IOrder;
+
+    public options = {
+        addGlobalClass: true,
+    };
+
+    public properties = {
+        item: Object,
+    }
 
     public tapPay() {
-        if (!this.item) {
+        if (!this.data.item) {
             return;
         }
-        this.$router.push({name: 'pay', params: {id: this.item.id + ''}});
+        wx.navigateTo({
+            url: '/pages/pay/index?id=' + this.data.item.id
+        });
     }
 
     public tapOrder() {
-        if (!this.item) {
+        if (!this.data.item) {
             return;
         }
-        this.$router.push({name: 'order-detail', params: {id: this.item.id + ''}});
+        wx.navigateTo({
+            url: 'detail?id=' + this.data.item.id
+        });
     }
 
     public tapRefund() {
-        if (!this.item) {
+        if (!this.data.item) {
             return;
         }
-        this.$router.push({name: 'refund-create', params: {order: this.item.id + ''}});
+        wx.navigateTo({
+            url: '/pages/refund/create?order=' + this.data.item.id
+        });
     }
 
     public tapComment() {
-        this.$router.push({name: 'comment'});
+        wx.navigateTo({
+            url: 'comment?id=' + this.data.item.id
+        });
     }
 
-    @Emit('receive')
     public tapReceive() {
+        this.triggerEvent('receive')
     }
 
-    @Emit('cancel')
     public tapCancel() {
+        this.triggerEvent('cancel')
     }
 }
 </script>

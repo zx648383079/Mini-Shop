@@ -5,10 +5,8 @@
         </div>
         <div class="dialog dialog-content" v-if="calendarVisible">
             <div class="dialog-header">
-                <slot name="header">
-                    <div class="dialog-title">{{ title }}</div>
-                    <i class="fa fa-close dialog-close" @click="hideCalerdar"></i>
-                </slot>
+               <div class="dialog-title">{{ title }}</div>
+                <i class="fa fa-close dialog-close" @click="hideCalerdar"></i>
             </div>
             <div class="dialog-body">
                 <slot name="panel"></slot>
@@ -24,6 +22,7 @@
 import { WxJson, WxComponent, WxMethod } from "../../../typings/wx/lib.wx.page";
 
 interface IComponentPage {
+    [key: string]: any,
     calendarVisible: boolean
 }
 
@@ -47,20 +46,34 @@ export class DialogPanel extends WxComponent<IComponentPage>  {
     }
 
     ready() {
-        
+        this.observe('calendarVisible', val => {
+            this.triggerEvent('toggle', val);
+        });
+        this.observe('hide', val => {
+            if (this.data.calendarVisible === !val) {
+                return;
+            }
+            this.setData({
+                calendarVisible: !val
+            });
+        });
     }
 
-    @Watch('calendarVisible')
-    public onVisibleChanged(val: boolean, oldVal: boolean) {
-        this.$emit('toggle', val);
-    }
-
-    @Watch('hide')
-    public onHideChanged(val: boolean, oldVal: boolean) {
-        if (this.calendarVisible === !val) {
-            return;
-        }
-        this.calendarVisible = !val;
+    @WxMethod()
+    public observe(key: string, callback: (newVal: any, oldVal: any) => void) {
+        let val = this.data[key];
+        Object.defineProperty(this.data, key, {
+            configurable: true,
+            enumerable: true,
+            set: function(value) {
+                // 用page对象调用,改变函数内this指向,以便this.data访问data内的属性值
+                callback.call(this, value, val); // value是新值，val是旧值
+                val = value;
+            },
+            get: function() {
+                return val;
+            }     
+        })
     }
 
     @WxMethod()

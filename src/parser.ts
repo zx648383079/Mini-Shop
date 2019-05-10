@@ -445,7 +445,7 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
         let attr = parseNodeAttr(json.attrs, 'navigator');
         return `<navigator${attr}>${child}</navigator>`;
     }
-    if (['i', 'span', 'strong', 'block', 'font'].indexOf(json.tag + '') >= 0 
+    if (['i', 'span', 'strong', 'block', 'font', 'em', 'b'].indexOf(json.tag + '') >= 0 
     && (!json.children || (json.children.length == 1 && json.children[0].node == 'text'))) {
         const attr = parseNodeAttr(json.attrs, 'text');
         return `<text${attr}>${child}</text>`;

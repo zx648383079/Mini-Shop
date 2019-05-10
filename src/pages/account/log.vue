@@ -30,9 +30,9 @@ interface IPageData {
     items: IAccountLog[],
 }
 @WxJson({
-    navigationBarTitleText: "分类",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "明细",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Card extends WxPage<IPageData> {
     

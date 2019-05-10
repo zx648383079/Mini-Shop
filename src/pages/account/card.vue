@@ -17,6 +17,11 @@
                 </div>
             </div>
         </div>
+
+        <a class="add-btn" href="cardNew">
+            <i class="fa fa-plus"></i>
+            添加
+        </a>
     </div>
 </template>
 <script lang="ts">
@@ -28,9 +33,9 @@ interface IPageData {
     items: ICard[],
 }
 @WxJson({
-    navigationBarTitleText: "分类",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "银行卡",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Card extends WxPage<IPageData> {
     
@@ -100,7 +105,7 @@ export class Card extends WxPage<IPageData> {
         position: absolute;
         left: 10px;
         padding-top: 20px;
-        img {
+        image {
             width: 60px;
             height: 60px;
         }
@@ -110,7 +115,7 @@ export class Card extends WxPage<IPageData> {
             line-height: 30px;
             font-weight: 700;
             font-size: 20px;
-            em {
+            text {
                 font-size: 14px;
                 color: #f888;
             }
@@ -127,4 +132,5 @@ export class Card extends WxPage<IPageData> {
         }
     }
 }
+
 </style>

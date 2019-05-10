@@ -8,13 +8,18 @@
         <div class="menu-list">
             <RechargePanel/>
             <WithdrawPanel/>
-            <a @click="$router.push('/account/card')">
-                <i class="fa fa-credit-card" aria-hidden="true"></i>
+            <a class="item" href="log">
+                <i class="fa fa-invoice" aria-hidden="true"></i>
+                明细
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            </a>
+            <a class="item" href="card">
+                <i class="fa fa-card" aria-hidden="true"></i>
                 银行卡
                 <i class="fa fa-chevron-right" aria-hidden="true"></i>
             </a>
-            <a @click="$router.push('/invoice')">
-                <i class="fa fa-bookmark" aria-hidden="true"></i>
+            <a class="item" href="/pages/invoice/index">
+                <i class="fa fa-invoice" aria-hidden="true"></i>
                 发票管理
                 <i class="fa fa-chevron-right" aria-hidden="true"></i>
             </a>
@@ -35,7 +40,7 @@ interface IPageData {
 @WxJson({
     usingComponents: {
         RechargePanel: "Child/RechargePanel",
-        MenuItem: "Child/RechargePanel"
+        WithdrawPanel: "Child/WithdrawPanel"
     },
     navigationBarTitleText: "我的余额",
     navigationBarBackgroundColor: "#05a6b1",

@@ -1,12 +1,10 @@
 <template>
     <div>
-        <div class="has-header">
-            <div class="account-box">
-                <div class="line-item" v-for="(item, index) in items" :key="index">
-                    <span><i :class="['fab', item.icon]"></i>{{ item.name }}</span>
-                    <span>{{ item.id ? '已绑定' : '未绑定' }}</span>
-                    <i class="fa fa-chevron-right"></i>
-                </div>
+        <div class="account-box">
+            <div class="line-item" v-for="(item, index) in items" :key="index">
+                <span><i :class="['fab', item.icon]"></i>{{ item.name }}</span>
+                <span>{{ item.id ? '已绑定' : '未绑定' }}</span>
+                <i class="fa fa-chevron-right"></i>
             </div>
         </div>
     </div>
@@ -32,9 +30,9 @@ interface IConnectMap {
     [key: string]: IConnectMapItem
 }
 @WxJson({
-    navigationBarTitleText: "分类",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "账户安全",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Center extends WxPage<IPageData> {
 

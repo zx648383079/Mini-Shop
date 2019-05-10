@@ -18,9 +18,9 @@ import { WxPage, WxJson } from "../../../typings/wx/lib.wx.page";
 interface IPageData {
 }
 @WxJson({
-    navigationBarTitleText: "分类",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "添加银行卡",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class CardNew extends WxPage<IPageData> {
     
