@@ -31,20 +31,25 @@ import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
 
 interface IPageData {
     items: ICard[],
+    has_more: boolean,
+    page: number,
+    isLoading: boolean
 }
 @WxJson({
     navigationBarTitleText: "银行卡",
     navigationBarBackgroundColor: "#05a6b1",
-    navigationBarTextStyle: "white"
+    navigationBarTextStyle: "white",
+    onReachBottomDistance: 10,
+    enablePullDownRefresh: true,
 })
 export class Card extends WxPage<IPageData> {
     
     public data: IPageData = {
-        items: []
+        items: [],
+        has_more: true,
+        page: 1,
+        isLoading: false
     };
-    public has_more = true;
-    public page = 1;
-    public isLoading = false;
 
     public onLoad() {
         this.tapRefresh();
@@ -66,28 +71,36 @@ export class Card extends WxPage<IPageData> {
      * refresh
      */
     public tapRefresh() {
-        this.data.items = [];
-        this.isLoading = false;
-        this.has_more = true;
-        this.goPage(this.page = 1);
+        this.setData({
+            items: [],
+            isLoading: false,
+            has_more: true
+        });
+        this.goPage(1);
     }
 
     public goPage(page: number) {
-        if (this.isLoading || !this.has_more) {
+        if (this.data.isLoading || !this.data.has_more) {
             return;
         }
-        this.isLoading = true;
+        this.setData({
+            isLoading: true,
+            page
+        });
         getBankCardList({
             page,
         }).then(res => {
-            this.page = page;
-            this.has_more = res.paging.more;
-            this.isLoading = false;
-            if (!res.data) {
-                return;
+            let items = [];
+            if (page < 2) {
+                items = res.data as never[];
+            } else {
+                items = [].concat(this.data.items as never[], res.data as never[]);
             }
             this.setData({
-                items: [].concat(this.data.items as never[], res.data as never[])
+                has_more: res.paging.more,
+                isLoading: false,
+                page,
+                items
             });
         });
     }

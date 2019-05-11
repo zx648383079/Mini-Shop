@@ -4,9 +4,30 @@
     </div>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Number) readonly star!: number;
-    public star_list = [1, 2, 3, 4, 5];
+import { WxJson, WxComponent } from "../../../../typings/wx/lib.wx.page";
+
+
+interface IComponentData {
+    star?: number,
+    star_list: number[],
+}
+
+@WxJson({
+    component: true
+})
+export class Star extends WxComponent<IComponentData>  {
+
+    public options = {
+        addGlobalClass: true,
+    }
+
+    public properties = {
+        star: Number,
+    }
+
+    public data = {
+        star_list: [1, 2, 3, 4, 5]
+    }
 }
 </script>
 <style lang="scss" scoped>

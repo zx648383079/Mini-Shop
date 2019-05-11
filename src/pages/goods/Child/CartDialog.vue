@@ -6,7 +6,7 @@
                 <p class="price">{{ product.price }}</p>
                 <p class="stock">库存：{{ product.stock }}</p>
                 <p class="selected-property"></p>
-                <i class="fa fa-times dialog-close" @click="tapClose"></i>
+                <i class="fa fa-close dialog-close" @click="tapClose"></i>
             </div>
             <div class="property-box">
                 <div v-for="(item, index) in product.properties" :key="index" :class="['group', item.type == 2 ? ' multi-group' : '']">
@@ -20,79 +20,125 @@
                     <span>数量</span>
                     <div class="number-box">
                         <i class="fa fa-minus" @click="tapMinus"></i>
-                        <input type="text" class="number-input" v-model="amount" @change="tapChangeAmount">
+                        <input type="text" class="number-input" value="{{amount}}" @change="tapChangeAmount">
                         <i class="fa fa-plus" @click="tapPlus"></i>
                     </div>
                 </div>
             </div>
             <div class="dialog-footer">
-                <a @click="tapDoCart" class="dailog-yes">确认</a>
+                <div @click="tapDoCart" class="dailog-yes">确认</div>
             </div>
         </div>
     </div>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Object) readonly product!: IProduct;
-    @Prop({type: Number, default: 0}) readonly mode!: number;
-    public amount: number = 1;
+import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { IProduct, ICart } from "../../../api/model";
+import { addGoods } from "../../../api/cart";
+import {
+    IMyApp
+} from '../../../app';
 
-    @Emit('close')
-    public tapClose() {  
+interface IComponentData {
+    product?: IProduct,
+    mode?: number,
+    amount: number,
+}
+
+const app = getApp<IMyApp>();
+
+@WxJson({
+    component: true
+})
+export class CartDialog extends WxComponent<IComponentData>  {
+
+    public options = {
+        addGlobalClass: true,
     }
 
+    public properties = {
+        product: Object,
+        mode: {
+            type: Number,
+            value: 0
+        }
+    }
+
+    public data: IComponentData = {
+        amount: 1
+    }
+
+    @WxMethod()
+    public tapClose() {  
+        this.triggerEvent('close');
+    }
+
+    @WxMethod()
     public getStock(): number {
-        if (!this.product) {
+        if (!this.data.product) {
             return 1;
         }
-        return this.product.stock as number;
+        return this.data.product.stock as number;
     }
 
+    @WxMethod()
     public tapMinus() {
-        this.amount = Math.max(this.amount - 1, 1);
+        this.setData({
+            amount: Math.max(this.data.amount - 1, 1)
+        });
     }
 
+    @WxMethod()
     public tapChangeAmount() {
-        if (this.amount < 1) {
-            this.amount = 1;
+        if (this.data.amount < 1) {
+            this.data.amount = 1;
             return;
         }
         const stock = this.getStock();
-        if (this.amount > stock) {
-            this.amount = stock;
+        if (this.data.amount > stock) {
+            this.setData({
+                amount: stock
+            });
         }
     }
 
+    @WxMethod()
     public tapPlus() {
-        this.amount = Math.min(this.amount + 1, this.getStock());
+        this.setData({
+            amount: Math.min(this.data.amount + 1, this.getStock())
+        });
     }
 
+    @WxMethod()
     public tapDoCart() {
-        if (!this.product) {
+        if (!this.data.product) {
             return;
         }
-        if (this.mode == 1) {
-            addGoods(this.product.id, this.amount).then(res => {
-                Toast('已成功加入购物车');
-                this.tapClose()
+        if (this.data.mode == 1) {
+            addGoods(this.data.product.id, this.data.amount).then(res => {
+                wx.showToast({
+                    title: '已成功加入购物车'
+                });
+                this.tapClose();
             });
             return;
         }
         const data: ICart[] = [
             {
-                name: this.product.shop + '',
+                name: this.data.product.shop + '',
                 goods_list: [
                     {
-                        goods_id: this.product.id,
-                        amount: this.amount,
-                        goods: this.product,
-                        price: this.product.price
+                        goods_id: this.data.product.id,
+                        amount: this.data.amount,
+                        goods: this.data.product,
+                        price: this.data.product.price
                     }
                 ]
             }
         ];
-        dispatchSetCart(data).then(() => {
-            this.$router.push('/cashier');
+        app.setCart(data);
+        wx.navigateTo({
+            url: '/pages/cashier/index'
         });
     }
 }

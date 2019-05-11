@@ -38,7 +38,7 @@
                 <div class="goods-list">
                     <div class="item-view" v-for="(item, index) in data.new_products" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
                         <div class="item-img">
-                            <a @click="tapProduct"><img :src="item.thumb" alt="" mode="widthFix"></a>
+                            <a href="/pages/goods/index?id={{ item.id }}"><img :src="item.thumb" alt="" mode="widthFix"></a>
                         </div>
                         <div class="item-title">
                             {{ item.name }}
@@ -57,7 +57,7 @@
                 <div class="goods-list">
                     <div class="item-view" v-for="(item, index) in data.hot_products" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
                         <div class="item-img">
-                            <a @click="tapProduct"><img :src="item.thumb" alt="" mode="widthFix"></a>
+                            <a href="/pages/goods/index?id={{ item.id }}"><img :src="item.thumb" alt="" mode="widthFix"></a>
                         </div>
                         <div class="item-title">
                             {{ item.name }}
@@ -76,7 +76,7 @@
                 <div class="goods-list">
                     <div class="item-view" v-for="(item, index) in data.best_products" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
                         <div class="item-img">
-                            <a @click="tapProduct"><img :src="item.thumb" alt="" mode="widthFix"></a>
+                            <a href="/pages/goods/index?id={{ item.id }}"><img :src="item.thumb" alt="" mode="widthFix"></a>
                         </div>
                         <div class="item-title">
                             {{ item.name }}

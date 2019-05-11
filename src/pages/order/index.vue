@@ -39,6 +39,7 @@ interface IPageData {
     navigationBarBackgroundColor: "#05a6b1",
     navigationBarTextStyle: "white",
     enablePullDownRefresh: true,
+    onReachBottomDistance: 10,
 })
 export class Index extends WxPage<IPageData> {
 
@@ -90,6 +91,11 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapRefresh() {
+        this.setData({
+            items: [],
+            isLoading: false,
+            has_more: true
+        });
         this.goPage(1);
     }
 

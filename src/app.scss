@@ -662,7 +662,7 @@ footer,
     background: $white;
     border: 0.0625rem solid #e1e1e1;
 
-    a,
+    navigator,
     .item {
         width: 25%;
         text-align: center;
@@ -1101,6 +1101,7 @@ footer,
 
 .number-box {
     input {
+        display: inline-block;
         width: 3.125rem;
         text-align: center;
         border: none;

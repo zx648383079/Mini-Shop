@@ -70,7 +70,7 @@
         <div class="menu-list">
             <MenuItem class="item" title="签到" icon="fa-et-checking-in" uri="/pages/checkin/index"/>
             <MenuItem class="item" title="我的收货地址" icon="fa-map" uri="/pages/address/index"/>
-            <MenuItem class="item" title="浏览历史" icon="fa-history" uri="/product/history"/>
+            <MenuItem class="item" title="浏览历史" icon="fa-history" uri="/pages/goods/history"/>
             <MenuItem class="item" title="我的推荐" icon="fa-share" uri="/pages/affiliate/index"/>
             <MenuItem class="item" title="帮助" icon="fa-help" uri="/pages/article/index"/>
         </div>

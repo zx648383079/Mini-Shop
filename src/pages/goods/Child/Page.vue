@@ -24,9 +24,28 @@
     </div>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Array) readonly items!: IComment[];
-    public star_list = [1, 2, 3, 4, 5];
+import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
+import { IComment } from "../../../api/model";
+
+interface IComponentData {
+    items?: IComment[]
+}
+
+@WxJson({
+    usingComponents: {
+        Star: 'Star'
+    },
+    component: true
+})
+export class Page extends WxComponent<IComponentData>  {
+
+    public options = {
+        addGlobalClass: true,
+    }
+
+    public properties = {
+        items: Object,
+    }
 }
 </script>
 <style lang="scss" scoped>

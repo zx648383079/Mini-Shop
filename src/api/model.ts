@@ -281,3 +281,5 @@ export enum ORDER_STATUS {
     RECEIVED = 60,
     FINISH = 80,
 }
+
+export const SET_GOODS_HISTORY = 'SET_GOODS_HISTORY';

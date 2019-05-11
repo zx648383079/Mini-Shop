@@ -1,12 +1,7 @@
 <template>
     <div>
-        <BackHeader :title="$route.meta.title">
-            <a v-if="items && items.length > 0" class="right" @click="tapClear">
-                <i class="fa fa-trash-alt"></i>
-            </a>
-        </BackHeader>
-        <div class="has-header collect-page">
-            <PullToRefresh :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
+        <div class="collect-page">
+            <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
                 <div class="swipe-box goods-list">
                     <SwipeRow name="goods-item" v-for="(item, index) in items" :key="index" @remove="tapRemove(item)" :index="index" ref="swiperow">
                         <div class="goods-img">
@@ -21,8 +16,9 @@
                 <div class="order-empty" v-if="!items || items.length < 1">
                     您没有浏览记录
                 </div>
-            </PullToRefresh>
+            </div>
         </div>
+        <div class="add-btn" @click="tapClear">清空</div>
     </div>
 </template>
 <script lang="ts">
@@ -30,88 +26,125 @@ import {
     IMyApp
 } from '../../app';
 import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { IProduct, SET_GOODS_HISTORY } from '../../api/model';
+import { getList } from '../../api/product';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    goodsId: number[],
+    items: IProduct[],
+    has_more: boolean,
+    page: number,
+    isLoading: boolean
 }
 @WxJson({
-    navigationBarTitleText: "售后",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "我的足迹",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
+    onReachBottomDistance: 10,
+    enablePullDownRefresh: true,
 })
 export class History extends WxPage<IPageData> {
-    public items: IProduct[] = [];
 
-    public has_more = true;
-    public page = 1;
-    public isLoading = false;
-    public goodsId: number[] = [];
+    public data: IPageData = {
+        goodsId: [],
+        items: [],
+        has_more: true,
+        page: 1,
+        isLoading: false
+    }
 
-    public created() {
+    public onLoad() {
         this.tapRefresh();
     }
 
     public tapRemove(item: IProduct) {
-        for (let i = 0; i < this.goodsId.length; i++) {
-            if (this.goodsId[i] === item.id) {
-                this.goodsId.splice(i, 1);
+        let goodsId = this.data.goodsId;
+        for (let i = 0; i < goodsId.length; i++) {
+            if (goodsId[i] === item.id) {
+                goodsId.splice(i, 1);
                 break;
             }
         }
-        setLocalStorage(SET_GOODS_HISTORY, this.goodsId);
-    }
-
-    public tapClear() {
-        MessageBox.confirm('确认清空浏览记录？').then(action => {
-            if (action !== 'confirm') {
-                return;
-            }
-            this.goodsId = [];
-            this.items = [];
-            this.has_more = false;
-            this.isLoading = false;
-            removeLocalStorage(SET_GOODS_HISTORY);
+        wx.setStorageSync(SET_GOODS_HISTORY, goodsId);
+        this.setData({
+            goodsId
         });
     }
 
+    public tapClear() {
+        let that = this;
+        wx.showModal({
+            title: '提示',
+            content: '确认清空浏览记录？',
+            success() {
+                that.setData({
+                    goodsId: [],
+                    items: [],
+                    has_more: false,
+                    isLoading: false
+                });
+                wx.removeStorageSync(SET_GOODS_HISTORY);
+            }
+        })
+    }
+
+    onPullDownRefresh() {
+        this.tapRefresh();
+    }
+
+    onReachBottom() {
+        this.tapMore();
+    }
+
     public tapMore() {
-        this.goPage( ++ this.page);
+        this.goPage(this.data.page + 1);
     }
 
     /**
      * refresh
      */
     public tapRefresh() {
-        this.items = [];
-        this.isLoading = false;
-        this.has_more = true;
-        this.goodsId = getLocalStorage<number[]>(SET_GOODS_HISTORY, true);
-        if (!this.goodsId || this.goodsId.length < 1) {
-            this.has_more = false;
-            this.isLoading = true;
-            setTimeout(() => {
-                this.isLoading = false;
-            }, 500);
+        this.setData({
+            goodsId: wx.getStorageSync(SET_GOODS_HISTORY) || [],
+            items: [],
+            has_more: true,
+            isLoading: true
+        });
+        if (!this.data.goodsId || this.data.goodsId.length < 1) {
+            this.setData({
+                has_more: false,
+                isLoading: false
+            });
             return;
         }
-        this.goPage(this.page = 1);
+        this.goPage(1);
     }
 
     public goPage(page: number) {
-        if (this.isLoading || !this.has_more) {
+        if (this.data.isLoading || !this.data.has_more) {
             return;
         }
-        this.isLoading = true;
+        this.setData({
+            isLoading: true,
+            page
+        });
         getList({
-            id: this.goodsId,
+            id: this.data.goodsId,
             page,
         }).then(res => {
-            this.has_more = res.paging.more;
-            this.isLoading = false;
-            if (!res.data) {
-                return;
+            let items = [];
+            if (page < 2) {
+                items = res.data as never[];
+            } else {
+                items = [].concat(this.data.items as never[], res.data as never[]);
             }
-            this.items = [].concat(this.items as never[], res.data as never[]);
+            this.setData({
+                has_more: res.paging.more,
+                isLoading: false,
+                page,
+                items
+            });
         });
     }
 }

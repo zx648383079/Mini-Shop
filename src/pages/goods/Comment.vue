@@ -1,34 +1,18 @@
 <template>
     <div>
-        <header class="top">
-            <a @click="tapBack" class="back">
-                <i class="fa fa-chevron-left" aria-hidden="true"></i>
-            </a>
-            <div class="top-tab">
-                <a @click="tapProductScroll('info')">商品</a>
-                <a @click="tapProductScroll('detail')">详情</a>
-                <a class="active">评价</a>
-                <a  @click="tapProductScroll('recommend')">推荐</a>
-            </div>
-        </header>
-
-        <div class="has-header">
-            <PullToRefresh :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
-                <div id="comments" class="comment-box">
-                    <div class="comment-subtotal" v-if="comment">
-                        评分
-                        <Star :star="comment.avg"/>
-                        <span>{{ comment.favorable_rate }}%</span>好评
-                    </div>
-                    <div class="comment-stats" v-if="comment && comment.tags && comment.tags.length > 0">
-                        <a v-for="(item, index) in comment.tags" :key="index">{{ item.label }}（{{ item.count }}）</a>
-                    </div>
-                    <CommentPage :items="items"/>
+        <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
+            <div id="comments" class="comment-box">
+                <div class="comment-subtotal" v-if="comment">
+                    评分
+                    <Star star="{{comment.avg}}"/>
+                    <span>{{ comment.favorable_rate }}%</span>好评
                 </div>
-            </PullToRefresh>
-            
+                <div class="comment-stats" v-if="comment && comment.tags && comment.tags.length > 0">
+                    <a v-for="(item, index) in comment.tags" :key="index">{{ item.label }}（{{ item.count }}）</a>
+                </div>
+                <CommentPage items="{{items}}"/>
+            </div>
         </div>
-
     </div>
 </template>
 <script lang="ts">
@@ -36,83 +20,114 @@ import {
     IMyApp
 } from '../../app';
 import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { ICommentSubtotal, IComment } from '../../api/model';
+import { getCommentSubtotal, getCommentList } from '../../api/comment';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    comment: ICommentSubtotal | null,
+    item_id: number,
+    item_type: number,
+    items: IComment[],
+    has_more: boolean,
+    page: number,
+    isLoading: boolean
 }
 @WxJson({
-    navigationBarTitleText: "售后",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    usingComponents: {
+        Star: 'Child/Star',
+        CommentPage: 'Child/Page'
+    },
+    navigationBarTitleText: "商品评价",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
+    onReachBottomDistance: 10,
+    enablePullDownRefresh: true,
 })
 export class Comment extends WxPage<IPageData> {
-    public comment: ICommentSubtotal | null = null;
-    public items: IComment[] = [];
-    public item_id: number = 0;
-    public item_type: number = 0;
-    public has_more = true;
-    public page = 1;
-    public isLoading = false;
 
-    public created() {
-        this.item_id = parseInt(this.$route.params.id);
-        if (!this.item_id) {
-            Toast('商品错误');
-            this.$router.push('/');
+    public data: IPageData = {
+        comment: null,
+        item_id: 0,
+        item_type: 0,
+        items: [],
+        has_more: true,
+        page: 1,
+        isLoading: false
+    }
+
+    public onLoad(query?: any) {
+        let item_id = parseInt(query.id);
+        if (!item_id) {
+            wx.showToast({
+                title: '商品错误'
+            });
+            wx.switchTab({
+                url: '/pages/index/index'
+            });
             return;
         }
-        getCommentSubtotal(this.item_id).then(res => {
-            this.comment = res;
+        this.setData({
+            item_id
+        });
+        getCommentSubtotal(item_id).then(res => {
+            this.setData({
+                comment: res
+            });
         });
         this.tapRefresh();
     }
 
-    public tapBack() {
-        if (window.history.length <= 1) {
-            this.$router.push('/');
-            return;
-        }
-        this.$router.go(-1);
+    onPullDownRefresh() {
+        this.tapRefresh();
+    }
+
+    onReachBottom() {
+        this.tapMore();
     }
 
     public tapMore() {
-        this.goPage( ++ this.page);
+        this.goPage(this.data.page + 1);
     }
 
     /**
      * refresh
      */
     public tapRefresh() {
-        this.items = [];
-        this.isLoading = false;
-        this.has_more = true;
-        this.goPage(this.page = 1);
+        this.setData({
+            items: [],
+            isLoading: false,
+            has_more: true
+        });
+        this.goPage(1);
     }
 
     public goPage(page: number) {
-        if (this.isLoading || !this.has_more) {
+        if (this.data.isLoading || !this.data.has_more) {
             return;
         }
-        this.isLoading = true;
+        this.setData({
+            isLoading: true,
+            page
+        });
         getCommentList({
-            item_id: this.item_id,
-            item_type: this.item_type,
+            item_id: this.data.item_id,
+            item_type: this.data.item_type,
             page,
         }).then(res => {
-            this.has_more = res.paging.more;
-            this.isLoading = false;
-            if (!res.data) {
-                return;
+            let items = [];
+            if (page < 2) {
+                items = res.data as never[];
+            } else {
+                items = [].concat(this.data.items as never[], res.data as never[]);
             }
-            this.items = [].concat(this.items as never[], res.data as never[]);
+            this.setData({
+                has_more: res.paging.more,
+                isLoading: false,
+                page,
+                items
+            });
         });
-    }
-
-    /**
-     * tapProductScroll
-     */
-    public tapProductScroll(id: string) {
-        this.$router.replace({name: 'product', params: {id: this.item_id + ''}, hash: '#'+id});
     }
 }
 </script>
