@@ -594,6 +594,7 @@ interface Target {
 }
 
 interface Detail {
+  [key: string]: any,
   x: number;
   y: number;
 }

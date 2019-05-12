@@ -1076,13 +1076,14 @@ footer,
 
 
 .check-box {
+    font-size:1rem;
     &::before {
-        content: "\f111";
+        content: "\e72f";
     }
 
     &.active {
         &::before {
-            content: "\f058";
+            content: "\e731";
         }
     }
 }
@@ -1163,7 +1164,6 @@ footer,
 }
 
 .cart-footer {
-    bottom: 3rem;
     background-color: $white;
 
     .check-box {
@@ -1187,7 +1187,6 @@ footer,
         }
     }
 }
-
 
 .empty-cart-box {
     text-align: center;
@@ -1491,7 +1490,7 @@ footer,
         .image-box {
             margin: 10px 0;
 
-            li {
+            view {
                 display: inline-block;
                 margin-right: 10px;
                 list-style-type: none;
@@ -2145,7 +2144,8 @@ footer,
         .order-actions {
             line-height: 30px;
 
-            navigator {
+            navigator,
+            text {
                 padding: 0 5px;
             }
         }

@@ -1,32 +1,35 @@
 <template>
     <div>
-        <div class="has-header">
-            <form class="form-inline" method="post">
+        <div>
+            <form class="form-inline" bindsubmit="tapSubmit">
                 <div class="input-group">
-                    <input type="text" name="name" placeholder="收货人" required  v-model="address.name">
+                    <input type="text" name="name" placeholder="收货人" required  value="{{ address.name }}">
                 </div>
                 <div class="input-group">
-                    <input type="text" name="tel" placeholder="手机号" required v-model="address.tel">
+                    <input type="text" name="tel" placeholder="手机号" required value="{{ address.tel}}">
                 </div>
-                <SelectPicker :items="regions" :column="3" v-model="address.region">
+                 <picker
+                        name="region"
+                        mode="region"
+                        bindchange="bindRegionChange"
+                        value="{{region}}">
                     <div class="input-group region-box">
-                        <span>{{ address.region && address.region.full_name ? address.region.full_name : '地址' }}</span>
+                        <span v-if="region && region.length === 3">{{region[0]}} {{region[1]}} {{region[2]}}</span>
+                        <span v-else>请选择地区</span>
                     </div>
-                </SelectPicker>
+                </picker>
                 
                 <div class="input-group">
-                    <textarea name="address" placeholder="详细地址" required v-model="address.address"></textarea>
+                    <textarea name="address" placeholder="详细地址" required value="{{ address.address }}"></textarea>
                 </div>
 
-                <div class="input-radio" @click="address.is_default = !address.is_default">
+                <div class="input-radio">
                     <span>设为默认地址</span>
-                    <i class="fa toggle-box" :class="{active: address.is_default}"></i>
+                    <switch name="is_default" checked="{{ address.is_default }}" bindchange="switchChange" />
                 </div>
+                <button class="btn" form-type="submit" type="primary" @click="tapSubmit">保存</button> 
+                <button  v-if="address.id > 0" class="btn" type="warn" @click="tapRemove">删除地址</button> 
             </form>
-        </div>
-
-        <div class="fixed-footer" v-if="address.id > 0">
-            <button class="btn" type="button" @click="tapRemove">删除地址</button> 
         </div>
 
     </div>
@@ -35,71 +38,115 @@
 import {
     IMyApp
 } from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage, CustomEvent } from '../../../typings/wx/lib.wx.page';
+import { IAddress } from '../../api/model';
+import { getAddress, updateAddress, createAddress, deleteAddress } from '../../api/address';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    address: IAddress,
+    back: number,
+    region: string[]
 }
 @WxJson({
-    navigationBarTitleText: "分类",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "编辑地址",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Edit extends WxPage<IPageData> {
-    public address: IAddress = {
-        id: 0,
-        name: '',
-        tel: '',
-        region_id: 0,
-        region_name: '',
-        address: '',
-        is_default: false,
-    };
 
-    public back: number = 0;
+    public data: IPageData = {
+        address:  {
+            id: 0,
+            name: '',
+            tel: '',
+            region_id: 0,
+            region_name: '',
+            address: '',
+            is_default: false,
+        },
+        back: 0,
+        region: []
+    }
 
-    public regions: IRegionObject = {};
-
-    public created() {
-        if (this.$route.query.back) {
-            this.back = parseInt(this.$route.query.back + '');
+    public onLoad(query?: any) {
+        if (query && query.back) {
+            this.setData({
+                back: parseInt(query.back)
+            });
         }
-        getRegionTree().then(res => {
-            if (res.data) {
-                this.regions = res.data;
-            }
-        });
-        const id = parseInt(this.$route.params.id);
+        // getRegionTree().then(res => {
+        //     if (res.data) {
+        //         this.setData({
+        //             regions: res.data
+        //         });
+        //     }
+        // });
+        const id = query && query.id ? parseInt(query.id) : 0;
         if (!id) {
             return;
         }
         getAddress(id).then(res => {
-            this.address = res;
+            if (!res) {
+                return;
+            }
+            this.setData({
+                address: res,
+                region: res.region_name ? res.region_name.split(' ') : [],
+            });
         });
     }
 
-    public tapSubmit() {
-        if (!this.address.region) {
-            Toast('请选择收货地址');
+    switchChange(e: CustomEvent) {
+        // let address = this.data.address;
+        // address.is_default = e.detail.value;
+        // this.setData({
+        //     address
+        // });
+    }
+
+    bindRegionChange(e: CustomEvent) {
+        this.setData({
+            region: e.detail.value
+        });
+    }
+
+    public tapSubmit(e: CustomEvent) {
+        let address = e.detail.value;
+        if (!address) {
+            wx.showToast({
+                title: '请完善收货地址'
+            });
+            return;
+        }
+        if (!address.region || address.region.length < 3) {
+            wx.showToast({
+                title: '请选择收货地址'
+            });
             return;
         }
         const data: IAddress = {
-            id: this.address.id,
-            name: this.address.name,
-            tel: this.address.tel,
-            region_id: this.address.region.id,
-            address: this.address.address,
-            is_default: this.address.is_default
+            id: this.data.address.id,
+            name: address.name,
+            tel: address.tel,
+            region_id: 0,
+            region_name: address.region.join(' '),
+            address: address.address,
+            is_default: address.is_default
         };
         if (!data.name) {
-            Toast('请输入收货人');
+            wx.showToast({
+                title: '请输入收货人'
+            });
             return;
         }
         if (!data.tel) {
-            Toast('请输入手机号');
+            wx.showToast({
+                title: '请输入手机号'
+            });
             return;
         }
-        if (this.address.id > 0) {
+        if (data.id > 0) {
             updateAddress(data).then(res => {
                 this.saveBack(res);
             });
@@ -110,34 +157,51 @@ export class Edit extends WxPage<IPageData> {
     }
 
     public tapRemove() {
-        if (this.address.id < 1) {
+        if (this.data.address.id < 1) {
             return;
         }
         
-        deleteAddress(this.address.id).then(res => {
-            dispatchSetAddressList([]);
-            this.$router.back();
+        deleteAddress(this.data.address.id).then(res => {
+            app.setAddressList([]);
+            wx.navigateBack({
+                delta: 0
+            });
         });
     }
 
     public saveBack(address: IAddress) {
-        dispatchSetAddressList([]);
-        if (this.back < 1) {
-            this.$router.back();
+        app.setAddressList([]);
+        if (this.data.back < 1) {
+            wx.navigateBack({
+                delta: 0
+            });
             return;
         }
-        dispatchSetAddress(address);
-        if (this.back === 1) {
-            this.$router.replace('/cashier');
+        app.setAddress(address);
+        if (this.data.back === 1) {
+            wx.navigateTo({
+                url: '/pages/cashier/index'
+            });
             return;
         }
-        if (this.back === 2) {
-            this.$router.back();
+        if (this.data.back === 2) {
+            wx.navigateBack({
+                delta: 0
+            });
             return;
         }
     }
 }
 </script>
 <style lang="scss" scoped>
-
+switch {
+    float: right;
+}
+.btn {
+    margin: 0 0 0 0.3125rem;
+    line-height: 2.5rem;
+    background-color: #d22222;
+    color: #fff;
+    display: block;
+}
 </style>

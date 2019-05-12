@@ -1,6 +1,6 @@
 <template>
     <DialogPanel title="支付方式">
-        <div class="line-item payment-box">
+        <div class="line-item payment-box" slot="input">
             <span>支付方式</span>
             <span>
                 {{ value ? value.name : '请选择' }}
@@ -13,9 +13,28 @@
     </DialogPanel>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Object) readonly value?: IPayment;
-    @Prop(Array) readonly items?: IPayment[];
+import { WxJson, WxComponent } from "../../../../typings/wx/lib.wx.page";
+
+interface IComponentData {
+    value?: IPayment,
+    items?: IPayment[]
+}
+
+@WxJson({
+    usingComponents: {
+        DialogPanel: '/components/DialogPanel/index'
+    },
+    component: true
+})
+export class PaymentLine extends WxComponent<any>  {
+    public options = {
+        addGlobalClass: true,
+    }
+
+    public properties = {
+        value: Object,
+        items: Object,
+    }
     
     public tapSelected(item: IPayment) {
         this.$emit('input', item);

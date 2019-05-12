@@ -21,31 +21,31 @@
         </div>
         <div class="order-footer">
             <div class="order-actions">
-                <a @click="tapPay" v-if="item.status == ORDER_STATUS.UN_PAY">支付</a>
-                <a @click="tapOrder">详情</a>
-                <a @click="tapReceive" v-if="item.status == ORDER_STATUS.SHIPPED">确认收货</a>
-                <a @click="tapComment" v-if="item.status == ORDER_STATUS.RECEIVED">评价</a>
-                <a @click="tapRefund" v-if="item.status == ORDER_STATUS.SHIPPED || item.status == ORDER_STATUS.PAID_UN_SHIP">申请退款</a>
-                <a @click="tapRefund" v-if="item.status == ORDER_STATUS.RECEIVED">退换货</a>
-                <a @click="tapRefund" v-if="item.status == ORDER_STATUS.FINISH">售后</a>
-                <a @click="tapCancel" v-if="item.status == ORDER_STATUS.UN_PAY || item.status == ORDER_STATUS.PAID_UN_SHIP">取消</a>
+                <span @click="tapPay" v-if="item.status == ORDER_STATUS.UN_PAY">支付</span>
+                <span @click="tapOrder">详情</span>
+                <span @click="tapReceive" v-if="item.status == ORDER_STATUS.SHIPPED">确认收货</span>
+                <span @click="tapComment" v-if="item.status == ORDER_STATUS.RECEIVED">评价</span>
+                <span @click="tapRefund" v-if="item.status == ORDER_STATUS.SHIPPED || item.status == ORDER_STATUS.PAID_UN_SHIP">申请退款</span>
+                <span @click="tapRefund" v-if="item.status == ORDER_STATUS.RECEIVED">退换货</span>
+                <span @click="tapRefund" v-if="item.status == ORDER_STATUS.FINISH">售后</span>
+                <span @click="tapCancel" v-if="item.status == ORDER_STATUS.UN_PAY || item.status == ORDER_STATUS.PAID_UN_SHIP">取消</span>
             </div>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
+import { WxComponent, WxJson, WxMethod } from "../../../../typings/wx/lib.wx.page";
 import { ORDER_STATUS, IOrder } from "../../../api/model";
 
-interface IComponentPage {
-    item: IOrder
+interface IComponentData {
+    item?: IOrder,
+    ORDER_STATUS: any
 }
 
 @WxJson({
     component: true,
 })
-export class OrderItem extends WxComponent<IComponentPage>  {
-    public ORDER_STATUS = ORDER_STATUS;
+export class OrderItem extends WxComponent<IComponentData>  {
 
     public options = {
         addGlobalClass: true,
@@ -55,6 +55,11 @@ export class OrderItem extends WxComponent<IComponentPage>  {
         item: Object,
     }
 
+    public data: IComponentData = {
+        ORDER_STATUS: ORDER_STATUS
+    }
+
+    @WxMethod()
     public tapPay() {
         if (!this.data.item) {
             return;
@@ -64,6 +69,7 @@ export class OrderItem extends WxComponent<IComponentPage>  {
         });
     }
 
+    @WxMethod()
     public tapOrder() {
         if (!this.data.item) {
             return;
@@ -73,6 +79,7 @@ export class OrderItem extends WxComponent<IComponentPage>  {
         });
     }
 
+    @WxMethod()
     public tapRefund() {
         if (!this.data.item) {
             return;
@@ -82,16 +89,19 @@ export class OrderItem extends WxComponent<IComponentPage>  {
         });
     }
 
+    @WxMethod()
     public tapComment() {
         wx.navigateTo({
-            url: 'comment?id=' + this.data.item.id
+            url: '/pages/comment/index?id=' + this.data.item.id
         });
     }
 
+    @WxMethod()
     public tapReceive() {
         this.triggerEvent('receive')
     }
 
+    @WxMethod()
     public tapCancel() {
         this.triggerEvent('cancel')
     }

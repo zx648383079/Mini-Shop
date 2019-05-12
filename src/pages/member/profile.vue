@@ -18,26 +18,31 @@
                     <span>{{user.sex}}</span>
                     <i class="fa fa-chevron-right"></i>
                 </div>
-                <DatePicker v-model="user.birthday" format="yyyy-mm-dd">
+                <picker
+                    mode="date"
+                    value="{{user.birthday}}"
+                    start="1930-01-01"
+                    end="{{ max }}"
+                    bindchange="bindDateChange" >
                     <div class="line-item">
                         <span>生日</span>
                         <span>{{user.birthday}}</span>
                         <i class="fa fa-chevron-right"></i>
                     </div>
-                </DatePicker>
+                </picker>
             </div>
 
             
             <div class="menu-list">
-                <a @click="$router.push('/address')">
+                <a class="item" href="/pages/address/index">
                     我的收货地址
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
-                <a @click="$router.push('/address')">
+                <a class="item" href="/pages/address/index">
                     修改密码
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
-                <a @click="$router.push('/address')">
+                <a class="item" href="/pages/address/index">
                     实名认证
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
@@ -54,11 +59,12 @@ import {
     IMyApp
 } from '../../app';
 import { IUser } from '../../api/model';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage, CustomEvent } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
-    user: IUser|null
+    user: IUser|null,
+    max: string,
 }
 @WxJson({
     navigationBarTitleText: "个人信息",
@@ -67,14 +73,30 @@ interface IPageData {
 })
 export class Profile extends WxPage<IPageData> {
     public data: IPageData = {
-        user: null
+        user: null,
+        max: '2019-05-19'
     };
 
     public onLoad() {
+        let now = new Date();
+        this.setData({
+            max: [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-')
+        });
         app.getUser().then(res => {
             this.setData({
                 user: res
             });
+        });
+    }
+
+    /**
+     * bindDateChange
+     */
+    public bindDateChange(e: CustomEvent) {
+        let user = this.data.user;
+        user.birthday = e.detail.value;
+        this.setData({
+            user
         });
     }
 

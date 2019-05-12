@@ -37,9 +37,11 @@ interface IPageData {
 }
 @WxJson({
     navigationBarTitleText: '我的消息',
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
     usingComponents: {
-        'SwipeRowBox': '/components/SwipeRow/box',
-        'SwipeRow': '/components/SwipeRow/index'
+        SwipeRowBox: '/components/SwipeRow/box',
+        SwipeRow: '/components/SwipeRow/index'
     }
 })
 export class Index extends WxPage<IPageData> {

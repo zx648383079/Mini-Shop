@@ -15,9 +15,9 @@ const app = getApp<IMyApp>();
 interface IPageData {
 }
 @WxJson({
-    navigationBarTitleText: "售后",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "推荐二维码",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Share extends WxPage<IPageData> {
 

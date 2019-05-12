@@ -1,6 +1,6 @@
 <template>
     <DialogPanel title="配送方式">
-        <div class="line-item shipping-box">
+        <div class="line-item shipping-box" slot="input">
             <span>配送方式</span>
             <span>
                 {{ value ? value.name : '请选择' }}
@@ -13,9 +13,30 @@
     </DialogPanel>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Object) readonly value?: IShipping;
-    @Prop(Array) readonly items?: IShipping[];
+import { WxJson, WxComponent } from "../../../../typings/wx/lib.wx.page";
+import { IShipping } from "../../../api/model";
+
+interface IComponentData {
+    value?: IShipping,
+    items?: IShipping[]
+}
+
+@WxJson({
+    usingComponents: {
+        DialogPanel: '/components/DialogPanel/index'
+    },
+    component: true
+})
+export class ShippingLine extends WxComponent<IComponentData>  {
+
+    public options = {
+        addGlobalClass: true,
+    }
+
+    public properties = {
+        value: Object,
+        items: Object,
+    }
     
     public tapSelected(item: IShipping) {
         this.$emit('input', item);

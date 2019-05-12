@@ -6,6 +6,8 @@
         "pages/account/cardNew",
         "pages/account/log",
         "pages/account/center",
+        "pages/address/index",
+        "pages/address/edit",
         "pages/affiliate/index",
         "pages/affiliate/order",
         "pages/affiliate/rule",
@@ -15,6 +17,7 @@
         "pages/goods/history",
         "pages/goods/comment",
         "pages/cart/index",
+        "pages/cashier/index",
         "pages/checkin/index",
         "pages/search/index",
         "pages/search/result",
@@ -23,7 +26,8 @@
         "pages/member/index",
         "pages/member/profile",
         "pages/member/login",
-        "pages/order/index"
+        "pages/order/index",
+        "pages/order/detail"
     ],
     "window": {
         "backgroundTextStyle": "light",

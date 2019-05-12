@@ -159,6 +159,7 @@ export interface IUser {
     name: string;
     avatar: string;
     token?: string;
+    birthday?: string;
 }
 
 export interface IAccountLog {

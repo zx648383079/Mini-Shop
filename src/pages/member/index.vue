@@ -34,10 +34,10 @@
             </a>
         </div>
         <div class="menu-large">
-            <MenuLargeItem class="item" title="待付款" icon="fa-money" :uri="'/order?status=' + ORDER_STATUS.UN_PAY" :count="order_subtotal.un_pay"/>
-            <MenuLargeItem class="item" title="待收货" icon="fa-shipping-fast" :uri="'/order?status=' + ORDER_STATUS.SHIPPED" :count="order_subtotal.shipped"/>
-            <MenuLargeItem class="item" title="待评价" icon="fa-comment" uri="/comment" :count="order_subtotal.uncomment"/>
-            <MenuLargeItem class="item" title="退换货" icon="fa-exchange" uri="/refund" :count="order_subtotal.refunding"/>
+            <MenuLargeItem class="item" title="待付款" icon="fa-money" uri="/pages/order/index?status={{ORDER_STATUS.UN_PAY}}" count="{{order_subtotal.un_pay}}"/>
+            <MenuLargeItem class="item" title="待收货" icon="fa-shipping-fast" uri="/pages/order/index?status={{ORDER_STATUS.SHIPPED}}" count="{{order_subtotal.shipped}}"/>
+            <MenuLargeItem class="item" title="待评价" icon="fa-comment" uri="/pages/comment/index" count="{{order_subtotal.uncomment}}"/>
+            <MenuLargeItem class="item" title="退换货" icon="fa-exchange" uri="/pages/refund/index" count="{{order_subtotal.refunding}}"/>
         </div>
 
         <div class="menu-panel">

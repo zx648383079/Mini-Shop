@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <BackHeader title="订单详情"/>
-        <div class="has-header order-box" v-if="order">
+    <div class="order-box" v-if="order">
             <div class="status-header">
                 <i class="fa fa-money-bill"></i>
                 {{ order.status_label }}
@@ -47,16 +45,15 @@
                 </div>
                 <div class="order-footer">
                     <div class="order-actions">
-                       <a @click="tapPay" v-if="order.status == ORDER_STATUS.UN_PAY">支付</a>
-                        <a @click="tapReceive" v-if="order.status == ORDER_STATUS.SHIPPED">确认收货</a>
-                        <a @click="tapComment" v-if="order.status == ORDER_STATUS.RECEIVED">评价</a>
-                        <a @click="tapRefund" v-if="order.status == ORDER_STATUS.SHIPPED || order.status == ORDER_STATUS.PAID_UN_SHIP">申请退款</a>
-                        <a @click="tapRefund" v-if="order.status == ORDER_STATUS.RECEIVED">退换货</a>
-                        <a @click="tapRefund" v-if="order.status == ORDER_STATUS.FINISH">售后</a>
-                        <a @click="tapCancel" v-if="order.status == ORDER_STATUS.UN_PAY || order.status == ORDER_STATUS.PAID_UN_SHIP">取消</a>
+                        <span @click="tapPay" v-if="order.status == ORDER_STATUS.UN_PAY">支付</span>
+                        <span @click="tapReceive" v-if="order.status == ORDER_STATUS.SHIPPED">确认收货</span>
+                        <span @click="tapComment" v-if="order.status == ORDER_STATUS.RECEIVED">评价</span>
+                        <span @click="tapRefund" v-if="order.status == ORDER_STATUS.SHIPPED || order.status == ORDER_STATUS.PAID_UN_SHIP">申请退款</span>
+                        <span @click="tapRefund" v-if="order.status == ORDER_STATUS.RECEIVED">退换货</span>
+                        <span @click="tapRefund" v-if="order.status == ORDER_STATUS.FINISH">售后</span>
+                        <span @click="tapCancel" v-if="order.status == ORDER_STATUS.UN_PAY || order.status == ORDER_STATUS.PAID_UN_SHIP">取消</span>
                     </div>
                 </div>
-        </div>
 
     </div>
 </template>
@@ -65,68 +62,104 @@ import {
     IMyApp
 } from '../../app';
 import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { IOrder, ORDER_STATUS } from '../../api/model';
+import { receiveOrder, cancelOrder } from '../../api/order';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    order: IOrder | null,
+    ORDER_STATUS: any
 }
 @WxJson({
     navigationBarTitleText: "订单详情",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
 })
-export class Index extends WxPage<IPageData> {
-    public order: IOrder | null = null;
-    public ORDER_STATUS = ORDER_STATUS;
+export class Detail extends WxPage<IPageData> {
 
-    public created() {
-        const id = parseInt(this.$route.params.id);
+    public data: IPageData = {
+        order: null,
+        ORDER_STATUS: ORDER_STATUS
+    }
+
+    public onLoad(query?: any) {
+        const id = parseInt(query.id);
         if (!id) {
-            Toast('订单错误');
-            this.$router.push('/');
+            wx.showToast({
+                title: '订单错误'
+            });
+            wx.switchTab({
+                url: '/pages/index/index'
+            })
             return;
         }
-        dispatchOrder(id).then(res => {
-            this.order = res;
+        app.getOrder(id).then(res => {
+            this.setData({
+                order: res
+            });
         });
     }
 
     public tapPay() {
-        if (!this.order) {
+        if (!this.data.order) {
             return;
         }
-        this.$router.push({name: 'pay', params: {id: this.order.id + ''}});
+        wx.navigateTo({
+            url: '/pages/pay/index?id=' + this.data.order.id
+        });
     }
 
     public tapRefund() {
-        if (!this.order) {
+        if (!this.data.order) {
             return;
         }
-        this.$router.push({name: 'refund-create', params: {order: this.order.id + ''}});
+        wx.navigateTo({
+            url: '/pages/refund/create?order=' + this.data.order.id
+        });
     }
 
     public tapComment() {
-        this.$router.push({name: 'comment'});
+        if (!this.data.order) {
+            return;
+        }
+        wx.navigateTo({
+            url: '/pages/comment/index?id=' + this.data.order.id
+        });
     }
 
     public tapReceive() {
-        MessageBox.confirm('确认取消此订单？').then(action => {
-            if (action !== 'confirm' || !this.order) {
-                return;
+        let that = this;
+        wx.showModal({
+            title: '提示',
+            content: '确认已收到商品？',
+            success() {
+                if (!that.data.order) {
+                    return;
+                }
+                receiveOrder(that.data.order.id).then(res => {
+                    that.setData({
+                        order: res
+                    });
+                });
             }
-            receiveOrder(this.order.id).then(res => {
-                this.order = res;
-            });
         });
     }
 
     public tapCancel() {
-        MessageBox.confirm('确认取消此订单？').then(action => {
-            if (action !== 'confirm' || !this.order) {
-                return;
+        let that = this;
+        wx.showModal({
+            title: '提示',
+            content: '确认取消此订单？',
+            success() {
+                if (!that.data.order) {
+                    return;
+                }
+                cancelOrder(that.data.order.id).then(res => {
+                    that.setData({
+                        order: res
+                    });
+                });
             }
-            cancelOrder(this.order.id).then(res => {
-                this.order = res;
-            });
         });
     }
 }

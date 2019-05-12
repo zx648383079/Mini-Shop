@@ -23,14 +23,17 @@
 <script lang="ts">
 import { WxPage, WxJson } from "../../../typings/wx/lib.wx.page";
 interface IPageData {
+    items: number[],
 }
 @WxJson({
-    navigationBarTitleText: "售后",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "推荐的用户",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export default class User extends WxPage<IPageData> {
-    public items = [1];
+    public data: IPageData = {
+        items: [1]
+    }
 }
 </script>
 <style lang="scss" scoped>

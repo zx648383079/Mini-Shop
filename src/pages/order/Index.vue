@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="tab-bar order-header">
-            <a v-for="(item, index) in status_list" :key="index" @click="tapStatus(item)" class="{{status == item.status ? 'active' : ''}}">{{ item.name }}</a>
+            <span v-for="(item, index) in status_list" :key="index" @click="tapStatus" data-status="{{ item.status }}" class="{{status == item.status ? 'active' : ''}}">{{ item.name }}</span>
         </div>
 
         <div class="order-box">
@@ -18,7 +18,7 @@
 import {
     IMyApp
 } from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage, TouchEvent } from '../../../typings/wx/lib.wx.page';
 import { ORDER_STATUS, IOrder } from '../../api/model';
 import { getOrder, receiveOrder, cancelOrder } from '../../api/order';
 const app = getApp<IMyApp>();
@@ -132,12 +132,13 @@ export class Index extends WxPage<IPageData> {
         });
     }
 
-    public tapStatus(item: any) {
-        if (this.data.status == item.status) {
+    public tapStatus(e: TouchEvent) {
+        let status = e.currentTarget.dataset.status; 
+        if (this.data.status == status) {
             return;
         }
         this.setData({
-            status: item.status
+            status: status
         });
         this.tapRefresh();
     }
@@ -193,5 +194,14 @@ export class Index extends WxPage<IPageData> {
     color: #ccc;
     text-align: center;
     padding-top: 20vh;
+}
+.order-header {
+    text {
+        color: #fff;
+        &.active {
+            border-bottom: 2px solid #333;
+        }
+    }
+
 }
 </style>

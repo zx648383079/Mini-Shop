@@ -504,7 +504,8 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
                     key = attr;
                 }
             }
-            if (!key || key.indexOf('@') >= 0) {
+            if (!key || key.indexOf('@') > 0 
+                || (key.charAt(0) === '@' && value === true)) {
                 continue;
             }
             if (value === true) {
@@ -514,6 +515,15 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
             if (Array.isArray(value)) {
                 value = value.join(' ');
             };
+            if (key.charAt(0) === '@') {
+                key = 'bind:' + key.substr(1);
+                if (value.indexOf('(') > 0) {
+                    value = value.substring(0, value.indexOf('(') - 1);
+                }
+            } else if (key.charAt(0) === ':') {
+                key = key.substr(1);
+                value = '{{ ' + value +' }}';
+            }
             str += ' ' + key + '=' + q(value) + ext;
         }
         return str;

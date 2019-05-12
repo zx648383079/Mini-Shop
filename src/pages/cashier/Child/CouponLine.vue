@@ -1,6 +1,6 @@
 <template>
     <DialogPanel title="优惠券">
-        <div class="line-item inovice-box">
+        <div class="line-item inovice-box" slot="input">
             <span>优惠券</span>
             <span>
                 {{ value ? value.name : (!items || items.length < 1 ? '无可用' : '请选择') }}
@@ -18,9 +18,28 @@
     </DialogPanel>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Object) readonly value?: IPayment;
-    @Prop(Array) readonly items?: IPayment[];
+import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
+
+interface IComponentData {
+    value?: IPayment,
+    items?: IPayment[]
+}
+
+@WxJson({
+    usingComponents: {
+        DialogPanel: '/components/DialogPanel/index'
+    },
+    component: true
+})
+export class CouponLine extends WxComponent<IComponentData>  {
+    public options = {
+        addGlobalClass: true,
+    }
+
+    public properties = {
+        value: Object,
+        items: Object,
+    }
 }
 </script>
 <style lang="scss" scoped>

@@ -164,7 +164,7 @@ interface IPageData {
     },
     navigationBarTitleText: "商品详情",
     navigationBarBackgroundColor: "#05a6b1",
-    navigationBarTextStyle: "white"
+    navigationBarTextStyle: "white",
 })
 export class Index extends WxPage<IPageData> {
 
@@ -293,5 +293,7 @@ export class Index extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
-
+.goods-gallary-box {
+    text-align: center;
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="has-header has-footer checkout-box">
+        <div class="has-footer checkout-box">
             <AddressLine :address="address" @click="tapAddress"/>
 
             <PaymentLine v-model="payment" :items="payment_list"/>
@@ -50,9 +50,22 @@ import {
     IMyApp
 } from '../../app';
 import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { IAddress, ICart, IOrder, IPayment, IShipping, ICartItem } from '../../api/model';
+import { getPaymentList, getShippingList, previewOrder, checkoutOrder } from '../../api/cart';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    address: IAddress | null,
+    address_list: IAddress[],
+    cart: ICart[],
+    order: IOrder| null,
+    payment_list: IPayment[],
+    payment: IPayment| null,
+    shipping_list: IShipping[],
+    shipping: IShipping| null,
+    cart_box: ICartBox | null,
+    invoice: any,
+    coupon: any
 }
 
 interface ICartBox {
@@ -60,100 +73,133 @@ interface ICartBox {
     goods: ICartItem[] | number[];
 }
 @WxJson({
+    usingComponents: {
+        AddressLine: 'Child/AddressLine',
+        CouponLine: 'Child/CouponLine',
+        InvoiceLine: 'Child/InvoiceLine',
+        PaymentLine: 'Child/PaymentLine',
+        ShippingLine: 'Child/ShippingLine',
+    },
     navigationBarTitleText: "结算",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Index extends WxPage<IPageData> {
-    public address: IAddress | null = null;
-    address_list?: IAddress[];
-    cart?: ICart[];
-    public order: IOrder| null = null;
-    public payment_list: IPayment[] = [];
-    public payment: IPayment| null = null;
-    public shipping_list: IShipping[] = [];
-    public shipping: IShipping| null = null;
-    public cart_box: ICartBox | null = null;
-    public invoice = null;
-    public coupon = null;
 
-    public created() {
-        if (!this.cart || this.cart.length < 1) {
-            this.$router.push('/cart');
+    public data: IPageData = {
+        address: null,
+        address_list: [],
+        cart: [],
+        order: null,
+        payment_list: [],
+        payment: null,
+        shipping_list: [],
+        shipping: null,
+        cart_box: null,
+        invoice: null,
+        coupon: null
+    };
+
+    public onLoad() {
+        let cart = app.globalData.cart;
+        if (!cart || cart.length < 1) {
+            wx.switchTab({
+                url: '/pages/cart/index'
+            });
             return;
         }
-        this.cart_box = this.getGoodsIds();
-        dispatchAddress().then(res => {
-            this.address = res;
+        this.setData({
+            cart,
+            cart_box: this.getGoodsIds(cart)
+        });
+        app.getAddress().then(res => {
+            this.setData({
+                address: res || null
+            });
+            this.onAddressChanged();
         });
         getPaymentList().then(res => {
             if (res.data) {
-                this.payment_list = res.data;
+                this.setData({
+                    payment_list: res.data
+                });
             }
         });
     }
 
-    @Watch('address')
     public onAddressChanged() {
         this.refreshPrice();
-        if (!this.address || !this.cart_box) {
+        if (!this.data.address || !this.data.cart_box) {
             return;
         }
-        getShippingList(this.cart_box.goods, this.address.id, this.cart_box.type).then(res => {
+        getShippingList(this.data.cart_box.goods, this.data.address.id, this.data.cart_box.type).then(res => {
             if (res.data) {
-                this.shipping_list = res.data;
+                this.setData({
+                    shipping_list: res.data
+                });
             }
         })
     }
 
-    @Watch('payment')
     public onPaymentChanged() {
         this.refreshPrice();
     }
 
-    @Watch('shipping')
     public onShippingChanged() {
         this.refreshPrice();
     }
 
     public refreshPrice() {
-        if (!this.address || !this.cart_box) {
+        if (!this.data.address || !this.data.cart_box) {
             return;
         }
-        previewOrder(this.cart_box.goods, this.address.id, this.shipping ? this.shipping.id : 0, this.payment ? this.payment.id : 0, this.cart_box.type).then(res => {
-            this.order = res;
+        previewOrder(
+            this.data.cart_box.goods, 
+            this.data.address.id, 
+            this.data.shipping ? this.data.shipping.id : 0, this.data.payment ? this.data.payment.id : 0, this.data.cart_box.type).then(res => {
+            this.setData({
+                order: res
+            });
         });
     }
 
     public tapCheckout() {
-        if (!this.address || !this.cart_box || !this.shipping || !this.payment) {
+        if (!this.data.address || !this.data.cart_box || !this.data.shipping || !this.data.payment) {
             return;
         }
-        checkoutOrder(this.cart_box.goods, this.address.id, this.shipping.id, this.payment.id, this.cart_box.type).then(res => {
-            dispatchSetCart([]);
-            dispatchSetOrder(res);
-            this.$router.replace('/pay/' + res.id);
+        checkoutOrder(
+            this.data.cart_box.goods, 
+            this.data.address.id, this.data.shipping.id, this.data.payment.id, this.data.cart_box.type).then(res => {
+            app.globalData.cart = [];
+            app.globalData.order = res;
+            wx.navigateTo({
+                url: 'pay?id=' + res.id
+            });
         });
     }
 
     public tapAddress() {
-        if (!this.address_list || this.address_list.length < 1) {
-            this.$router.push({path: '/address/create', query: {back: '1'}});
+        if (!this.data.address_list || this.data.address_list.length < 1) {
+            wx.navigateTo({
+                url: '/pages/address/edit?back=1'
+            });
             return;
         }
-        this.$router.push({name: 'address', query: {selected: (this.address ?this.address.id + '' : '0')}});
+        wx.navigateTo({
+            url: '/pages/address/index?selected=' + (this.data.address ? this.data.address.id : '0')
+        });
     }
 
 
 
-    public getGoodsIds(): ICartBox {
-        if (!this.cart) {
+    public getGoodsIds(carts: ICart[]): ICartBox {
+        if (!carts || carts.length < 1) {
             return {type: 0, goods: []};
         }
         let goods: ICartItem[] = [],
             cart: number[]  = [],
             type: number = -1;
-        for (const group of this.cart) {
+        for (const group of carts) {
             for (const item of group.goods_list) {
                 if (type == -1) {
                     type = item.id && item.id > 0 ? 0 : 1; 

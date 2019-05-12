@@ -1,13 +1,13 @@
 <template>
     <div>
-      <div class="has-header">
-            <div class="swipe-box address-list">
-                <SwipeRow v-for="(item, index) in items" :name="['address-item', selected == item.id ? ' selected' : '']"  :key="index" :index="item.id" ref="swiperow" @click="tapSelected(item)">
-                    <div slot="left" v-if="!item.is_default">
-                        <a class="set-default" @click="tapDefault(item)">
-                            设为默认
-                        </a>
-                    </div>
+        <SwipeRowBox class="swipe-box address-list">
+            <SwipeRow v-for="(item, index) in items" :name="['address-item', selected == item.id ? ' selected' : '']"  :key="index" :index="item.id" ref="swiperow">
+                <div slot="left" class="actions-left" v-if="!item.is_default">
+                    <a class="set-default" @click="tapDefault(item)">
+                        设为默认
+                    </a>
+                </div>
+                <div slot="content" class="swipe-content" @click="tapSelected" data-i="{{ index }}">
                     <div class="address-first">
                         <span>{{ item.name }}</span>
                     </div>
@@ -21,99 +21,152 @@
                             <span>{{ item.region.full_name }} {{ item.address }}</span>    
                         </p>
                     </div>
-                    <div slot="right">
-                        <a @click="tapEdit(item)">
-                            <i class="fa fa-edit"></i>
-                        </a>
-                        <i class="fa fa-trash" @click="tapRemove(item)"></i>
-                    </div>
-                </SwipeRow>
-            </div>
-        </div>
+                </div>
+                <div slot="right" class="actions-right">
+                    <a @click="tapEdit(item)">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <i class="fa fa-trash" @click="tapRemove(item)"></i>
+                </div>
+            </SwipeRow>
+        </SwipeRowBox>
+        <a href="edit" class="add-btn">添加</a>
     </div>
 </template>
 <script lang="ts">
 import {
     IMyApp
 } from '../../app';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { IAddress } from '../../api/model';
+import { defaultAddress, deleteAddress } from '../../api/address';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    items: IAddress[],
+    selected: number,
+    mode: number
 }
 @WxJson({
-    navigationBarTitleText: "分类",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    usingComponents: {
+        SwipeRowBox: '/components/SwipeRow/box',
+        SwipeRow: '/components/SwipeRow/index'
+    },
+    navigationBarTitleText: "我的地址",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white"
 })
 export class Index extends WxPage<IPageData> {
-    public items: IAddress[] = [];
-    public selected: number = 0;
-    public mode: number = 0;
 
-    public created() {
-        if (this.$route.query.selected) {
-            this.mode = this.$route.query.back ? parseInt(this.$route.query.back + '') :1;
-            this.selected = parseInt(this.$route.query.selected + '');
+    public data: IPageData = {
+        items: [],
+        selected: 0,
+        mode: 0
+    }
+
+    public onLoad(query?: any) {
+        if (query && query.selected) {
+            this.setData({
+                mode: query.back ? parseInt(query.back) : 1,
+                selected: parseInt(query.selected)
+            });
         }
-        dispatchAddressList().then(res => {
+        app.getAddressList().then(res => {
             if (!res) {
                 return;
             }
-            this.items = res;
+            this.setData({
+                items: res
+            });
         });
     }
 
     public tapEdit(item: IAddress) {
-        this.$router.push({name: 'address-edit', params: { id: item.id + ''}});
+        wx.navigateTo({
+            url: 'edit?id=' + item.id
+        });
     }
 
-    public tapSelected(item: IAddress) {
-        if (this.mode < 1) {
+    public tapSelected(e: TouchEvent) {
+        if (this.data.mode < 1) {
             return;
         }
-        this.selected = item.id;
-        dispatchSetAddress(item);
-        if (this.mode === 1) {
-            this.$router.replace('/cashier');
+        let item = this.data.items[e.currentTarget.dataset.i as number];
+        this.setData({
+            selected: item.id
+        });
+        app.setAddress(item);
+        if (this.data.mode === 1) {
+            wx.navigateTo({
+                url: '/pages/cashier/index'
+            });
             return;
         }
-        if (this.mode === 2) {
-            this.$router.back();
+        if (this.data.mode === 2) {
+            wx.navigateBack({
+                delta: 0,
+            });
             return;
         }
     }
 
     public tapDefault(item: IAddress) {
+        let items = this.data.items;
         defaultAddress(item.id).then(() => {
-            for (const it of this.items) {
+            for (const it of items) {
                 it.is_default = item.id == it.id;
             }
-            const rows: SwipeRow[] = this.$refs.swiperow as SwipeRow[];
-            for (const box of rows) {
-                box.reset();
+            // const rows: SwipeRow[] = this.$refs.swiperow as SwipeRow[];
+            // for (const box of rows) {
+            //     box.reset();
+            // }
+            if (this.data.mode > 0) {
+                app.setAddressIfEmpty(item);
             }
-            if (this.mode > 0) {
-                dispatchSetAddressIfEmpty(item);
-            }
+            this.setData({
+                items
+            });
         });
     }
 
     public tapRemove(item: IAddress) {
+        let items = this.data.items;
         deleteAddress(item.id).then(() => {
-            for (let i = 0; i < this.items.length; i++) {
-                if (this.items[i].id == item.id) {
-                    this.items.splice(i, 1);
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].id == item.id) {
+                    items.splice(i, 1);
                 }
             }
+            this.setData({
+                items
+            });
         });
     }
 }
 </script>
 <style lang="scss" scoped>
-.set-default {
-    line-height: 5rem;
-    font-size: 16px;
-    margin: 0 10px;
+
+.swipe-content {
+    width: 750rpx;
+}
+.actions-right,
+.actions-left {
+    height: 200px;
+    display: flex;
+    direction: row;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 200px;
+    .set-default {
+        line-height: 5rem;
+        font-size: 16px;
+        margin: 0 10px;
+        width: 200rpx;
+    }
+    .fa-trash {
+        background-color: red;
+        color: #fff;
+        width: 150rpx; 
+    }
 }
 </style>

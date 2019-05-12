@@ -30,7 +30,7 @@
 import {
     IMyApp
 } from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage, TouchEvent } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
@@ -115,9 +115,17 @@ export class Index extends WxPage<IPageData> {
     button {
         display: inline-block;
         background-color: transparent;
-        border: none;
-        width: auto;
+        border: 0;
+        width: 3rem;
+        line-height: 3rem;
+        height: 3rem;
         color: #333;
+        border: none;
+        margin:0;
+        padding: 0;
+        &:hover {
+            background-color: transparent;
+        }
     }
     .fa {
         font-size: 2rem;

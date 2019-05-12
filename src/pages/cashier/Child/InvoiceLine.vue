@@ -1,6 +1,6 @@
 <template>
     <DialogPanel title="发票">
-        <div class="line-item inovice-box">
+        <div class="line-item inovice-box" slot="input">
             <span>发票</span>
             <span>
                 {{ value ? value.name : '请选择' }}
@@ -46,8 +46,26 @@
     </DialogPanel>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Object) readonly value?: IPayment;
+import { WxJson, WxComponent } from "../../../../typings/wx/lib.wx.page";
+
+interface IComponentData {
+    value?: IPayment,
+}
+
+@WxJson({
+    usingComponents: {
+        DialogPanel: '/components/DialogPanel/index'
+    },
+    component: true
+})
+export class InvoiceLine extends WxComponent<any>  {
+    public options = {
+        addGlobalClass: true,
+    }
+
+    public properties = {
+        value: Object,
+    }
 }
 </script>
 <style lang="scss" scoped>
