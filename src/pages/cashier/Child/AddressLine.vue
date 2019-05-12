@@ -3,10 +3,8 @@
         <div class="address-box" v-if="address">
             <i class="fa fa-map"></i>
             <p>
-                <a >
-                    <span class="name">{{ address.name }}</span>
-                    <span class="tel">{{ address.tel }}</span>
-                </a>
+                <span class="name">{{ address.name }}</span>
+                <span class="tel">{{ address.tel }}</span>
             </p>
             <p>{{ address.region.full_name }} {{ address.address }}</p>
             <i class="fa fa-chevron-right"></i>
@@ -14,7 +12,7 @@
         <div class="address-box empty-address" v-else>
             <i class="fa fa-map"></i>
             <h3>
-                <a>请选择地址</a>
+                请选择地址
             </h3>
             <i class="fa fa-chevron-right"></i>
         </div>
@@ -57,5 +55,8 @@ export class AddressLine extends WxComponent<IComponentData>  {
         font-size: 1.5rem;
         line-height: 3.875rem;
     }
+}
+.fa-map {
+    left: 10px;
 }
 </style>

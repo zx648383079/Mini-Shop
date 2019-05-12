@@ -40,7 +40,7 @@
             </div>
             <div class="checkout-footer" v-if="order">
                 <span data-key="order_amount">{{ order.order_amount | price }}</span>
-                <a @click="tapCheckout" class="btn">立即支付</a>
+                <div @click="tapCheckout" class="btn">立即支付</div>
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@
 import {
     IMyApp
 } from '../../app';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, CustomEvent } from '../../../typings/wx/lib.wx.page';
 import { IAddress, ICart, IOrder, IPayment, IShipping, ICartItem } from '../../api/model';
 import { getPaymentList, getShippingList, previewOrder, checkoutOrder } from '../../api/cart';
 const app = getApp<IMyApp>();
@@ -114,7 +114,8 @@ export class Index extends WxPage<IPageData> {
         });
         app.getAddress().then(res => {
             this.setData({
-                address: res || null
+                address: res || null,
+                address_list: app.globalData.addressList
             });
             this.onAddressChanged();
         });
@@ -141,11 +142,17 @@ export class Index extends WxPage<IPageData> {
         })
     }
 
-    public onPaymentChanged() {
+    public paymentChanged(e: CustomEvent) {
+        this.setData({
+            payment: e.detail
+        });
         this.refreshPrice();
     }
 
-    public onShippingChanged() {
+    public shippingChanged(e: CustomEvent) {
+        this.setData({
+            shipping: e.detail
+        });
         this.refreshPrice();
     }
 

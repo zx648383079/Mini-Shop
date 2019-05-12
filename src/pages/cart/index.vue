@@ -18,7 +18,7 @@
                                 <span>{{ cart.price | price }}</span>
                                 <div class="number-box">
                                     <i class="fa fa-minus"></i>
-                                    <input type="text" name="" v-model="cart.amount">
+                                    <input type="text" name="" value="{{cart.amount}}">
                                     <i class="fa fa-plus"></i>
                                 </div>
                             </div>

@@ -353,6 +353,9 @@ export function jsonToWxml(json: IElement | IElement[], exclude: RegExp = /^.+[\
             'v-if': function(value: string) {
                 return ['wx:if', '{{ ' +value + ' }}'];
             },
+            'v-model': function(value: string) {
+                return ['value', '{{' + value + '}}', `bind:input="${value}Changed"`];
+            },
             'v-elseif': function(value: string) {
                 return ['wx:elif', '{{ ' +value + ' }}'];
             },

@@ -15,6 +15,12 @@
 
 [√] 商品评论显示页
 
+[√] 购物车页
+
+[√] 结算页
+
+[√] 支付页
+
 [√] 个人中心页
 
 [√] 个人账户页（包含提现、充值弹窗）
@@ -27,11 +33,25 @@
 
 [√] 订单列表页
 
+[√] 订单详情页
+
+[√] 收货地址页
+
 [√] 消息页
 
 [√] 账号关联页
 
 [√] 签到页
+
+[√] 推荐页
+
+[√] 推荐规则页
+
+[√] 推荐订单页
+
+[√] 推荐会员页
+
+[√] 推荐二维码页
 
 ## 本项目自带转化工具
 
@@ -48,6 +68,33 @@ sass 引用模式未做处理
 支持json自动生成，支持 属性合并
 
 ## 更新
+
+### 标签属性转化列表
+
+
+属性名 | 目标属性
+---------|----------
+ `v-if` | `wx:if="{{  }}"`
+ `v-elseif` | `wx:elif="{{  }}"`
+ `v-else` | `wx:else`
+ `v-bind:src` | `src`
+ `href` | `url`
+ `@click` | `bindtap`
+ `v-on:click` | `bindtap`
+ `(click)` | `bindtap`
+ `@touchstart` | `bindtouchstart`
+ `@touchmove` | `bindtouchmove`
+ `@touchend` | `bindtouchend`
+ `:key` | 
+ `v-show` | `hidden="{{! }}"`
+ `v-for` | `wx:for="{{  }}" wx:for-index=" " wx:for-item=""`
+ `v-model` | `value="{{  }}" bind:input=" Changed"`
+ 第一个支付为`@`且值不为空 | `bind:`
+ 第一个支付为`:` | `={{ }}`
+ 其他包含`@` |
+
+
+
 
 定义`WxPage` `WxCommpent` 两个类，增强 `setData` 的智能提示，
 

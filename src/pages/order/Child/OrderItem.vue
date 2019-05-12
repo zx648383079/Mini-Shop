@@ -65,7 +65,7 @@ export class OrderItem extends WxComponent<IComponentData>  {
             return;
         }
         wx.navigateTo({
-            url: '/pages/pay/index?id=' + this.data.item.id
+            url: '/pages/cashier/pay?id=' + this.data.item.id
         });
     }
 
@@ -91,6 +91,9 @@ export class OrderItem extends WxComponent<IComponentData>  {
 
     @WxMethod()
     public tapComment() {
+        if (!this.data.item) {
+            return;
+        }
         wx.navigateTo({
             url: '/pages/comment/index?id=' + this.data.item.id
         });

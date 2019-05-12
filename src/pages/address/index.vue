@@ -1,7 +1,7 @@
 <template>
     <div>
         <SwipeRowBox class="swipe-box address-list">
-            <SwipeRow v-for="(item, index) in items" :name="['address-item', selected == item.id ? ' selected' : '']"  :key="index" :index="item.id" ref="swiperow">
+            <SwipeRow right-width="150" left-width="200" v-for="(item, index) in items" :name="['address-item', selected == item.id ? ' selected' : '']"  :key="index" :index="item.id" ref="swiperow">
                 <div slot="left" class="actions-left" v-if="!item.is_default">
                     <a class="set-default" @click="tapDefault(item)">
                         设为默认
@@ -151,7 +151,7 @@ export class Index extends WxPage<IPageData> {
 }
 .actions-right,
 .actions-left {
-    height: 200px;
+    height: 100px;
     display: flex;
     direction: row;
     text-align: center;

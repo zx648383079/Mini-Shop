@@ -8,12 +8,13 @@
             <i class="fa fa-chevron-right"></i>
         </div>
         <div class="item-list" slot="panel">
-            <a v-for="(item, index) in items" :key="index" :class="{active: value && item.id == value.id}" @click="tapSelected(item)">{{ item.name }}</a>
+            <span v-for="(item, index) in items" :key="index" class="{{value && item.id == value.id ? 'active' : ''}}" @click="tapSelected" data-i="{{ index }}">{{ item.name }}</span>
         </div>
     </DialogPanel>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent } from "../../../../typings/wx/lib.wx.page";
+import { WxJson, WxComponent, TouchEvent, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { IPayment } from "../../../api/model";
 
 interface IComponentData {
     value?: IPayment,
@@ -26,7 +27,7 @@ interface IComponentData {
     },
     component: true
 })
-export class PaymentLine extends WxComponent<any>  {
+export class PaymentLine extends WxComponent<IComponentData>  {
     public options = {
         addGlobalClass: true,
     }
@@ -36,8 +37,12 @@ export class PaymentLine extends WxComponent<any>  {
         items: Object,
     }
     
-    public tapSelected(item: IPayment) {
-        this.$emit('input', item);
+    @WxMethod()
+    public tapSelected(e: TouchEvent) {
+        if (!this.data.items) {
+            return;
+        }
+        this.triggerEvent('input', this.data.items[e.currentTarget.dataset.i as number]);
     }
 }
 </script>
@@ -47,7 +52,7 @@ export class PaymentLine extends WxComponent<any>  {
 }
 
 .item-list {
-    a {
+    text {
         display: inline-block;
         padding: 5px 10px;
         border: 1px solid #ccc;

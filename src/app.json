@@ -18,6 +18,7 @@
         "pages/goods/comment",
         "pages/cart/index",
         "pages/cashier/index",
+        "pages/cashier/pay",
         "pages/checkin/index",
         "pages/search/index",
         "pages/search/result",

@@ -46,7 +46,7 @@
                         <div class="item-actions">
                             <span class="item-price">{{ item.price | price }}
                             </span>
-                            <span @click="tapAddCart">加入购物车</span>
+                            <span @click="tapAddCart" data-id="{{ item.id }}">加入购物车</span>
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                         <div class="item-actions">
                             <span class="item-price">{{ item.price | price }}
                             </span>
-                            <span @click="tapAddCart">加入购物车</span>
+                            <span @click="tapAddCart" data-id="{{ item.id }}">加入购物车</span>
                         </div>
                     </div>
                 </div>
@@ -84,13 +84,14 @@
                         <div class="item-actions">
                             <span class="item-price">{{ item.price | price }}
                             </span>
-                            <span @click="tapAddCart">加入购物车</span>
+                            <span @click="tapAddCart" data-id="{{ item.id }}">加入购物车</span>
                         </div>
                     </div>
                 </div>
             </div>
 
         </div>
+        <CartDialog :mode="mode" :product="goods" @close="tapCloseDialog"/>
     </div>
 </template>
 <script lang="ts">
@@ -98,9 +99,9 @@ import {
     IMyApp
 } from '../../app';
 import { IAd, ICategory, IProduct, ISubtotal, IHomeProduct } from '../../api/model';
-import { getHome } from '../../api/product';
+import { getHome, getInfo } from '../../api/product';
 import { getBanners } from '../../api/ad';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.wx.page';
 
 const app = getApp<IMyApp>();
 
@@ -114,6 +115,9 @@ interface IPageData {
     isGuest: boolean;
 }
 @WxJson({
+    usingComponents: {
+        CartDialog: '/pages/goods/Child/CartDialog'
+    },
     navigationBarTitleText: "首页",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"
@@ -155,6 +159,28 @@ export class Index extends WxPage<IPageData> {
             this.setData({
                 subtotal: res
             });
+        });
+    }
+
+    public tapAddCart(e: TouchEvent) {
+        let id = e.currentTarget.dataset.id as number;
+        if (this.data.goods && this.data.goods.id === id) {
+            this.setData({
+                mode: 1
+            });
+            return;
+        }
+        getInfo(id).then(res => {
+            this.setData({
+                goods: res,
+                mode: 1
+            });
+        });
+    }
+
+    public tapCloseDialog() {
+        this.setData({
+            mode: 0
         });
     }
 }
