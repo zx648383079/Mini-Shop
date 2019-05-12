@@ -7,8 +7,8 @@
                     <span>{{ item.name }}</span>
                 </div>
                 <SwipeRowBox class="swipe-box goods-list">
-                    <SwipeRow name="cart-item goods-item" v-for="(cart, i) in item.goods_list" :key="i" :index="cart.id" ref="swiperow">
-                        <div slot="content">
+                    <SwipeRow name="cart-item goods-item" v-for="(cart, i) in item.goods_list" :key="i" :index="cart.id" right-width="150">
+                        <div slot="content" class="swipe-content">
                             <i class="fa check-box {{ cart.checked ? 'active' : ''}}" @click="toggleCheck" data-group="{{ index }}" data-cart="{{ i }}"></i>
                             <div class="goods-img">
                                 <img :src="cart.goods.thumb" alt="">
@@ -200,14 +200,15 @@ export class Index extends WxPage<IPageData> {
 <style lang="scss" scoped>
 .swipe-content {
     width: 750rpx;
+    margin: 0;
 }
 .actions-right {
-    height: 110rpx;
+    height: 100px;
     display: flex;
     direction: row;
     text-align: center;
     vertical-align: middle;
-    line-height: 110rpx;
+    line-height: 100px;
     .fa-trash {
         background-color: red;
         color: #fff;

@@ -29,8 +29,8 @@
                 <div class="goods-info">
                     <div class="goods-header">
                         <h1 class="goods-name">{{ goods.name }}</h1>
-                        <div :class="['goods-collect', goods.is_collect ? 'active' : '']" @click="tapCollect">
-                            <i class="like-icon"></i>
+                        <div class="goods-collect {{goods.is_collect ? 'active' : ''}}" @click="tapCollect">
+                            <i class="fa like-icon"></i>
                             收藏
                         </div>
                     </div>

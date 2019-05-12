@@ -132,8 +132,6 @@ export class SwipeRow extends WxComponent<IComponentData> {
         this.startX = (e.changedTouches[0] as Touch).pageX;
     }
 
-    
-
     @WxMethod()
     touchMove(e: CustomEvent) {
         this.isTouch = true;

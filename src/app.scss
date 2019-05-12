@@ -1141,8 +1141,8 @@ footer,
 
             .number-box {
                 position: absolute;
-                right: 0;
-                bottom: 0;
+                right: 10px;
+                bottom: 10px;
             }
 
             .goods-info {
@@ -1376,12 +1376,11 @@ footer,
 
             .like-icon {
                 display: block;
-                font-family: "Font Awesome 5 Free";
                 font-style: normal;
                 font-size: 26px;
 
                 &::before {
-                    content: "\f004";
+                    content: "\e64f";
                 }
             }
 
