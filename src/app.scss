@@ -370,7 +370,7 @@ $lineHeight: 2.5rem;
     background-color: $white;
     z-index: 10;
 
-    ul {
+    .box {
         padding-right: 35px;
         font-size: 0;
         font-family: none;
@@ -380,14 +380,14 @@ $lineHeight: 2.5rem;
         background-color: $white;
     }
 
-    li {
+    .item {
         width: 3.75rem;
         text-align: center;
         font-size: 13px;
         display: inline-block;
         vertical-align: top;
 
-        navigator {
+        text {
             display: inline-block;
             height: 45px;
             line-height: 45px;
@@ -395,7 +395,7 @@ $lineHeight: 2.5rem;
         }
 
         &.active {
-            navigator {
+            text {
                 color: #e4393c;
                 border-bottom: 2px solid #e4393c;
             }
@@ -418,7 +418,7 @@ $lineHeight: 2.5rem;
     }
 
     &.unfold {
-        ul {
+        .box {
             padding-right: 0;
             white-space: normal;
             padding-right: 30px;

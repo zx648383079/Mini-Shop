@@ -1,16 +1,16 @@
 <template>
     <div>
-        <div :class="['scroll-nav', isExpand ? 'unfold' : '']">
-            <ul>
-                <li v-for="(item, index) in categories" :key="index" :class="{active: category == item.id}">
-                        <a>{{ item.name }}</a>
+        <div class="scroll-nav {{isExpand ? 'unfold' : ''}}">
+            <ul class="box">
+                <li v-for="(item, index) in categories" :key="index" class="item {{category == item.id ? 'active' : ''}}">
+                        <span>{{ item.name }}</span>
                 </li>
             </ul>
-            <a @click="isExpand = !isExpand" class="fa nav-arrow"></a>
+            <span @click="tapExpand" class="fa nav-arrow"></span>
         </div>
-        <PullToRefresh :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
+        <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
             <ArticleItem :items="items"/>
-        </PullToRefresh>
+        </div>
     </div>
 </template>
 <script lang="ts">
@@ -27,12 +27,20 @@ interface IPageData {
     category: number,
     status: number,
     items: IArticle[],
-    isExpand: boolean
+    isExpand: boolean,
+    has_more: boolean,
+    page: number,
+    isLoading: boolean
 }
 @WxJson({
-    navigationBarTitleText: "分类",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    usingComponents: {
+        ArticleItem: 'Child/ArticleItem'
+    },
+    navigationBarTitleText: "文章分类",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
+    enablePullDownRefresh: true,
+    onReachBottomDistance: 10,
 })
 export class Index extends WxPage<IPageData> {
 
@@ -41,11 +49,11 @@ export class Index extends WxPage<IPageData> {
         category: 0,
         status: 0,
         items: [],
-        isExpand: false
+        isExpand: false,
+        has_more: true,
+        page: 1,
+        isLoading: false
     }
-    public has_more = true;
-    public page = 1;
-    public isLoading = false;
 
     public onLoad(option: any) {
         if (option.category) {
@@ -70,6 +78,23 @@ export class Index extends WxPage<IPageData> {
     }
 
     /**
+     * tapExpand
+     */
+    public tapExpand() {
+        this.setData({
+            isExpand: !this.data.isExpand
+        });
+    }
+
+    onPullDownRefresh() {
+        this.tapRefresh();
+    }
+
+    onReachBottom() {
+        this.tapMore();
+    }
+
+    /**
      * tapCategory
      */
     public tapCategory(item: IArticleCategory) {
@@ -85,29 +110,34 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapMore() {
-        if (!this.has_more) {
+        if (!this.data.has_more) {
             return;
         }  
-        this.goPage(this.page + 1);
+        this.goPage(this.data.page + 1);
     }
 
     public goPage(page: number) {
-        if (this.isLoading) {
+        if (this.data.isLoading) {
             return;
         }
-        this.isLoading = true;
+        this.setData({
+            isLoading: true
+        });
         getArticleList({
             category: this.data.category,
             page: page,
         }).then(res => {
-            this.page = page;
-            this.isLoading = false;
-            if (this.page < 2) {
-                this.setData({items: res.data as never[];})
-                return;
+            let items = [];
+            if (page < 2) {
+                items = res.data as never[];
+            } else {
+                items = [].concat(this.data.items as never[], res.data as never[]);
             }
             this.setData({
-                items: [].concat(this.data.items as never[], res.data as never[])
+                has_more: res.paging.more,
+                isLoading: false,
+                page,
+                items
             });
         });
     }

@@ -7,41 +7,56 @@
 import {
     IMyApp
 } from '../../app';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, CustomEvent } from '../../../typings/wx/lib.wx.page';
+import { IArticleCategory } from '../../api/model';
+import { getCategories } from '../../api/category';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    items: IArticleCategory[],
+    id: number,
 }
 @WxJson({
+    usingComponents: {
+        CatItem: 'Child/CatItem'
+    },
     navigationBarTitleText: "分类",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
 })
 export class Category extends WxPage<IPageData> {
-    public items: IArticleCategory[] = [];
-    public id: number = 0;
+    public data: IPageData = {
+        items: [],
+        id: 0
+    }
 
-    created() {
-        const id = parseInt(this.$route.query.id + '');
+    onLoad(query?: any) {
+        const id = parseInt(query.id + '');
         if (id) {
-            this.id = id;
+            this.setData({
+                id
+            });
         }
+        this.tapRefresh();
     }
     /**
      * tapCategory
      */
-    public tapCategory(item: IArticleCategory) {
-        this.id = item.id;
-        this.$route.meta.title = item.name;
+    public tapCategory(e: CustomEvent) {
+        this.setData({
+            id: e.detail.id as number
+        });
         this.tapRefresh();
     }
 
     public tapRefresh() {
-        getCategories(this.id).then(res => {
+        getCategories(this.data.id).then(res => {
             if (!res.data) {
                 return;
             }
-            this.items = res.data;
+            this.setData({
+                items: res.data
+            });
         });
     }
 }

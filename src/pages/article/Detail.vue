@@ -27,9 +27,9 @@ interface IPageData {
     article: IArticle|null
 }
 @WxJson({
-    navigationBarTitleText: "分类",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "文章",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
 })
 export class Detail extends WxPage<IPageData> {
     public data = {

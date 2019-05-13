@@ -1,7 +1,7 @@
 <template>
     <div>
         <dl class="article-item" v-for="(item, index) in items" :key="index">
-            <dt><a @click="tapItem(item)">{{ item.title }}</a>
+            <dt><a href="/pages/article/detail?id={{ item.id }}">{{ item.title }}</a>
                 <span class="book-time">{{ item.crated_at }}</span></dt>
             <dd>
                 <p>{{ item.description ? item.description.substr(0, 100) : '' }}</p>
@@ -18,11 +18,23 @@
     </div>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Array) readonly items!: any;
+import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
+import { IArticle } from "../../../api/model";
 
-    public tapItem(item: IArticle) {
-        this.$router.push({name: 'article-detail', params: {id: item.id + ''}});
+interface IComponentData {
+    items?: IArticle[],
+}
+
+@WxJson({
+    component: true,
+})
+export class ArticleItem extends WxComponent<IComponentData>  {
+    public options = {
+        addGlobalClass: true,
+    };
+
+    public properties = {
+        items: Object,
     }
 }
 </script>
