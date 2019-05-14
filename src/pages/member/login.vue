@@ -30,7 +30,7 @@
 import {
     IMyApp
 } from '../../app';
-import { WxJson, WxPage, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage, TouchEvent, getCurrentPages } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
@@ -68,7 +68,14 @@ export class Index extends WxPage<IPageData> {
 
     public tapLoginBack() {
         wx.switchTab({
-            url: '/pages/index/index'
+            url: '/pages/index/index',
+            success: function () { 
+                let page = getCurrentPages().pop(); 
+                if (!page) {
+                    return; 
+                }
+                page.onLoad(); 
+            }
         });
     }
 

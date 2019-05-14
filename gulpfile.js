@@ -113,11 +113,9 @@ gulp.task('vue', gulp.series('vuejs', 'vuets', 'vuecss', 'vuesass', 'vuejson', a
 }));
 
 gulp.task('test', async() => {
-    await gulp.src('src/pages/member/index.vue')
-    .pipe(template('ts'))
-    .pipe(rename({extname: '.ts'}))
-    .pipe(getTs())
-    .pipe(rename({extname: '.js'}))
+    await gulp.src('src/pages/article/Child/ArticleItem.vue')
+    .pipe(template('tpl'))
+    .pipe(rename({extname: '.wxml'}))
     .pipe(gulp.dest('dist/'));
 });
 

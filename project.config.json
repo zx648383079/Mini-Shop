@@ -46,7 +46,7 @@
 				{
 					"id": 0,
 					"name": "test",
-					"pathName": "pages/cart/index",
+					"pathName": "pages/index/index",
 					"query": "",
 					"scene": null
 				}
