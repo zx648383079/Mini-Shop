@@ -35,9 +35,11 @@ const app = getApp<IMyApp>();
 interface IPageData {
 }
 @WxJson({
-    navigationBarTitleText: "售后",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "售后管理",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
+    enablePullDownRefresh: true,
+    onReachBottomDistance: 10,
 })
 export class Index extends WxPage<IPageData> {
     public status_list = [

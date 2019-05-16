@@ -45,7 +45,7 @@ const app = getApp<IMyApp>();
 interface IPageData {
 }
 @WxJson({
-    navigationBarTitleText: "分类",
+    navigationBarTitleText: "申请售后",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"
 })

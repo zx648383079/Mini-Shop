@@ -1,9 +1,6 @@
 <template>
     <div>
-        <BackHeader :title="$route.meta.title"/>
-        <div class="has-header">
-            <CommentItem v-for="(item, index) in items" :key="index" :item="item" @commented="tapCommented(index)"/>
-        </div>
+        <CommentItem v-for="(item, index) in items" :key="index" :item="item" @commented="tapCommented(index)"/>
     </div>
 </template>
 <script lang="ts">
@@ -11,35 +8,38 @@ import {
     IMyApp
 } from '../../app';
 import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { IOrderGoods } from '../../api/model';
+import { getUnCommentGoods } from '../../api/order';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    items: IOrderGoods[]
 }
 @WxJson({
-    navigationBarTitleText: "售后",
+    navigationBarTitleText: "评价晒单",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"
 })
 export class Create extends WxPage<IPageData> {
     items: IOrderGoods[] = [];
 
-    created() {
-        getUnCommentGoods(this.$route.query).then(res => {
+    onLoad(query?: any) {
+        getUnCommentGoods(query).then(res => {
             if (!res.data || res.data.length < 1) {
-                this.tapBack();
+                wx.navigateBack({
+                    delta: 0
+                });
                 return;
             }
             this.items = res.data;
         });
     }
 
-    public tapBack() {
-        this.$router.back();
-    }
-
     public tapCommented(i: number) {
         if (this.items.length < 2) {
-            this.tapBack();
+            wx.navigateBack({
+                delta: 0
+            });
             return;
         }
         this.items.splice(i, 1);
