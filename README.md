@@ -61,7 +61,9 @@
 
 支持拆解html js ts sass css 写在一个文件上的情况
 
-sass 引用模式未做处理
+sass 支持ttf文件自动转化为 base64
+
+sass 引用模式自动处理
 
 自动转化html 为 wxml, 自动转化 v-if v-for v-else v-show
 

@@ -65,7 +65,9 @@ gulp.task('ts', async() => {
 
 gulp.task('sass', async() => {
     await gulp.src('src/**/*.{scss,sass}')
+        .pipe(template('presass'))
         .pipe(getSass())
+        .pipe(template('endsass'))
         .pipe(rename({extname: '.wxss'}))
         .pipe(gulp.dest('dist/'));
 });
@@ -93,7 +95,9 @@ gulp.task('vuecss', async() => {
 gulp.task('vuesass', async() => {
     await gulp.src('src/**/*.{vue,html}')
         .pipe(template('sass'))
+        .pipe(template('presass'))
         .pipe(getSass())
+        .pipe(template('endsass'))
         .pipe(rename({extname: '.wxss'}))
         .pipe(gulp.dest('dist/'));
 });

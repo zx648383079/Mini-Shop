@@ -42,6 +42,19 @@ module.exports = function (tag) {
                     file.contents = Buffer.from(str);
                     return callback(null, file);
                 }
+                if (tag === 'presass') {
+                    var parser = require('./dist/parser.js');
+                    var str = parser.preImport(String(file.contents));
+                    file.contents = Buffer.from(str);
+                    return callback(null, file);
+                }
+                if (tag === 'endsass') {
+                    var parser = require('./dist/parser.js');
+                    var str = parser.endImport(String(file.contents));
+                    str = parser.replaceTTF(String(file.contents), file.base);
+                    file.contents = Buffer.from(str);
+                    return callback(null, file);
+                }
                 if (file.extname === '.ts') {
                     if (tag !== 'ts') {
                         return callback(null, file);
