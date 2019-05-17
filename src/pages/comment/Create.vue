@@ -16,6 +16,9 @@ interface IPageData {
     items: IOrderGoods[]
 }
 @WxJson({
+    usingComponents: {
+        CommentItem: 'Child/CommentItem'  
+    },
     navigationBarTitleText: "评价晒单",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"

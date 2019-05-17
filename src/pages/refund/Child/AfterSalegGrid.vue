@@ -62,23 +62,57 @@
     </div>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Number) readonly mode!: number;
-    @Getter('addressList') address_list?: IAddress[];
-    public address: IAddress | null = null;
+import { WxComponent, WxJson, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { IAddress } from "../../../api/model";
+import { IMyApp } from "../../../app";
+const app = getApp<IMyApp>();
 
-    created() {
-        dispatchAddress().then(res => {
-            this.address = res;
-        });   
+interface IComponentData {
+    mode?: number,
+    address_list: IAddress[],
+    address: IAddress | null
+}
+
+@WxJson({
+    component: true
+})
+export class AfterSalegGrid extends WxComponent<IComponentData>  {
+    public options = {
+        addGlobalClass: true,
+    }
+    public properties = {
+        mode: Number,
     }
 
+    public data: IComponentData = {
+        address_list: [],
+        address: null
+    }
+
+    ready() {
+        app.getAddressList().then(res => {
+            this.setData({
+                address_list: res
+            });
+        });
+        app.getAddress().then(res => {
+            this.setData({
+                address: res
+            });
+        })
+    }
+
+    @WxMethod()
     public tapAddress() {
-        if (!this.address_list || this.address_list.length < 1) {
-            this.$router.push({path: '/address/create', query: {back: '2'}});
+        if (!this.data.address_list || this.data.address_list.length < 1) {
+            wx.navigateTo({
+                url: '/pages/address/create?back=2'
+            });
             return;
         }
-        this.$router.push({name: 'address', query: {back: '2', selected: (this.address ?this.address.id + '' : '0')}});
+        wx.navigateTo({
+            url: '/pages/address/index?back=2&selected=' + (this.data.address ? this.data.address.id + '' : '0')
+        });
     }
 }
 </script>

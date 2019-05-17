@@ -1,18 +1,15 @@
 <template>
     <div>
-        <BackHeader title="开票历史"/>
-        <div class="has-header">
-            <div class="log-hr">
-                2018年12月
+        <div class="log-hr">
+            2018年12月
+        </div>
+        <div class="log-item" v-for="(item, index) in items" :key="index">
+            <div class="info">
+                <div class="name">个人</div>
+                <p>2018-123</p>
             </div>
-            <div class="log-item" v-for="(item, index) in items" :key="index">
-                <div class="info">
-                    <div class="name">个人</div>
-                    <p>2018-123</p>
-                </div>
-                <div class="amount">
-                    ￥200
-                </div>
+            <div class="amount">
+                ￥200
             </div>
         </div>
     </div>
@@ -25,6 +22,7 @@ import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    items: any[]
 }
 @WxJson({
     navigationBarTitleText: "开票历史",
@@ -32,7 +30,9 @@ interface IPageData {
     navigationBarTextStyle: "black"
 })
 export class Log extends WxPage<IPageData> {
-    public items = [];
+    public data: IPageData = {
+        items: []
+    }
 }
 </script>
 <style lang="scss" scoped>

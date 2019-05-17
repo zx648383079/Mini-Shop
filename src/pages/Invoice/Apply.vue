@@ -1,7 +1,6 @@
 <template>
     <div>
-        <BackHeader title="申请开票"/>
-        <div class="has-header has-double-footer">
+        <div class="has-double-footer">
             <div class="order-mini-item" v-for="(item, index) in items" :key="index">
                 <i class="fa check-box"></i>
                 <div class="info">
@@ -39,6 +38,7 @@ import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    items: any[]
 }
 @WxJson({
     navigationBarTitleText: "申请开票",
@@ -46,7 +46,9 @@ interface IPageData {
     navigationBarTextStyle: "black"
 })
 export class Apply extends WxPage<IPageData> {
-    public items = [1, 1, 2, 3];
+    public data: IPageData = {
+        items: [1, 1, 2, 3]
+    }
 }
 </script>
 <style lang="scss" scoped>

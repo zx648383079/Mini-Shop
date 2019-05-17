@@ -26,8 +26,15 @@
     </div>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
+import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
 
+@WxJson({
+    component: true
+})
+export class RefundGrid extends WxComponent<any>  {
+    public options = {
+        addGlobalClass: true,
+    }
 }
 </script>
 <style lang="scss" scoped>

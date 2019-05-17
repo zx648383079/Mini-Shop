@@ -1,26 +1,23 @@
 <template>
     <div>
-        <BackHeader :title="$route.meta.title"/>
-        <div class="has-header">
-            <div class="tab-bar order-header">
-                 <a v-for="(item, index) in status_list" :key="index" @click="tapStatus(item)" :class="status == item.status ? 'active' : ''">{{ item.name }}</a>
-            </div>
+        <div class="tab-bar order-header">
+                <a v-for="(item, index) in status_list" :key="index" @click="tapStatus" data-status="{{ item.status }}" :class="status == item.status ? 'active' : ''">{{ item.name }}</a>
+        </div>
 
-            <div class="order-box">
-                <PullToRefresh :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
-                    <div class="goods-list">
-                        <div class="goods-item" v-for="(item, index) in items" :key="index">
-                            <div class="goods-img">
-                                <img :src="item.thumb" alt="">
-                            </div>
-                            <div class="goods-info">
-                                <h4>{{ item.name }}</h4>
-                                <span class="amount"> x {{ item.amount }}</span>
-                                <a class="action" @click="tapApply(item)">申请售后</a>
-                            </div>
+        <div class="order-box">
+            <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
+                <div class="goods-list">
+                    <div class="goods-item" v-for="(item, index) in items" :key="index">
+                        <div class="goods-img">
+                            <img :src="item.thumb" alt="">
+                        </div>
+                        <div class="goods-info">
+                            <h4>{{ item.name }}</h4>
+                            <span class="amount"> x {{ item.amount }}</span>
+                            <a class="action" @click="tapApply(item)">申请售后</a>
                         </div>
                     </div>
-                </PullToRefresh>
+                </div>
             </div>
         </div>
     </div>
@@ -29,10 +26,18 @@
 import {
     IMyApp
 } from '../../app';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { IOrderGoods } from '../../api/model';
+import { getRefundGoodsList } from '../../api/order';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    status_list: any[],
+    items: IOrderGoods[],
+    status: number,
+    has_more: boolean,
+    page: number,
+    isLoading: boolean
 }
 @WxJson({
     navigationBarTitleText: "售后管理",
@@ -42,68 +47,95 @@ interface IPageData {
     onReachBottomDistance: 10,
 })
 export class Index extends WxPage<IPageData> {
-    public status_list = [
-        {
-            name: '售后申请',
-            status: 0
-        },
-        {
-            name: '处理中',
-            status: 1
-        },
-        {
-            name: '记录',
-            status: 2
-        },
-    ];
-    public items: IOrderGoods[] = [];
-    public status = 0;
-    public has_more = true;
-    public page = 1;
-    public isLoading = false;
+        public data: IPageData = {
+        status_list: [
+            {
+                name: '售后申请',
+                status: 0
+            },
+            {
+                name: '处理中',
+                status: 1
+            },
+            {
+                name: '记录',
+                status: 2
+            },
+        ],
+        items: [],
+        status: 0,
+        has_more: true,
+        page: 1,
+        isLoading: false
+    }
 
-    public created() {
-        if (this.$route.query && this.$route.query.status) {
-            this.status = parseInt(this.$route.query.status + '') || 0;
+    public onLoad(query?: any) {
+        if (query && query.status) {
+            this.setData({
+                status: parseInt(query.status + '') || 0
+            });
         }
         this.tapRefresh();
     }
 
+    onPullDownRefresh() {
+        this.tapRefresh();
+    }
+
+    onReachBottom() {
+        this.tapMore();
+    }
+
     public tapRefresh() {
+        this.setData({
+            items: [],
+            isLoading: false,
+            has_more: true
+        });
         this.goPage(1);
     }
 
     public tapMore() {
-        if (!this.has_more) {
+        if (!this.data.has_more) {
             return;
         }  
-        this.goPage(this.page + 1);
+        this.goPage(this.data.page + 1);
     }
 
     public goPage(page: number) {
-        if (this.isLoading) {
+        if (this.data.isLoading) {
             return;
         }
-        this.isLoading = true;
+        this.setData({
+            isLoading: true
+        });
         getRefundGoodsList({
-            status: this.status,
+            status: this.data.status,
             page,
         }).then(res => {
-            this.has_more = res.paging.more;
-            this.isLoading = false;
-            if (this.page < 2) {
-                this.items = res.data as never[];
-                return;
+            let items = [];
+            if (page < 2) {
+                items = res.data as never[];
+            } else {
+                items = [].concat(this.data.items as never[], res.data as never[]);
             }
-            this.items = [].concat(this.items as never[], res.data as never[]);
+            this.setData({
+                has_more: res.paging.more,
+                isLoading: false,
+                page,
+                items
+            });
         });
     }
 
-    public tapStatus(item: any) {
-        if (this.status == item.status) {
+    public tapStatus(e: TouchEvent) {
+        let status = e.currentTarget.dataset.status; 
+        if (this.data.status == status) {
             return;
         }
-        this.status = item.status;
+        this.setData({
+            status: status
+        });
         this.tapRefresh();
     }
 
@@ -111,7 +143,9 @@ export class Index extends WxPage<IPageData> {
      * tapApply
      */
     public tapApply(item: IOrderGoods) {
-        this.$router.push({name: 'refund-create', query: {goods: item.id + ''}});
+        wx.navigateTo({
+            url: 'create?goods=' + item.id
+        });
     }
 }
 </script>

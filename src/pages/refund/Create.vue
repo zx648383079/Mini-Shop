@@ -1,38 +1,35 @@
 <template>
     <div>
-        <BackHeader :title="$route.meta.title"/>
-        <div class="has-header has-footer">
-            <div>
-                <div class="goods-item" v-for="(item, index) in items" :key="index">
-                    <div class="goods-img">
-                        <img :src="item.thumb" alt="">
-                    </div>
-                    <div class="goods-info">
-                        <h4>{{ item.name }}</h4>
-                        <span class="amount"> x {{ item.amount }}</span>
-                    </div>
+        <div>
+            <div class="goods-item" v-for="(item, index) in items" :key="index">
+                <div class="goods-img">
+                    <img :src="item.thumb" alt="">
+                </div>
+                <div class="goods-info">
+                    <h4>{{ item.name }}</h4>
+                    <span class="amount"> x {{ item.amount }}</span>
                 </div>
             </div>
-            <div v-if="mode < 2">
-                <div class="actions" v-if="status == ORDER_STATUS.SHIPPED">
-                    <span>您是否已收到货?</span>
-                    <div class="radio-box">
-                        <span :class="{ active: mode < 1 }" @click="mode = 0">未收货</span>
-                        <span :class="{ active: mode == 1 }" @click="mode = 1">已收货</span>
-                    </div>
-                </div>
-                <RefundGrid v-if="mode < 1"/>
-                <div class="choose-mode" v-if="mode == 1">
-                    <button class="btn" @click="mode = 2">申请返修/退换货</button>
-                </div>
-            </div>
-            <div class="menu-list" v-if="mode == 2">
-                <MenuItem title="维修" icon="fa-hammer" @click="mode = 3"/>
-                <MenuItem title="退货" icon="fa-undo" @click="mode = 4"/>
-                <MenuItem title="换货" icon="fa-exchange-alt" @click="mode = 5"/>
-            </div>
-            <AfterSalegGrid v-if="mode > 2" :mode="mode"/>
         </div>
+        <div v-if="mode < 2">
+            <div class="actions" v-if="status == ORDER_STATUS.SHIPPED">
+                <span>您是否已收到货?</span>
+                <div class="radio-box">
+                    <span :class="{ active: mode < 1 }" @click="mode = 0">未收货</span>
+                    <span :class="{ active: mode == 1 }" @click="mode = 1">已收货</span>
+                </div>
+            </div>
+            <RefundGrid v-if="mode < 1"/>
+            <div class="choose-mode" v-if="mode == 1">
+                <button class="btn" @click="mode = 2">申请返修/退换货</button>
+            </div>
+        </div>
+        <div class="menu-list" v-if="mode == 2">
+            <MenuItem title="维修" icon="fa-hammer" @click="mode = 3"/>
+            <MenuItem title="退货" icon="fa-undo" @click="mode = 4"/>
+            <MenuItem title="换货" icon="fa-exchange-alt" @click="mode = 5"/>
+        </div>
+        <AfterSalegGrid v-if="mode > 2" :mode="mode"/>
     </div>
 </template>
 <script lang="ts">
@@ -40,31 +37,46 @@ import {
     IMyApp
 } from '../../app';
 import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { IOrderGoods, ORDER_STATUS } from '../../api/model';
+import { getRefundGoods } from '../../api/order';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    ORDER_STATUS: any,
+    items: IOrderGoods[],
+    mode: number,
+    status: ORDER_STATUS
 }
 @WxJson({
     navigationBarTitleText: "申请售后",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"
 })
-export class Index extends WxPage<IPageData> {
-    public ORDER_STATUS = ORDER_STATUS;
-    items: IOrderGoods[] = [];
-    mode: number = 0;
-    status: ORDER_STATUS = ORDER_STATUS.PAID_UN_SHIP;
+export class Create extends WxPage<IPageData> {
 
-    created() {
-        getRefundGoods(this.$route.query).then(res => {
+    public data: IPageData = {
+        ORDER_STATUS: ORDER_STATUS,
+        items: [],
+        mode: 0,
+        status: ORDER_STATUS.PAID_UN_SHIP
+    }
+
+    onLoad(query?: any) {
+        getRefundGoods(query).then(res => {
             if (!res.data || res.data.length < 1) {
-                this.$router.push('/');
+                wx.navigateTo({
+                    url: '/pages/index/index'
+                });
                 return;
             }
-            this.items = res.data;
-            this.status = res.data[0].status as ORDER_STATUS;
-            if (this.status == ORDER_STATUS.RECEIVED || this.status == ORDER_STATUS.FINISH) {
-                this.mode = 2;
+            this.setData({
+                items: res.data,
+                status: res.data[0].status,
+            })
+            if (this.data.status == ORDER_STATUS.RECEIVED || this.data.status == ORDER_STATUS.FINISH) {
+                this.setData({
+                    mode: 2
+                });
             }
         });
     }

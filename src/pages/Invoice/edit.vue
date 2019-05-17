@@ -1,8 +1,7 @@
 <template>
     <div>
-        <BackHeader title="编辑抬头"/>
-        <div class="has-header">
-                         <div class="input-group">
+        <div>
+            <div class="input-group">
                  <label for="发票抬头">发票抬头</label>
                  <div class="">
                      <input type="text" id="发票抬头" class="form-control " name="发票抬头" placeholder="请输入 发票抬头" required="">

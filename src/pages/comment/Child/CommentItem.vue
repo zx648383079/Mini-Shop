@@ -27,37 +27,64 @@
     </form>
 </template>
 <script lang="ts">
-export class BackHeader extends WxComponent<any>  {
-    @Prop(Object) readonly item!: IOrderGoods;
+import { IOrderGoods, IComment } from "../../../api/model";
+import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { commentGoods } from "../../../api/order";
 
-    comment: IComment = {
-        title: '',
-        content: '',
-        rank: 10,
-        images: [],
+interface IComponentData {
+    item?: IOrderGoods[],
+    comment: IComment
+}
+
+@WxJson({
+    component: true,
+    usingComponents: {
+        Star: 'Star'
+    }
+})
+export class CommentItem extends WxComponent<IComponentData>  {
+    public options = {
+        addGlobalClass: true,
     };
 
-    tapRemove(i: number) {
-        if (!this.comment || !this.comment.images) {
-            return;
-        }
-        this.comment.images.splice(i, 1);
+    public properties = {
+        item: Object,
     }
 
+    public data: IComponentData = {
+        comment: {
+            title: '',
+            content: '',
+            rank: 10,
+            images: [],
+        }
+    }
+
+    @WxMethod()
+    tapRemove(i: number) {
+        if (!this.data.comment || !this.data.comment.images) {
+            return;
+        }
+        this.data.comment.images.splice(i, 1);
+    }
+
+    @WxMethod()
     tapSave() {
         const comment = {
-            title: this.item.name,
-            content: this.comment.content,
-            rank: this.comment.rank,
-            images: this.comment.images,
-            goods: this.item.id,
+            title: this.data.item.name,
+            content: this.data.comment.content,
+            rank: this.data.comment.rank,
+            images: this.data.comment.images,
+            goods: this.data.item.id,
         };
         if (!comment.content || comment.content.length < 10) {
-            Toast('评论内容必须大于10个字符');
+            wx.showToast({
+                title: '评论内容必须大于10个字符'
+            });
             return;
         }
         commentGoods(comment).then(() => {
-            this.$emit('commented');
+            this.triggerEvent('commented');
         });
     }
 }
