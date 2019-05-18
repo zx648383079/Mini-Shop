@@ -13,7 +13,7 @@
                     <span>{{user.name}}</span>
                     <i class="fa fa-chevron-right"></i>
                 </div>
-                <div class="line-item">
+                <div class="line-item" @click="tapSex">
                     <span>性别</span>
                     <span>{{user.sex}}</span>
                     <i class="fa fa-chevron-right"></i>
@@ -38,12 +38,20 @@
                     我的收货地址
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
-                <a class="item" href="/pages/address/index">
+                <a class="item" href="password">
                     修改密码
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
-                <a class="item" href="/pages/address/index">
+                <a class="item" href="certification">
                     实名认证
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+                <a class="item" href="driver">
+                    登陆设备管理
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+                <a class="item" href="cancel">
+                    账户注销
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
                 
@@ -98,6 +106,19 @@ export class Profile extends WxPage<IPageData> {
         this.setData({
             user
         });
+    }
+
+    /**
+     * tapSex
+     */
+    public tapSex() {
+        wx.showActionSheet({
+            itemList: ['男', '女', '未知'],
+            success: res => {
+                console.log(res.tapIndex);
+                
+            }
+        })
     }
 
     public tapLogout() {

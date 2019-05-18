@@ -46,8 +46,8 @@
 				{
 					"id": 0,
 					"name": "test",
-					"pathName": "pages/index/index",
-					"query": "",
+					"pathName": "pages/comment/create",
+					"query": "goods=5",
 					"scene": null
 				}
 			]

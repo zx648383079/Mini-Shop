@@ -3,7 +3,7 @@
 
 [Vue-Shop](https://github.com/zx648383079/Vue-Shop)小程序版
 
-## 已完成转化页面
+## 所有页面已转化完成
 
 [√] 首页
 

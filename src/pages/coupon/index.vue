@@ -1,16 +1,16 @@
 <template>
     <div>
-        <div class="has-header has-footer">
+        <div class="has-footer">
             <div :class="['scroll-nav', isExpand ? 'unfold' : '']">
-                <ul>
-                    <li v-for="(item, index) in categories" :key="index">
-                            <a href="">{{ item.name }}</a>
+                <ul class="box">
+                    <li v-for="(item, index) in categories" :key="index" class="item {{category == item.id ? 'active' : ''}}">
+                        <span>{{ item.name }}</span>
                     </li>
                 </ul>
                 <a @click="isExpand = !isExpand" class="fa nav-arrow"></a>
             </div>
 
-            <PullToRefresh :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
+            <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
                 <div class="coupon-item" v-for="(item, index) in items" :key="index">
                     <div class="thumb">
                         <img :src="item.thumb" alt="">
@@ -31,7 +31,7 @@
                         <i>剩余76%</i>
                     </div>
                 </div>
-            </PullToRefresh>
+            </div>
         </div>
 
         <footer class="tab-bar">
@@ -39,7 +39,7 @@
                 <i class="fa fa-gift" aria-hidden="true"></i>
                 领券
             </a>
-            <a @click="$router.push('/coupon/my')">
+            <a href="my">
                 <i class="fa fa-user" aria-hidden="true"></i>
                 我的优惠券
             </a>
@@ -51,28 +51,49 @@ import {
     IMyApp
 } from '../../app';
 import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { ICategory } from '../../api/model';
 const app = getApp<IMyApp>();
 
 interface IPageData {
+    categories: ICategory[],
+    status: number,
+    items: any[],
+    isExpand: boolean,
+    has_more: boolean,
+    page: number,
+    isLoading: boolean
 }
 @WxJson({
-    navigationBarTitleText: "售后",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "领券",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
+    enablePullDownRefresh: true,
+    onReachBottomDistance: 10,
 })
 export class Index extends WxPage<IPageData> {
-    public categories: ICategory[] = [];
-    public status: number = 0;
-    public items = [];
-    public isExpand: boolean = false;
-    public has_more = true;
-    public page = 1;
-    public isLoading = false;
+    public data: IPageData = {
+        categories: [],
+        status: 0,
+        items: [],
+        isExpand: false,
+        has_more: true,
+        page: 1,
+        isLoading: false
+    }
 
-    public created() {
-        dispatchCategories().then(res => {
-            this.categories = res;
+    public onLoad() {
+        app.getCategories().then(res => {
+            this.setData({
+                categories: res
+            });
         });
+    }
+    onPullDownRefresh() {
+        this.tapRefresh();
+    }
+
+    onReachBottom() {
+        this.tapMore();
     }
 
     public tapRefresh() {
@@ -80,27 +101,20 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapMore() {
-        if (!this.has_more) {
+        if (!this.data.has_more) {
             return;
         }  
-        this.goPage(this.page + 1);
+        this.goPage(this.data.page + 1);
     }
 
     public goPage(page: number) {
-        if (this.isLoading) {
+        if (this.data.isLoading) {
             return;
         }
-        this.isLoading = true;
-        setTimeout(() => {
-            this.page = page;
-            this.isLoading = false;
-            const data = [1,2,3,4,5,6,7];
-            if (this.page < 2) {
-                this.items = data as never[];
-                return;
-            }
-            this.items = [].concat(this.items as never[], data as never[]);
-        }, 2000);
+        this.setData({
+            isLoading: true
+        });
+
     }
 
 }

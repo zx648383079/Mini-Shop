@@ -1,22 +1,24 @@
 <template>
     <div>
-        <div class="has-header collect-page">
-            <PullToRefresh :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
+        <div class="collect-page">
+            <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
                 <div class="swipe-box goods-list">
-                    <SwipeRow name="goods-item" v-for="(item, index) in filterItems" :key="index" @remove="tapRemove(item, index)" :index="index" ref="swiperow">
-                        <div class="goods-img">
-                            <img :src="item.goods.thumb" alt="">
-                        </div>
-                        <div class="goods-info">
-                            <h4>{{item.goods.name}}</h4>
-                            <span>{{ item.goods.price }}</span>
+                    <SwipeRow name="goods-item" v-for="(item, index) in filterItems" :key="index" @remove="tapRemove(item, index)" :index="index">
+                        <div slot="content">
+                            <div class="goods-img">
+                                <img :src="item.goods.thumb" alt="">
+                            </div>
+                            <div class="goods-info">
+                                <h4>{{item.goods.name}}</h4>
+                                <span>{{ item.goods.price }}</span>
+                            </div>
                         </div>
                     </SwipeRow>
                 </div>
                 <div class="order-empty" v-if="!filterItems || filterItems.length < 1">
                     您还没有收藏商品
                 </div>
-            </PullToRefresh>
+            </div>
         </div>
     </div>
 </template>
@@ -25,6 +27,7 @@ import {
     IMyApp
 } from '../../app';
 import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { removeCollect } from '../../api/user';
 const app = getApp<IMyApp>();
 
 interface IPageData {
@@ -48,7 +51,7 @@ export class Index extends WxPage<IPageData> {
         });
     }
 
-    public created() {
+    public onLoad() {
         this.tapRefresh();
     }
 

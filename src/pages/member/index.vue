@@ -59,7 +59,7 @@
                     <span class="menu-item-icon">0
                     </span>
                     红包
-                </a><a @click="$router.push('/coupon/my')" class="item">
+                </a><a href="/pages/coupon/my" class="item">
                     <span class="menu-item-icon">0
                     </span>
                     优惠券

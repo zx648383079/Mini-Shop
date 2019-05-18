@@ -21,7 +21,7 @@
         </div>
         <div class="input-radio">
             <span>匿名评价</span>
-            <i class="fa toggle-box"></i>
+            <switch checked/>
         </div>
         <button type="button" @click="tapSave" class="btn">提交评价</button>
     </form>

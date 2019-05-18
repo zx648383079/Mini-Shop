@@ -1,7 +1,6 @@
 <template>
     <div>
-        <BackHeader :title="$route.meta.title"/>
-        <div class="has-header has-footer">
+        <div class="has-footer">
             <div class="tab-header">
                 <div class="tab-item active">未使用</div>
                 <div class="tab-item">使用记录</div>
@@ -26,7 +25,7 @@
         </div>
 
         <footer class="tab-bar">
-            <a @click="$router.push('/coupon')">
+            <a href="index">
                 <i class="fa fa-gift" aria-hidden="true"></i>
                 领券
             </a>
@@ -47,9 +46,9 @@ const app = getApp<IMyApp>();
 interface IPageData {
 }
 @WxJson({
-    navigationBarTitleText: "售后",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTitleText: "我的优惠券",
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
 })
 export class My extends WxPage<IPageData> {
 

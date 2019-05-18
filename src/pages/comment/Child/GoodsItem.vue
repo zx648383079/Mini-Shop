@@ -5,7 +5,7 @@
         </div>
         <div class="goods-info">
             <h4>{{ item.name }}</h4>
-            <a v-if="item.comment_id < 1" @click="tapComment" class="comment-btn">评价</a>
+            <span v-if="item.comment_id < 1" @click="tapComment" class="comment-btn">评价</span>
         </div>
     </div>
 </template>

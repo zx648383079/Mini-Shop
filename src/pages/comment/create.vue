@@ -20,8 +20,8 @@ interface IPageData {
         CommentItem: 'Child/CommentItem'  
     },
     navigationBarTitleText: "评价晒单",
-    navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarBackgroundColor: "#05a6b1",
+    navigationBarTextStyle: "white",
 })
 export class Create extends WxPage<IPageData> {
     items: IOrderGoods[] = [];
@@ -34,7 +34,9 @@ export class Create extends WxPage<IPageData> {
                 });
                 return;
             }
-            this.items = res.data;
+            this.setData({
+                items: res.data
+            });
         });
     }
 
@@ -45,7 +47,11 @@ export class Create extends WxPage<IPageData> {
             });
             return;
         }
-        this.items.splice(i, 1);
+        let items = this.data.items;
+        items.splice(i, 1);
+        this.setData({
+            items
+        });
     }
 }
 </script>

@@ -1,15 +1,13 @@
 <template>
     <div>
-        <div class="has-header">
-            <div class="tab-bar order-header">
-                <a v-for="(item, index) in status_list" :key="index" @click="tapStatus" data-status="{{item.status}}" :class="status == item.status ? 'active' : ''">{{ item.name }}</a>
-            </div>
+        <div class="tab-bar order-header">
+            <a v-for="(item, index) in status_list" :key="index" @click="tapStatus" data-status="{{item.status}}" :class="status == item.status ? 'active' : ''">{{ item.name }}</a>
+        </div>
 
-            <div class="comment-list-box">
-                <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
-                    <div class="goods-list">
-                        <GoodsItem v-for="(item, index) in items" :key="index" :item="item" @comment="tapComment"/>
-                    </div>
+        <div class="comment-list-box">
+            <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
+                <div class="goods-list">
+                    <GoodsItem v-for="(item, index) in items" :key="index" :item="item" @comment="tapComment"/>
                 </div>
             </div>
         </div>
@@ -19,7 +17,7 @@
 import {
     IMyApp
 } from '../../app';
-import { WxJson, WxPage, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage, TouchEvent, CustomEvent } from '../../../typings/wx/lib.wx.page';
 import { IOrderGoods } from '../../api/model';
 import { getCommentGoods } from '../../api/order';
 const app = getApp<IMyApp>();
@@ -131,9 +129,11 @@ export class Index extends WxPage<IPageData> {
         this.tapRefresh();
     }
 
-    public tapComment(item:IOrderGoods) {
+    public tapComment(item: CustomEvent) {
+        console.log(item);
+        
         wx.navigateTo({
-            url: 'create?goods=' +item.id 
+            url: 'create?goods=' + item.detail.id 
         });
     }
 }
