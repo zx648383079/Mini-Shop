@@ -6,7 +6,7 @@
 
         <div class="order-box">
             <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
-                <OrderItem v-for="(item, index) in items" :key="index" item="{{item}}" @receive="tapReceive(item)" @cancel="tapCancel(item)"/>
+                <OrderItem v-for="(item, index) in items" :key="index" item="{{item}}" @receive="tapReceive" @cancel="tapCancel"/>
                 <div class="order-empty" v-if="!items || items.length < 1">
                     您还没有订单
                 </div>
