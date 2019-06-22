@@ -1,0 +1,79 @@
+<template>
+    <div>
+        <div class="store-page">
+            <header class="store-header">
+                <div class="search-back-box">
+                    <a class="back" href="javascript:history.back(-1);">
+                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                    </a>
+                    <a class="search-entry" href="<?=$this->url('./mobile/search')?>">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        <span>搜索本店商品</span>
+                    </a>
+                </div>
+                <div class="store-info">
+                    <div class="logo">
+                        <img src="/assets/images/avatar/1.png" alt="">
+                    </div>
+                    <div class="info">
+                        <div class="name">12345545</div>
+                        <p>233万人收藏</p>
+                    </div>
+                    <div class="action">
+                        <a href="">
+                            <i class="fa fa-star"></i>    
+                            收藏
+                        </a>
+                    </div>
+                </div>
+                <div class="tab-bar">
+                    <a href="" class="active">首页</a>
+                    <a href="">全部商品</a>
+                    <a href="">促销</a>
+                    <a href="">动态</a>
+                </div>
+            </header>
+
+            <div class="store-body">
+
+                <div class="goods-list">
+                    <div class="item-view" v-for="(item, index) in items" :key="index">
+                        <div class="item-img">
+                            <a ><img :src="item.thumb" alt=""></a>
+                        </div>
+                        <div class="item-title">
+                            {{item.name}}
+                        </div>
+                        <div class="item-actions">
+                            <span class="item-price">{{item.price}}</span>
+                            <span>加入购物车</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</template>
+<script lang="ts">
+import {
+    IMyApp
+} from '../../app';
+import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+const app = getApp<IMyApp>();
+
+interface IPageData {
+    items: any[]
+}
+@WxJson({
+    navigationBarTitleText: "店铺",
+    navigationBarBackgroundColor: "#f4f4f4",
+    navigationBarTextStyle: "black"
+})
+export class Index extends WxPage<IPageData> {
+    
+}
+</script>
+<style lang="scss" scoped>
+
+</style>
