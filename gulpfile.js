@@ -3,7 +3,7 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     ts = require("gulp-typescript"),
     clean = require('gulp-clean'),
-    template = require('./gulp-tempate'),
+    template = require('gulp-vue2mini'),
     tsProject = ts.createProject('tsconfig.json'),
     tsInstance = undefined,
     sassInstance = undefined;
@@ -44,16 +44,6 @@ function debug(info) {
 gulp.task('cleanall', function() {
     return gulp.src('dist/*', {read: false})
         .pipe(clean());
-});
-gulp.task('cleanparser', function() {
-    return gulp.src('dist/parser.js')
-        .pipe(clean());
-});
-
-gulp.task('initparser', async() => {
-    await gulp.src('src/parser.ts')
-        .pipe(getTs())
-        .pipe(gulp.dest('dist/'));
 });
 
 gulp.task('ts', async() => {
@@ -117,10 +107,10 @@ gulp.task('vue', gulp.series('vuejs', 'vuets', 'vuecss', 'vuesass', 'vuejson', a
 }));
 
 gulp.task('test', async() => {
-    await gulp.src('src/pages/article/Child/ArticleItem.vue')
-    .pipe(template('tpl'))
-    .pipe(rename({extname: '.wxml'}))
-    .pipe(gulp.dest('dist/'));
+    // await gulp.src('src/pages/article/Child/ArticleItem.vue')
+    // .pipe(template('tpl'))
+    // .pipe(rename({extname: '.wxml'}))
+    // .pipe(gulp.dest('dist/'));
 });
 
 gulp.task('md5', async() => {

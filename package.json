@@ -2,9 +2,9 @@
   "name": "demo",
   "version": "1.0.1",
   "scripts": {
-    "start": "gulp initparser && gulp && gulp vue",
-    "watch": "gulp initparser && gulp && gulp vue && gulp watch",
-    "build": "gulp initparser && gulp cleanall && gulp && gulp vue && gulp cleanparser"
+    "start": "gulp && gulp vue",
+    "watch": "gulp && gulp vue && gulp watch",
+    "build": "gulp cleanall && gulp && gulp vue"
   },
   "devDependencies": {
     "@types/node": "^12.0.4",
@@ -14,6 +14,7 @@
     "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-typescript": "^5.0.1",
+    "gulp-vue2mini": "^1.0.0",
     "node-sass": "^4.12.0",
     "typescript": "^3.5.1"
   },
