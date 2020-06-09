@@ -60,8 +60,8 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../app';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+} from '../../app.vue';
+import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
 import { IOrder, ORDER_STATUS } from '../../api/model';
 import { receiveOrder, cancelOrder } from '../../api/order';
 const app = getApp<IMyApp>();

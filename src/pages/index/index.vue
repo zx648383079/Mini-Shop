@@ -97,11 +97,11 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../app';
+} from '../../app.vue';
 import { IAd, ICategory, IProduct, ISubtotal, IHomeProduct } from '../../api/model';
 import { getHome, getInfo } from '../../api/product';
 import { getBanners } from '../../api/ad';
-import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 
 const app = getApp<IMyApp>();
 

@@ -31,11 +31,7 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
-const app = getApp<IMyApp>();
+import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
 
 interface IPageData {
     items: any[]

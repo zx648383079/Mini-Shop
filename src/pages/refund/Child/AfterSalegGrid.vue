@@ -62,9 +62,9 @@
     </div>
 </template>
 <script lang="ts">
-import { WxComponent, WxJson, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { WxComponent, WxJson, WxMethod } from "../../../../typings/wx/lib.vue";
 import { IAddress } from "../../../api/model";
-import { IMyApp } from "../../../app";
+import { IMyApp } from "../../../app.vue";
 const app = getApp<IMyApp>();
 
 interface IComponentData {

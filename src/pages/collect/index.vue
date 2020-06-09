@@ -23,12 +23,9 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
-import { removeCollect } from '../../api/user';
-const app = getApp<IMyApp>();
+import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
+import { removeCollect, getCollect } from '../../api/user';
+import { ICollect } from '../../api/model';
 
 interface IPageData {
 }

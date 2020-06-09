@@ -28,7 +28,7 @@
 </template>
 <script lang="ts">
 import { IOrderGoods, IComment } from "../../../api/model";
-import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
 import { commentGoods } from "../../../api/order";
 
 interface IComponentData {
@@ -70,6 +70,9 @@ export class CommentItem extends WxComponent<IComponentData>  {
 
     @WxMethod()
     tapSave() {
+        if (!this.data.item) {
+            return;
+        }
         const comment = {
             title: this.data.item.name,
             content: this.data.comment.content,

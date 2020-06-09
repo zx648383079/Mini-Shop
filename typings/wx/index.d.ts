@@ -12,17 +12,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /// <reference path="./lib.wx.page.d.ts" />
 /// <reference path="./lib.wx.api.d.ts" />
 /// <reference path="./lib.wx.cloud.d.ts" />
+/// <reference path="./lib.wx.component.d.ts" />
+/// <reference path="./lib.wx.behavior.d.ts" />
+/// <reference path="./lib.vue.d.ts" />
 
-declare type IAnyObject = Record<string, any>
-
-declare type KVInfer<T> = {
-  [K in keyof T]: T[K]
-}
-
-declare type Void<T> = T | undefined | null
-
-type PartialOptional<T, K extends keyof T> = Partial<Pick<T, K>> & Pick<T, Exclude<keyof T, K>>
-
-type Optional<T> = {
-  [K in keyof T]+?: T[K]
+declare namespace WechatMiniprogram {
+  type IAnyObject = Record<string, any>
+  type Optional<F> = F extends (arg: infer P) => infer R ? (arg?: P) => R : F
+  type OptionalInterface<T> = { [K in keyof T]: Optional<T[K]> }
 }

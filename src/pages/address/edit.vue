@@ -37,8 +37,8 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../app';
-import { WxJson, WxPage, CustomEvent } from '../../../typings/wx/lib.wx.page';
+} from '../../app.vue';
+import { WxJson, WxPage, CustomEvent } from '../../../typings/wx/lib.vue';
 import { IAddress } from '../../api/model';
 import { getAddress, updateAddress, createAddress, deleteAddress } from '../../api/address';
 const app = getApp<IMyApp>();

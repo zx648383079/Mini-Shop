@@ -24,7 +24,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
 import { ICheckIn } from '../../api/model';
 import { getCanCheckIn, getMonth, checkIn } from '../../api/check';
 import { twoPad } from '../../utils/util';
@@ -124,7 +124,7 @@ export class Index extends WxPage<IPageData> {
         }
         let day_list = this.data.day_list;
         for (let i = 0; i < day_list.length; i++) {
-            if (day_list[i].day && days.indexOf(day_list[i].day) >= 0) {
+            if (day_list[i].day && days.indexOf(day_list[i].day as number) >= 0) {
                 day_list[i].active = true;
                 len --;
             }

@@ -48,8 +48,8 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../app';
-import { WxPage, WxJson, CustomEvent } from '../../../typings/wx/lib.wx.page';
+} from '../../app.vue';
+import { WxPage, WxJson, CustomEvent } from '../../../typings/wx/lib.vue';
 import { IAddress, ICart, IOrder, IPayment, IShipping, ICartItem } from '../../api/model';
 import { getPaymentList, getShippingList, previewOrder, checkoutOrder } from '../../api/cart';
 const app = getApp<IMyApp>();

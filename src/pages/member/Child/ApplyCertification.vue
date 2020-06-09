@@ -31,7 +31,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxComponent, WxJson, WxMethod, TouchEvent } from "../../../../typings/wx/lib.wx.page";
+import { WxComponent, WxJson, WxMethod, TouchEvent } from "../../../../typings/wx/lib.vue";
 
 interface IComponentData {
     step: number

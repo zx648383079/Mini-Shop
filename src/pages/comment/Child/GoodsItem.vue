@@ -10,7 +10,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
 import { IOrderGoods } from "../../../api/model";
 
 interface IComponentData {

@@ -1,7 +1,11 @@
 import { Md5 } from 'ts-md5';
 
-export const apiEndpoint = 'http://zodream.localhost/open/';
-export const assetUri = 'http://zodream.localhost';
+const IS_DEV = !1;
+
+const BASIC_HOST = IS_DEV ? 'http://zodream.localhost' : 'https://zodream.cn';
+
+export const apiEndpoint = BASIC_HOST + '/open/';
+export const assetUri = BASIC_HOST;
 export const appId = '11543906547';
 export const secret = '012e936d3d3653b40c6fc5a32e4ea685';
 
@@ -39,6 +43,22 @@ export function getCurrentTime() {
 export function twoPad(n: number): string {
   const str = n.toString()
   return str[1] ? str : '0' + str
+}
+
+export function formatHour(time: number, format?: string, isSecond = false): string {
+    if (isNaN(time)) {
+        time = 0;
+    }
+    if (!isSecond) {
+        time = Math.floor(time / 1000);
+    }
+    let s = time % 60,
+        m = format && format.indexOf('h') < 0 ? Math.floor(time / 60) : (Math.floor(time / 60) % 60),
+        h = Math.floor(time / 3600);
+    if (!format) {
+        return (h !== 0 ? twoPad(h) + ':' : '') + twoPad(m) + ':' + twoPad(s);
+    }
+    return format.replace(/h+/, twoPad(h)).replace(/i+/, twoPad(m)).replace(/s+/, twoPad(s));
 }
 
 export function each(data: any, cb: (val: any, key: string | number) => boolean| void) {

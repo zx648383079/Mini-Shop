@@ -141,8 +141,8 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+} from '../../app.vue';
+import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
 import { IProduct, ICommentSubtotal, SET_GOODS_HISTORY } from '../../api/model';
 import { getInfo, getRecommend } from '../../api/product';
 import { getCommentSubtotal } from '../../api/comment';

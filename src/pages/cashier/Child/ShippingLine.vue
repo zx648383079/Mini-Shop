@@ -13,7 +13,7 @@
     </DialogPanel>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent, TouchEvent, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { WxJson, WxComponent, TouchEvent, WxMethod } from "../../../../typings/wx/lib.vue";
 import { IShipping } from "../../../api/model";
 
 interface IComponentData {

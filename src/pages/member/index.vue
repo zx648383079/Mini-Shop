@@ -80,10 +80,10 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../app';
+} from '../../app.vue';
 import { IUser, ORDER_STATUS, IOrderCount } from '../../api/model';
 import { getOrderSubtotal } from '../../api/order';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
 
 const app = getApp<IMyApp>();
 

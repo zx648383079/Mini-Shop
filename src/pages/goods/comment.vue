@@ -16,13 +16,9 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
 import { ICommentSubtotal, IComment } from '../../api/model';
 import { getCommentSubtotal, getCommentList } from '../../api/comment';
-const app = getApp<IMyApp>();
 
 interface IPageData {
     comment: ICommentSubtotal | null,

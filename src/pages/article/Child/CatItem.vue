@@ -7,7 +7,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent, TouchEvent, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { WxJson, WxComponent, TouchEvent, WxMethod } from "../../../../typings/wx/lib.vue";
 import { IArticleCategory } from "../../../api/model";
 
 interface IComponentData {

@@ -27,7 +27,7 @@
 <script lang="ts">
 import { ICard } from '../../api/model';
 import { getBankCardList } from '../../api/user';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
 
 interface IPageData {
     items: ICard[],
@@ -64,7 +64,7 @@ export class Card extends WxPage<IPageData> {
     }
 
     public tapMore() {
-        this.goPage( ++ this.page);
+        this.goPage(this.data.page + 1);
     }
 
     /**

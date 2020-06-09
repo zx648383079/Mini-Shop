@@ -22,13 +22,9 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
 import { IProduct, SET_GOODS_HISTORY } from '../../api/model';
 import { getList } from '../../api/product';
-const app = getApp<IMyApp>();
 
 interface IPageData {
     goodsId: number[],

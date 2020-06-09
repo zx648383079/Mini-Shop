@@ -18,11 +18,11 @@
     </DialogPanel>
 </template>
 <script lang="ts">
-import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
+import { WxComponent, WxJson } from "../../../../typings/wx/lib.vue";
 
 interface IComponentData {
-    value?: IPayment,
-    items?: IPayment[]
+    value?: any,
+    items?: any[]
 }
 
 @WxJson({

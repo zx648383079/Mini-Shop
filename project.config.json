@@ -5,7 +5,7 @@
 	},
 	"miniprogramRoot": "dist/",
 	"compileType": "miniprogram",
-	"libVersion": "2.4.0",
+	"libVersion": "2.0.4",
 	"projectname": "Mini-Shop",
 	"scripts": {
 		"beforeCompile": "",
@@ -19,7 +19,20 @@
 		"minified": true,
 		"newFeature": true,
 		"nodeModules": true,
-		"autoAudits": false
+		"autoAudits": false,
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		},
+		"useIsolateContext": true,
+		"useCompilerModule": false,
+		"userConfirmedUseCompilerModuleSwitch": false,
+		"compileHotReLoad": false,
+		"scopeDataCheck": false
 	},
 	"appid": "wxfc5287e8354375f4",
 	"simulatorType": "wechat",

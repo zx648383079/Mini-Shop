@@ -24,7 +24,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxComponent, WxJson } from "../../../../typings/wx/lib.wx.page";
+import { WxComponent, WxJson } from "../../../../typings/wx/lib.vue";
 import { IComment } from "../../../api/model";
 
 interface IComponentData {

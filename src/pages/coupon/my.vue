@@ -37,12 +37,8 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxJson, WxPage, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage, TouchEvent } from '../../../typings/wx/lib.vue';
 import { getMyCoupon } from '../../api/coupon';
-const app = getApp<IMyApp>();
 
 interface IPageData {
     statusList: string[],

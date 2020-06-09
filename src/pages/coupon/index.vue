@@ -49,8 +49,8 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../app';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+} from '../../app.vue';
+import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
 import { ICategory } from '../../api/model';
 const app = getApp<IMyApp>();
 

@@ -23,9 +23,7 @@
       "./typings",
       "./node_modules/@types"
     ],
-    "lib": [
-      "es2015",
-    ]
+    "lib": ["es5"],
   },
   "include": [
     "src/**/*.ts"

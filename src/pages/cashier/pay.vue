@@ -44,8 +44,8 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../app';
-import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.wx.page';
+} from '../../app.vue';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 import { IOrder, IPayment, ORDER_STATUS, IPrePay } from '../../api/model';
 import { getPaymentList } from '../../api/cart';
 import { payOrder } from '../../api/order';

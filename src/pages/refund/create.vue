@@ -33,13 +33,9 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
 import { IOrderGoods, ORDER_STATUS } from '../../api/model';
 import { getRefundGoods } from '../../api/order';
-const app = getApp<IMyApp>();
 
 interface IPageData {
     ORDER_STATUS: any,

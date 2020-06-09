@@ -40,12 +40,8 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxPage, WxJson, InputEvent, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, InputEvent, TouchEvent } from '../../../typings/wx/lib.vue';
 import { getHotKeywords, getTips } from '../../api/product';
-const app = getApp<IMyApp>();
 
 interface IPageData {
     keywords: string,

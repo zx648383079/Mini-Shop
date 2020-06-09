@@ -50,12 +50,10 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
+import { IMyApp } from '../../app.vue';
 import { ICategory, ISubtotal } from '../../api/model';
 import { getCategory } from '../../api/category';
-import { WxPage, WxJson } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 
 const app = getApp<IMyApp>();
 

@@ -34,7 +34,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxComponent, WxJson, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { WxComponent, WxJson, WxMethod } from "../../../../typings/wx/lib.vue";
 import { ORDER_STATUS, IOrder } from "../../../api/model";
 
 interface IComponentData {

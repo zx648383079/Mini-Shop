@@ -13,7 +13,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxPage, WxJson } from "../../../typings/wx/lib.wx.page";
+import { WxPage, WxJson } from "../../../typings/wx/lib.vue";
 
 interface IPageData {
 }

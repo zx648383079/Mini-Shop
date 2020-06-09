@@ -24,8 +24,8 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../../app';
-import { WxMethod, TouchEvent, WxComponent, WxJson } from '../../../../typings/wx/lib.wx.page';
+} from '../../../app.vue';
+import { WxMethod, TouchEvent, WxComponent, WxJson } from '../../../../typings/wx/lib.vue';
 const app = getApp<IMyApp>();
 
 @WxJson({

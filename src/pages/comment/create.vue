@@ -4,13 +4,9 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxJson, WxPage } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
 import { IOrderGoods } from '../../api/model';
 import { getUnCommentGoods } from '../../api/order';
-const app = getApp<IMyApp>();
 
 interface IPageData {
     items: IOrderGoods[]

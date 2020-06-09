@@ -27,7 +27,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent } from "../../../../typings/wx/lib.wx.page";
+import { WxJson, WxComponent } from "../../../../typings/wx/lib.vue";
 
 @WxJson({
     component: true

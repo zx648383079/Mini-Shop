@@ -14,14 +14,9 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxJson, WxPage, TouchEvent, CustomEvent } from '../../../typings/wx/lib.wx.page';
+import { WxJson, WxPage, TouchEvent, CustomEvent } from '../../../typings/wx/lib.vue';
 import { IOrderGoods } from '../../api/model';
 import { getCommentGoods } from '../../api/order';
-const app = getApp<IMyApp>();
-
 interface IPageData {
     status_list: any[],
     items: IOrderGoods[],

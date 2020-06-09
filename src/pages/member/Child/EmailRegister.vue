@@ -19,7 +19,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxComponent, WxJson, TouchEvent } from "../../../../typings/wx/lib.wx.page";
+import { WxComponent, WxJson, TouchEvent } from "../../../../typings/wx/lib.vue";
 
 
 @WxJson({

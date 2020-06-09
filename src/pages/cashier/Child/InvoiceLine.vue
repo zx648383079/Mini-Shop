@@ -46,10 +46,10 @@
     </DialogPanel>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent } from "../../../../typings/wx/lib.wx.page";
+import { WxJson, WxComponent } from "../../../../typings/wx/lib.vue";
 
 interface IComponentData {
-    value?: IPayment,
+    value?: any,
 }
 
 @WxJson({
@@ -58,7 +58,7 @@ interface IComponentData {
     },
     component: true
 })
-export class InvoiceLine extends WxComponent<any>  {
+export class InvoiceLine extends WxComponent<IComponentData>  {
     public options = {
         addGlobalClass: true,
     }

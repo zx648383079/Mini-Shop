@@ -55,10 +55,10 @@
 <script lang="ts">
 import {
     IMyApp
-} from '../../app';
+} from '../../app.vue';
 import { ICart, ICartItem } from '../../api/model';
 import { getCart } from '../../api/cart';
-import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 
 const app = getApp<IMyApp>();
 

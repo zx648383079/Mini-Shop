@@ -32,12 +32,12 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.wx.page";
+import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
 import { IProduct, ICart } from "../../../api/model";
 import { addGoods } from "../../../api/cart";
 import {
     IMyApp
-} from '../../../app';
+} from '../../../app.vue';
 
 interface IComponentData {
     product?: IProduct,

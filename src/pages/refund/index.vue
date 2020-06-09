@@ -23,13 +23,9 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    IMyApp
-} from '../../app';
-import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.wx.page';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 import { IOrderGoods } from '../../api/model';
 import { getRefundGoodsList } from '../../api/order';
-const app = getApp<IMyApp>();
 
 interface IPageData {
     status_list: any[],
