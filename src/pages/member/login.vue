@@ -21,6 +21,7 @@
             <div class="register-box" v-if="mode >= 4">
                 <MobileRegister v-if="mode == 4" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
                 <EmailRegister v-if="mode == 5" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
+                <EmailFind v-if="mode == 6" bind:click="tapChangeMode"/>
             </div>
 
         </div>
@@ -30,7 +31,7 @@
 import {
     IMyApp
 } from '../../app.vue';
-import { WxJson, WxPage, TouchEvent, getCurrentPages } from '../../../typings/wx/lib.vue';
+import { WxJson, WxPage, TouchEvent } from '../../../typings/wx/lib.vue';
 const app = getApp<IMyApp>();
 
 interface IPageData {
@@ -42,7 +43,8 @@ interface IPageData {
         "EmailRegister": "/pages/member/Child/EmailRegister",
         "MobileCodeLogin": "/pages/member/Child/MobileCodeLogin",
         "MobileLogin": "/pages/member/Child/MobileLogin",
-        "MobileRegister": "/pages/member/Child/MobileRegister"
+        "MobileRegister": "/pages/member/Child/MobileRegister",
+        "EmailFind": "/pages/member/Child/EmailFind",
     },
     navigationBarTitleText: "登录",
     navigationBarBackgroundColor: "#05a6b1",

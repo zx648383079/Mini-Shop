@@ -42,15 +42,15 @@
                     修改密码
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
-                <a class="item" href="certification">
+                <a class="item" href="/pages/account/certification">
                     实名认证
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
-                <a class="item" href="driver">
+                <a class="item" href="/pages/account/driver">
                     登陆设备管理
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
-                <a class="item" href="cancel">
+                <a class="item" href="/pages/account/cancel">
                     账户注销
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>

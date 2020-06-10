@@ -45,7 +45,7 @@ interface IPageData {
     title: string
 }
 @WxJson({
-    navigationBarTitleText: "签到",
+    navigationBarTitleText: "",
     navigationBarBackgroundColor: "#05a6b1",
     navigationBarTextStyle: "white"
 })
@@ -200,7 +200,7 @@ export class Index extends WxPage<IPageData> {
                     &:before {
                         font-family: "iconfont" !important;
                         font-weight: 900;
-                        content: "\ef65";
+                        content: "\e8da";
                         color: rgba(255, 255, 255, .3);
                         font-size: 30px;
                         position: absolute;

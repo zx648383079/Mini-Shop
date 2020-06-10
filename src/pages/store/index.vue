@@ -35,7 +35,7 @@
             </header>
 
             <div class="store-body">
-
+                
                 <div class="goods-list">
                     <div class="item-view" v-for="(item, index) in items" :key="index">
                         <div class="item-img">

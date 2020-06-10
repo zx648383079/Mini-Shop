@@ -1,16 +1,40 @@
 <template>
     <div>
-        <div class="scroll-nav {{isExpand ? 'unfold' : ''}}">
-            <ul class="box">
-                <li v-for="(item, index) in categories" :key="index" class="item {{category == item.id ? 'active' : ''}}">
-                        <span>{{ item.name }}</span>
+        <div :class="['scroll-nav', isExpand ? 'unfold' : '']">
+            <ul class="nav-ul">
+                <li class="nav-li" :class="{active: category == 0}" @click="tapCat(0)">
+                        <text>全部</text>
+                </li>
+                <li  class="nav-li" v-for="(item, index) in categories" :key="index" :class="{active: category == item.id}" @click="tapCat(item.id)">
+                        <text>{{ item.name }}</text>
                 </li>
             </ul>
-            <span @click="tapExpand" class="fa nav-arrow"></span>
+            <span @click="isExpand = !isExpand" class="fa nav-arrow"></span>
         </div>
-        <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
-            <ArticleItem :items="items"/>
+
+        <div class="box">
+            <block v-for="(item, index) in items" :key="index">
+                <dl class="article-item" @click="tapArticle(item.id)">
+                    <dt class="item-dt">{{ item.title }}
+                        <span class="book-time">{{ item.crated_at }}</span></dt>
+                    <dd class="item-dd">
+                        <p class="item-p">{{ item.description }}</p>
+                        <div class="tags">
+                            <span class="author" v-if="item.user"><i class="fa fa-pencil"></i><b>{{ item.user.name }}</b></span>
+                            <span class="category" v-if="item.term"><i class="fa fa-tag"></i><b>{{ item.term.name }}</b></span>
+                            <span class="comment"><i class="fa fa-comments"></i><b>{{ item.comment_count }}</b></span>
+                            <span class="agree"><i class="fa fa-thumbs-o-up"></i><b>{{ item.recommend }}</b></span>
+                            <span class="click"><i class="fa fa-eye"></i><b>{{ item.click_count }}</b></span>
+                        </div>
+                    </dd>
+                </dl>
+            </block>
+            <div class="empty-box" v-if="items.length < 1">
+                没有文章哦
+            </div>
         </div>
+
+        <SearchBar @search="tapSearch"/>
     </div>
 </template>
 <script lang="ts">
@@ -21,84 +45,53 @@ import { getCategories, getArticleList } from '../../api/article';
 interface IPageData {
     categories: IArticleCategory[],
     category: number,
-    status: number,
+    keywords: string,
     items: IArticle[],
-    isExpand: boolean,
-    has_more: boolean,
     page: number,
-    isLoading: boolean
+    hasMore: boolean,
+    isLoading: boolean,
 }
 @WxJson({
     usingComponents: {
-        ArticleItem: 'Child/ArticleItem'
+        SearchBar: '/pages/article/Child/SearchBar'
     },
-    navigationBarTitleText: "文章分类",
+    navigationBarTitleText: "文章列表",
     navigationBarBackgroundColor: "#05a6b1",
     navigationBarTextStyle: "white",
-    enablePullDownRefresh: true,
-    onReachBottomDistance: 10,
+    enablePullDownRefresh: true
 })
 export class Index extends WxPage<IPageData> {
-
     public data: IPageData = {
         categories: [],
         category: 0,
-        status: 0,
+        keywords: '',
         items: [],
-        isExpand: false,
-        has_more: true,
         page: 1,
-        isLoading: false
-    }
+        hasMore: true,
+        isLoading: false,
+    };
 
-    public onLoad(option: any) {
-        if (option.category) {
+    onLoad(option: any) {
+        if (option && option.category) {
             this.setData({
-                category: parseInt(option.category + '')
+                category: option.category 
             });
         }
         getCategories().then(res => {
-            if (!res.data) {
-                return;
-            }
             this.setData({
                 categories: res.data
-            })
-            if (!this.data.category || this.data.category < 1) {
-                this.tapCategory(res.data[0]);
-            }
+            });
         });
-        if (this.data.category && this.data.category > 0) {
-            this.tapRefresh();
-        }
-    }
-
-    /**
-     * tapExpand
-     */
-    public tapExpand() {
-        this.setData({
-            isExpand: !this.data.isExpand
-        });
+        this.tapRefresh();
     }
 
     onPullDownRefresh() {
         this.tapRefresh();
+        wx.stopPullDownRefresh();
     }
 
     onReachBottom() {
         this.tapMore();
-    }
-
-    /**
-     * tapCategory
-     */
-    public tapCategory(item: IArticleCategory) {
-        this.setData({
-            category: item.id,
-            isExpand: false
-        });
-        this.tapRefresh();
     }
 
     public tapRefresh() {
@@ -106,7 +99,7 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapMore() {
-        if (!this.data.has_more) {
+        if (!this.data.hasMore) {
             return;
         }  
         this.goPage(this.data.page + 1);
@@ -121,24 +114,146 @@ export class Index extends WxPage<IPageData> {
         });
         getArticleList({
             category: this.data.category,
+            keywords: this.data.keywords,
             page: page,
         }).then(res => {
-            let items = [];
-            if (page < 2) {
-                items = res.data as never[];
-            } else {
-                items = [].concat(this.data.items as never[], res.data as never[]);
-            }
             this.setData({
-                has_more: res.paging.more,
+                page: page,
+                hasMore: res.paging.more,
                 isLoading: false,
-                page,
-                items
+                items: page < 2 ? res.data :  [].concat(this.data.items as never[], res.data as never[])
             });
+        }, () => {
+            this.setData({
+                isLoading: false
+            });
+        });
+    }
+
+    /**
+     * tapSearch
+     */
+    public tapSearch(e: any) {
+        this.setData({
+            keywords: e.detail
+        });
+        this.tapRefresh();
+    }
+
+    /**
+     * tapCat
+     */
+    public tapCat(id: number) {
+        this.setData({
+            category: id,
+            isExpand: false
+        });
+        this.tapRefresh();
+    }
+
+    /**
+     * tapArticle
+     */
+    public tapArticle(id: string) {
+        wx.navigateTo({
+            url: 'detail?id=' + id
         });
     }
 }
 </script>
 <style lang="scss" scoped>
-
+page {
+    background-color: #f4f4f4;
+}
+.scroll-nav {
+    position: relative;
+    height: 45px;
+    background-color: #05a6b1;
+    color: #fff;
+    z-index: 10;
+    .nav-ul {
+        padding-right: 35px;
+        font-size: 0;
+        font-family: none;
+        white-space: nowrap;
+        overflow: hidden;
+        overflow-x: auto;
+        background-color:  #05a6b1;
+    }
+    .nav-li {
+        min-width: 3.75rem;
+        padding: 0 5px;
+        text-align: center;
+        font-size: 13px;
+        display: inline-block;
+        vertical-align: top;
+        text {
+            display: inline-block;
+            height: 45px;
+            line-height: 45px;
+            color: #fff;
+        }
+        &.active {
+            text {
+                color: #e4393c;
+                border-bottom: 2px solid #e4393c;
+            }
+        }
+    }
+    .nav-arrow {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 35px;
+        height: 45px;
+        line-height: 45px;
+        text-align: center;
+        background-color: #05a6b1;
+        &::before {
+            content: "\e60b";
+        }
+    }
+    &.unfold {
+        .nav-ul {
+            padding-right: 0;
+            white-space: normal;
+            padding-right: 30px;
+        }
+        .nav-arrow {
+            &::before {
+                content: "\e611";
+            }
+        }
+    }
+}
+.article-item {
+    background-color: #fff;
+    margin-top: 10px;
+    padding: 10px;
+    .item-dt {
+        line-height: 30px;
+        font-weight: 800;
+        font-size: 18px;
+    }
+    .item-dd {
+        .item-p {
+            margin: 5px 0;
+            min-height: 40px;
+            overflow: hidden;
+        }
+        .tags {
+            line-height: 20px;
+            font-size: 13px;
+            color: #767676;
+            .author,
+            .agree,
+            .category,
+            .comment,
+            .click {
+                display: inline-block;
+                margin-right: 10px;
+            }
+        }
+    }
+}
 </style>

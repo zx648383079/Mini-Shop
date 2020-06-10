@@ -1,6 +1,6 @@
 import { Md5 } from 'ts-md5';
 
-const IS_DEV = !1;
+const IS_DEV = !0;
 
 const BASIC_HOST = IS_DEV ? 'http://zodream.localhost' : 'https://zodream.cn';
 

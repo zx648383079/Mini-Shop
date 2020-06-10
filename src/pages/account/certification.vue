@@ -21,7 +21,7 @@
 <script lang="ts">
 import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
 import { IUser } from '../../api/model';
-import { IMyApp } from '../../app';
+import { IMyApp } from '../../app.vue';
 
 const app = getApp<IMyApp>();
 

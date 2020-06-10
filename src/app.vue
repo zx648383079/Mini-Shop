@@ -3,10 +3,10 @@ import {
     TOKEN_KEY
 } from "./utils/types";
 import {
-    ISubtotal, ICategory, ICart, IAddress, IOrder, IUser, ILogin
+    ISubtotal, ICategory, ICart, IAddress, IOrder, IUser, ILogin, IDataOne, IRegister
 } from "./api/model";
 import { getSubtotal } from "./api/product";
-import { getProfile, login, logout, authLogin } from "./api/user";
+import { getProfile, login, logout, authLogin, sendFindEmail, register } from "./api/user";
 import { getCategories } from "./api/category";
 import { getAddressList } from "./api/address";
 import { getOrderInfo } from "./api/order";
@@ -31,6 +31,8 @@ export interface IMyApp {
     loginUser(params: ILogin): Promise<IUser| void>,
     authloginUser(params: any): Promise<IUser| void>;
     logoutUser(): Promise<void>;
+    sendFindEmail(email: string): Promise<IDataOne<boolean>>;
+    registerUser(params: IRegister): Promise<IUser| void>;
     setCart(cart: ICart[]): void,
     getCategories(): Promise<ICategory[]>,
     getAddressList(): Promise<IAddress[]>,
@@ -52,6 +54,12 @@ export interface IMyApp {
         "pages/account/cardNew",
         "pages/account/log",
         "pages/account/center",
+        "pages/account/bind",
+        "pages/account/cancel",
+        "pages/account/connect",
+        "pages/account/driver",
+        "pages/account/certification",
+        "pages/authorize/index",
         "pages/address/index",
         "pages/address/edit",
         "pages/article/index",
@@ -64,6 +72,7 @@ export interface IMyApp {
         "pages/affiliate/user",
         "pages/comment/index",
         "pages/comment/create",
+        'pages/collect/index',
         "pages/goods/index",
         "pages/goods/history",
         "pages/goods/comment",
@@ -76,23 +85,26 @@ export interface IMyApp {
         "pages/search/index",
         "pages/search/result",
         "pages/category/index",
+        'pages/feedback/index',
         "pages/message/index",
+        "pages/message/detail",
         "pages/member/index",
         "pages/member/profile",
         "pages/member/login",
-        "pages/member/cancel",
-        "pages/member/certification",
-        "pages/member/driver",
         "pages/member/password",
         "pages/order/index",
         "pages/order/detail",
+        "pages/order/logistics",
         "pages/refund/index",
         "pages/refund/create",
         "pages/invoice/index",
         "pages/invoice/apply",
         "pages/invoice/edit",
         "pages/invoice/log",
-        "pages/invoice/title"
+        "pages/invoice/title",
+        "pages/setting/index",
+        "pages/store/index",
+        "pages/store/quick",
     ],
     window: {
         backgroundTextStyle: 'light',
@@ -206,8 +218,19 @@ export class Application extends WxApp<IAppData> implements IMyApp {
             return this.globalData.user = res;
         });
     }
+
+    public registerUser(params: IRegister) {
+        return register(params).then((res: IUser) => {
+            this.setUser(res);
+            return res;
+        });
+    }
+
+    public sendFindEmail(email: string) {
+        return sendFindEmail(email);
+    }
     
-    public logoutUser() {
+    public logoutUser(): Promise<void> {
         return new Promise((resolve, reject) => {
             const token = wx.getStorageSync<string>(TOKEN_KEY);
             if (!token) {
