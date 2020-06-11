@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="logo">
-            <img src="/images/logo.png" mode="widthFix">
+            <img src="/images/wap_logo.png" mode="widthFix">
         </div>
         <form bindsubmit="formSubmit" >
             <div class="input-box">
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <button form-type="submit">{{isSended ? '重置密码' : '发送验证邮件'}}</button>
-            <span class="right" @click="tapMode" data-mode="0">返回登录</span>
+            <span class="right" @click="tapMode" data-mode="3">返回登录</span>
         </form>
     </div>
 </template>

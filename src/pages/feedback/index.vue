@@ -2,7 +2,7 @@
     <div>
         <div class="large-header">
             <div class="title">留言反馈</div>
-            <i class="fa fa-check" @click="tapSubmit"></i>
+            <i class="fa fa-circle" @click="tapSubmit"></i>
         </div>
         <div class="input-box">
             <input type="text" placeholder="称呼" required  v-model="name">

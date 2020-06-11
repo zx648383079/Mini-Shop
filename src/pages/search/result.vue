@@ -14,7 +14,7 @@
                 </div>
             </header>
             <div class="has-header">
-                <div :loading="isLoading" :more="has_more"   bind:refresh="tapRefresh" bind:more="tapMore">
+                <div :loading="isLoading" :more="hasMore"   bind:refresh="tapRefresh" bind:more="tapMore">
                     <div class="goods-list">
                         <div class="item-view" v-for="(item, index) in items" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
                             <div class="item-img">
@@ -47,7 +47,7 @@ interface IPageData {
     category: number,
     brand: number,
     page: number,
-    has_more: boolean,
+    hasMore: boolean,
     isLoading: false,
     mode: number,
     goods: IProduct | null,
@@ -67,7 +67,7 @@ export class Index extends WxPage<IPageData> {
         category: 0,
         brand: 0,
         page: 1,
-        has_more: true,
+        hasMore: true,
         isLoading: false,
         mode: 0,
         goods: null
@@ -91,7 +91,7 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapMore() {
-        if (!this.data.has_more) {
+        if (!this.data.hasMore) {
             return;
         }  
         this.goPage(this.data.page + 1);
@@ -112,7 +112,7 @@ export class Index extends WxPage<IPageData> {
         }).then(res => {
             this.setData({
                 page: page,
-                has_more: res.paging.more,
+                hasMore: res.paging.more,
                 isLoading: false,
                 items: page < 2 ? res.data :  [].concat(this.data.items as never[], res.data as never[])
             });

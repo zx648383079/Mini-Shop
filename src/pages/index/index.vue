@@ -74,7 +74,7 @@
             <div class="home-panel" v-if="data.best_products && data.best_products.length > 0">
                 <div class="panel-header">推荐商品</div>
                 <div class="goods-list">
-                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
+                    <div class="item-view" v-for="(item, index) in data.best_products" :key="index" wx:key="id">
                         <div class="item-img">
                             <a href="/pages/goods/index?id={{ item.id }}"><img :src="item.thumb" alt="" mode="widthFix"></a>
                         </div>

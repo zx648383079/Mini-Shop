@@ -10,7 +10,7 @@
                 <span @click="tapMode" data-mode="4">手机号快捷注册</span>
 
                 <div class="login-oauth-box">
-                    <button open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="tapAuth"><i class="fa fa-weixin"></i></button>
+                    <button open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="tapAuth"><i class="fa fa-wechat"></i></button>
                 </div>
             </div>
             <div class="login-box" v-if="mode > 0 && mode < 4">
@@ -65,6 +65,18 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapChange(mode: number) {
+        const titles = [
+            '登录',
+            '手机号登录',
+            '短信验证码登录',
+            '邮箱登录',
+            '手机注册',
+            '邮箱注册',
+            '找回密码'
+        ];
+        wx.setNavigationBarTitle({
+            title: mode >= 0 && mode < titles.length ? titles[mode] : titles[0] 
+        });
         this.setData({mode});
     }
 
@@ -139,5 +151,11 @@ export class Index extends WxPage<IPageData> {
     .fa {
         font-size: 2rem;
     }
+}
+.right {
+    float: right;
+}
+navigator {
+    display: inline-block;
 }
 </style>

@@ -31,7 +31,7 @@
 			"outputPath": ""
 		},
 		"useIsolateContext": true,
-		"useCompilerModule": false,
+		"useCompilerModule": true,
 		"userConfirmedUseCompilerModuleSwitch": false
 	},
 	"appid": "wxfc5287e8354375f4",
@@ -53,14 +53,18 @@
 		"game": {
 			"list": []
 		},
+		"gamePlugin": {
+			"current": -1,
+			"list": []
+		},
 		"miniprogram": {
 			"current": 0,
 			"list": [
 				{
 					"id": 0,
-					"name": "test",
-					"pathName": "pages/comment/create",
-					"query": "goods=5",
+					"name": "pages/member/index",
+					"pathName": "pages/member/index",
+					"query": "id=1",
 					"scene": null
 				}
 			]

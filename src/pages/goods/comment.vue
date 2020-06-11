@@ -4,7 +4,7 @@
             <div id="comments" class="comment-box">
                 <div class="comment-subtotal" v-if="comment">
                     评分
-                    <Star star="{{comment.avg}}"/>
+                    <StarBox star="{{comment.avg}}"/>
                     <span>{{ comment.favorable_rate }}%</span>好评
                 </div>
                 <div class="comment-stats" v-if="comment && comment.tags && comment.tags.length > 0">
@@ -31,7 +31,7 @@ interface IPageData {
 }
 @WxJson({
     usingComponents: {
-        Star: 'Child/Star',
+        StarBox: 'Child/Star',
         CommentPage: 'Child/Page'
     },
     navigationBarTitleText: "商品评价",

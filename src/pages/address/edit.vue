@@ -173,7 +173,14 @@ export class Edit extends WxPage<IPageData> {
         app.setAddressList([]);
         if (this.data.back < 1) {
             wx.navigateBack({
-                delta: 0
+                delta: 0,
+                success: function () { 
+                    let page = getCurrentPages().pop(); 
+                    if (!page) {
+                        return; 
+                    }
+                    page.onLoad(); 
+                }
             });
             return;
         }
@@ -186,7 +193,14 @@ export class Edit extends WxPage<IPageData> {
         }
         if (this.data.back === 2) {
             wx.navigateBack({
-                delta: 0
+                delta: 0,
+                success: function () { 
+                    let page = getCurrentPages().pop(); 
+                    if (!page) {
+                        return; 
+                    }
+                    page.onLoad(); 
+                }
             });
             return;
         }

@@ -2,7 +2,7 @@
     <div>
         <div class="large-header">
             <div class="title">设置</div>
-            <i class="fa fa-check" @click="tapSubmit"></i>
+            <i class="fa fa-circle" @click="tapSubmit"></i>
         </div>
         <div class="line-item">
             <span class="label">震动</span>

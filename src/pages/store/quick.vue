@@ -1,62 +1,62 @@
 <template>
-    <div>
-        <div class="store-page">
-            <header class="store-header">
-                <div class="search-back-box">
-                    <a class="back" @click="tapBack">
-                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
-                    </a>
-                    <a class="search-entry" @click="$router.push('/search')">
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                        <span>搜索本店商品</span>
-                    </a>
+    <div class="store-page">
+        <header class="store-header">
+            <div class="search-back-box">
+                <view class="back" @click="tapBack">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </view>
+                <a class="search-entry" href="/pages/search/index">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    <span>搜索本店商品</span>
+                </a>
+            </div>
+            <div class="store-info">
+                <div class="logo">
+                    <img :src="store.logo" alt="">
                 </div>
-                <div class="store-info">
-                    <div class="logo">
-                        <img :src="'/assets/images/avatar/1.png' | assets" alt="">
-                    </div>
-                    <div class="info">
-                        <div class="name">12345545</div>
-                        <p>233万人收藏</p>
-                    </div>
-                    <div class="action">
-                        <a href="">
-                            <i class="fa fa-star"></i>    
-                            收藏
-                        </a>
-                    </div>
+                <div class="info">
+                    <div class="name">{{ store.name }}</div>
+                    <p>{{ store.collect_count }}人收藏</p>
                 </div>
-                <div class="tab-bar">
-                    <a v-for="(item, index) in tabList" :key="index" @click="tapTab(index)" :class="tabIndex == index ? 'active' : ''">{{ item.name }}</a>
+                <div class="action">
+                    <view class="item">
+                        <i :class="['fa', is_collected ? 'fa-collect': 'fa-uncollect']"></i>    
+                        收藏
+                    </view>
                 </div>
-            </header>
+            </div>
+            <div class="tab-bar">
+                <text class="tab-item" v-for="(item, index) in tabList" :key="index" @click="tapTab(index)" :class="tabIndex == index ? 'active' : ''">{{ item.name }}</text>
+            </div>
+        </header>
 
-            <div class="store-body">
-                <div class="goods-list">
-                    <div class="item" v-for="(item, index) in items" :key="index">
-                        <div class="item-img">
-                            <a ><img :src="item.thumb" alt=""></a>
-                        </div>
-                        <div class="item-info">
-                            <div class="item-title">{{item.name}}</div>
-                            <span class="item-price">{{item.price}}</span>
-                            <div class="item-actions">
-                                <i class="fa fa-minus-circle" v-if="item.amount && item.amount > 0"  @click="tapMinus(item)"></i>
-                                <span v-if="item.amount && item.amount > 0">{{ item.amount }}</span>
-                                <i class="fa fa-plus-circle" @click="tapPlus(item)"></i>
-                            </div>
-                        </div>
-                        
+        <div class="store-body">
+            <div class="goods-list">
+                <div class="item" v-for="(item, index) in items" :key="index">
+                    <div class="item-img">
+                        <a href="/pages/goods/index?id={{ item.id }}"><img :src="item.thumb" alt=""></a>
                     </div>
+                    <div class="item-info">
+                        <div class="item-title">{{item.name}}</div>
+                        <span class="item-price">{{item.price}}</span>
+                        <div class="item-actions">
+                            <i class="fa fa-minus" v-if="item.amount && item.amount > 0"  @click="tapMinus(index)"></i>
+                            <span v-if="item.amount && item.amount > 0">{{ item.amount }}</span>
+                            <i class="fa fa-plus" @click="tapPlus(index)"></i>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
+        <MiniCart></MiniCart>
     </div>
 </template>
 <script lang="ts">
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
-import { IProduct } from '../../api/model';
+import { IProduct, IStore } from '../../api/model';
 import { getList } from '../../api/product';
+import { getStore } from '../../api/store';
 
 interface IPageData {
     items: IProduct[],
@@ -64,16 +64,28 @@ interface IPageData {
     isLoading: boolean,
     page: number,
     tabIndex: number,
-    tabList: any[]
+    tabList: any[],
+    store: IStore
 }
 @WxJson({
+    usingComponents: {
+        MiniCart: '/pages/cart/Child/MiniCart'
+    },
     navigationBarTitleText: "快速下单",
     navigationBarBackgroundColor: "#f4f4f4",
-    navigationBarTextStyle: "black"
+    navigationBarTextStyle: "black",
+    onReachBottomDistance: 100,
 })
 export class Quick extends WxPage<IPageData> {
     
     public data: IPageData = {
+        store: {
+            id: 1,
+            logo: '',
+            name: '我的店铺',
+            collect_count: 0,
+            is_collected: false
+        },
         items: [],
         hasMore: false,
         isLoading: false,
@@ -99,8 +111,21 @@ export class Quick extends WxPage<IPageData> {
         ]
     };
 
-    public onLoad() {
+    public onLoad(option: any) {
+        if (!option || !option.id) {
+            this.tapBack();
+            return;
+        }
+        getStore(option.id).then(res => {
+            this.setData({
+                store: res
+            });
+        });
+        this.tapRefresh();
+    }
 
+    public onReachBottom() {
+        this.tapMore();
     }
 
     public tapBack() {
@@ -118,24 +143,24 @@ export class Quick extends WxPage<IPageData> {
     /**
      * tapPlus
      */
-    public tapPlus(item: IProduct) {
+    public tapPlus(index: number) {
+        const data = this.data;
+        const item = data.items[index];
         if (!item.amount) {
             item.amount = 0;
         }
         item.amount ++;
-        this.setData({
-            items: this.data.items
-        });
+        this.setData(data);
     }
 
-    public tapMinus(item: IProduct) {
+    public tapMinus(index: number) {
+        const data = this.data;
+        const item = data.items[index];
         if (!item.amount) {
             item.amount = 0;
         }
         item.amount = Math.max(0, item.amount - 1);
-        this.setData({
-            items: this.data.items
-        });
+        this.setData(data);
     }
 
     public tapRefresh() {
@@ -191,9 +216,9 @@ export class Quick extends WxPage<IPageData> {
         grid-template-columns: 100px 1fr;
         .item-img {
             height: 100px;
-            img {
-                width: 100%;
-                height: 100%;
+            image {
+                width: 100px;
+                height: 100px;
             }
         }
         .item-price {
@@ -204,7 +229,7 @@ export class Quick extends WxPage<IPageData> {
             bottom: 20px;
             right: 20px;
             display: inline-block;
-            span {
+            text {
                 display: inline-block;
                 padding: 0 5px;
             }

@@ -11,8 +11,8 @@
 </template>
 <script lang="ts">
 import { IConnect } from '../../api/model';
-import { getConnect } from '../../api/user';
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
+import { getConnect } from '../../api/account';
 interface IPageData {
     items: IConnect[]
 }
@@ -28,7 +28,7 @@ export class Center extends WxPage<IPageData> {
         items: []
     };
 
-    public created() {
+    public onLoad() {
         getConnect().then(res => {
             if (!res.data) {
                 return;

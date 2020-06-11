@@ -1,14 +1,14 @@
 <template>
     <div class="order-box" v-if="order">
             <div class="status-header">
-                <i class="fa fa-money-bill"></i>
+                <i class="fa fa-money"></i>
                 {{ order.status_label }}
             </div>
             <div class="shipping-box">
                 {{ order.shipping_status }}
             </div>
             <div class="address-box" v-if="order.address">
-                <i class="fa fa-map-marker"></i>
+                <i class="fa fa-map"></i>
                 <p>
                     <span class="name">{{ order.address.name }}</span>
                     <span class="tel">{{ order.address.tel }}</span>
@@ -36,7 +36,7 @@
                     <p class="line-item" v-if="order.shipping_at > 0"><span>发货时间</span> <span>{{ order.shipping_at | time }}</span> </p>
                     <p class="line-item" v-if="order.receive_at > 0"><span>签收时间</span> <span>{{ order.receive_at | time }}</span> </p>
                     <p class="line-item" v-if="order.finish_at > 0"><span>完成时间</span> <span>{{ order.finish_at | time }}</span> </p>
-                    <hr>
+                    <div class="hr"></div>
                     <p class="line-item"><span>商品总价</span> <span>{{ order.goods_amount }}</span> </p>
                     <p class="line-item"><span>+运费</span> <span>{{ order.shipping_fee }}</span> </p>
                     <p class="line-item"><span>+支付手续费</span> <span>{{ order.pay_fee }}</span> </p>
@@ -165,5 +165,7 @@ export class Detail extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
-
+page {
+    background-color: #f4f4f4;
+}
 </style>

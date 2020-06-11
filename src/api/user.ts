@@ -25,6 +25,11 @@ export const sendFindEmail = (email: string) => post<IDataOne<boolean>>('auth/pa
     email
 });
 
+export const sendMobileCode = (mobile: string, type: string = 'login') => post<IDataOne<boolean>>('auth/password/send_mobile_code', {
+    mobile,
+    type
+});
+
 export const resetPassword = (email: string, code: string,  password: string, confirm_password: string) => post<IDataOne<boolean>>('auth/password/reset', {
     email,
     code,

@@ -17,6 +17,7 @@ export interface IBaseResponse {
     timestamp?: string;
     encrypt?: string;
     encrypt_type?: string;
+    message?: string;
 }
 export interface IData<T> extends IBaseResponse {
     data?: T[];
@@ -115,6 +116,9 @@ export interface ICommentSubtotal {
 export interface IStore {
     id: number;
     name: string;
+    logo: string;
+    collect_count?: number;
+    is_collected?: boolean
 }
 
 export interface ICartItem {
@@ -160,6 +164,8 @@ export interface IUser {
     name: string;
     avatar: string;
     token?: string;
+    birthday?: string;
+    sex?: number;
 }
 
 export interface IAccountLog {

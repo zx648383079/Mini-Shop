@@ -1,13 +1,8 @@
 <template>
-    <div>
-        <SwipeRowBox class="swipe-box address-list">
-            <SwipeRow right-width="150" left-width="200" v-for="(item, index) in items" :name="['address-item', selected == item.id ? ' selected' : '']"  :key="index" :index="item.id" ref="swiperow">
-                <div slot="left" class="actions-left" v-if="!item.is_default">
-                    <a class="set-default" @click="tapDefault(item)">
-                        设为默认
-                    </a>
-                </div>
-                <div slot="content" class="swipe-content" @click="tapSelected" data-i="{{ index }}">
+    <div class="address-list slide-box">
+        <div class="item" v-for="(item, index) in items" :key="index" :index="item.id">
+            <MpSlideView buttons="{{ item.is_default ? defaultButtons : slideButtons}}" bindbuttontap="slideButtonTap" :i="index">
+                <div class="address-item" :class="{active: selected == index}" @click="tapSelected" data-i="{{ index }}">
                     <div class="address-first">
                         <span>{{ item.name }}</span>
                     </div>
@@ -22,14 +17,8 @@
                         </p>
                     </div>
                 </div>
-                <div slot="right" class="actions-right">
-                    <a @click="tapEdit(item)">
-                        <i class="fa fa-edit"></i>
-                    </a>
-                    <i class="fa fa-trash" @click="tapRemove(item)"></i>
-                </div>
-            </SwipeRow>
-        </SwipeRowBox>
+            </MpSlideView>
+        </div>
         <a href="edit" class="add-btn">添加</a>
     </div>
 </template>
@@ -45,23 +34,50 @@ const app = getApp<IMyApp>();
 interface IPageData {
     items: IAddress[],
     selected: number,
-    mode: number
+    mode: number,
+    slideButtons: any[],
+    defaultButtons: any[],
 }
 @WxJson({
     usingComponents: {
-        SwipeRowBox: '/components/SwipeRow/box',
-        SwipeRow: '/components/SwipeRow/index'
+        MpSlideView: 'weui-miniprogram/slideview/slideview'
     },
     navigationBarTitleText: "我的地址",
     navigationBarBackgroundColor: "#05a6b1",
-    navigationBarTextStyle: "white"
+    navigationBarTextStyle: "white",
 })
 export class Index extends WxPage<IPageData> {
 
     public data: IPageData = {
         items: [],
         selected: 0,
-        mode: 0
+        mode: 0,
+        slideButtons: [
+            {
+              text: '设为默认',
+              data: 0,
+            },
+            {
+              text: '编辑',
+              data: 1,
+            },
+            {
+              type: 'warn',
+              text: '删除',
+              data: 2,
+            }
+        ],
+        defaultButtons: [
+            {
+              text: '编辑',
+              data: 1,
+            },
+            {
+              type: 'warn',
+              text: '删除',
+              data: 2,
+            }
+        ]
     }
 
     public onLoad(query?: any) {
@@ -129,6 +145,11 @@ export class Index extends WxPage<IPageData> {
         });
     }
 
+    slideButtonTap(e: any) {
+        console.log(e);
+        
+    }
+
     public tapRemove(item: IAddress) {
         let items = this.data.items;
         deleteAddress(item.id).then(() => {
@@ -145,28 +166,11 @@ export class Index extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
-
-.swipe-content {
-    width: 750rpx;
+page {
+    background-color: #f4f4f4;
 }
-.actions-right,
-.actions-left {
-    height: 100px;
-    display: flex;
-    direction: row;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 200px;
-    .set-default {
-        line-height: 5rem;
-        font-size: 16px;
-        margin: 0 10px;
-        width: 200rpx;
-    }
-    .fa-trash {
-        background-color: red;
-        color: #fff;
-        width: 150rpx; 
-    }
+.item {
+    margin-bottom: 10px;
+    background-color: #fff;
 }
 </style>

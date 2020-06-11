@@ -27,6 +27,7 @@ export interface IMyApp {
     globalData: IAppData,
     getSubtotal(): Promise<ISubtotal>,
     getUser(): Promise<IUser|null>,
+    setUser(user: IUser|null): void,
     setToken(token?: string): void,
     loginUser(params: ILogin): Promise<IUser| void>,
     authloginUser(params: any): Promise<IUser| void>;
@@ -144,6 +145,9 @@ export interface IMyApp {
                 text: "我的"
             }
         ]
+    },
+    useExtendedLib: {
+        weui: true
     }
 })
 export class Application extends WxApp<IAppData> implements IMyApp {
@@ -177,8 +181,8 @@ export class Application extends WxApp<IAppData> implements IMyApp {
         });
     }
 
-    public getUser(): Promise<IUser|null> {
-        return new Promise((resolve, reject) => {
+    public getUser() {
+        return new Promise<IUser|null>((resolve, reject) => {
             if (this.globalData.user) {
                 resolve(this.globalData.user);
                 return;
@@ -194,10 +198,17 @@ export class Application extends WxApp<IAppData> implements IMyApp {
             }).catch(reject);
         });
     }
-    
+
+    public setUser(user: IUser| null) {
+        if (user && user.token && user.token.length > 0 && user.id && user.id > 0) {
+            this.setToken(user.token);
+        }
+        this.globalData.user = user;
+    }
+
     public setToken(token?: string) {
-        this.globalData.token = token ? token : null;
-        if (!token) {
+        this.globalData.token = token && token.length > 0 ? token : null;
+        if (!this.globalData.token) {
             wx.removeStorageSync(TOKEN_KEY);
             this.globalData.user = null;
             return;
@@ -404,7 +415,7 @@ $lineHeight: 2.5rem;
             top: 0.4375rem;
         }
 
-        span {
+        text {
             &:nth-child(2) {
                 float: right;
                 margin-right: 1.25rem;
@@ -700,11 +711,11 @@ $lineHeight: 2.5rem;
 
 .btn {
     padding: 0 30px;
-    background: #ff77ff;
+    // background: #ff77ff;
     border: none;
     display: inline-block;
     text-decoration: none;
-    line-height: 30px;
+    // line-height: 30px;
     margin: 0 8px;
     vertical-align: middle;
 }
@@ -1592,8 +1603,8 @@ footer,
             font-size: 2.5rem;
             top: 0.75rem;
 
-            &.fa-map-marker {
-                left: 1.1875rem;
+            &.fa-map {
+                left: 10px;
             }
 
             &.fa-chevron-right {
@@ -1755,15 +1766,17 @@ footer,
                 display: block;
                 font-style: normal;
                 font-size: 26px;
-
                 &::before {
-                    content: "\e64f";
+                    content: "\e6b4";
                 }
             }
 
             &.active {
                 .like-icon {
-                    color: $red
+                    color: $red;
+                    &::before {
+                        content: "\e6b3";
+                    }
                 }
             }
         }
@@ -1837,8 +1850,8 @@ footer,
 
             .avatar {
                 image {
-                    width: 100%;
-                    height: 100%;
+                    width: 39px;
+                    height: 39px;
                 }
             }
         }
@@ -2156,46 +2169,6 @@ footer,
     }
 }
 
-.user-header {
-    position: relative;
-    padding-top: 1.5625rem;
-    padding-bottom: 1.875rem;
-    background: $headerBg;
-
-    .avatar {
-        width: 5.625rem;
-        height: 5.625rem;
-        margin: 0 auto;
-        text-align: center;
-        line-height: 0;
-        position: relative;
-
-        image {
-            width: 100%;
-            height: 100%;
-            border-radius: 100%;
-        }
-
-        &::after {
-            content: "";
-            width: 6.25rem;
-            height: 6.25rem;
-            border: 0.125rem solid #99e3ff;
-            border-radius: 100%;
-            position: absolute;
-            left: -0.3125rem;
-            top: -0.3125rem;
-            z-index: 0;
-        }
-    }
-
-    .name {
-        text-align: center;
-        padding-top: 0.625rem;
-        color: $white;
-    }
-}
-
 .menu-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -2229,7 +2202,7 @@ footer,
             margin-top: 0.625rem;
         }
 
-        span {
+        text {
             line-height: 44px;
             vertical-align: text-bottom;
             display: inline-block;
@@ -2316,7 +2289,7 @@ footer,
         line-height: 5rem;
 
         .fa {
-            top: 2rem;
+            top: 0;
         }
 
         .avatar {
@@ -2324,7 +2297,7 @@ footer,
             height: 5rem;
             border-radius: 50%;
             padding: 5px;
-
+            box-sizing: border-box;
             image {
                 width: 70px;
                 height: 70px;
@@ -2363,6 +2336,15 @@ footer,
     }
 }
 
+.slide-box {
+    .btn {
+        display: block;
+        padding: 0;
+        margin: 0;
+        background-color: transparent;
+    }
+}
+
 .share-box {
     text-align: center;
 }
@@ -2392,6 +2374,9 @@ footer,
             right: 0.625rem;
             font-size: 1.5625rem;
             top: 0.125rem;
+        }
+        .switch {
+            float: right;
         }
     }
 }
@@ -2545,6 +2530,9 @@ footer,
         color: $white;
         text-align: center;
         font-size: 30px;
+        .fa {
+            font-size: 30px;
+        }
     }
 }
 
@@ -2610,6 +2598,7 @@ footer,
             background: transparent;
             width: 100%;
             outline: none;
+            text-align: left;
         }
     }
 
@@ -2617,7 +2606,7 @@ footer,
         display: grid;
         grid-template-columns: 1fr 80px;
 
-        navigator {
+        text {
             border: 1px solid;
             font-size: 12px;
             line-height: 40px;
@@ -2627,12 +2616,6 @@ footer,
     .unlogin {
         line-height: 40px;
         text-align: left;
-
-        navigator {
-            &:last-child {
-                float: right;
-            }
-        }
     }
 
     .input-group {
@@ -2816,8 +2799,6 @@ footer,
 
     .back {
         position: absolute;
-        top: 50%;
-        margin-top: -1rem;
         font-size: 1.5625rem;
         color: $white;
         left: 0.625rem;
@@ -2837,8 +2818,10 @@ footer,
         position: static;
         padding-top: 14px;
         border-top: none;
-
-        navigator {
+        height: 2rem;
+        navigator,
+        .tab-item {
+            display: inline-block;
             &.active {
                 border-bottom: 2px solid #333;
             }
@@ -2870,7 +2853,7 @@ footer,
         .action {
             padding-top: 20px;
 
-            navigator {
+            .item {
                 background: #e93b3d;
                 border: 1px solid #e93b3d;
                 border-radius: 50px;
@@ -2880,6 +2863,7 @@ footer,
                 white-space: nowrap;
                 font-size: 12px;
                 color: $white;
+                display: inline-block;
             }
         }
     }
@@ -2891,22 +2875,19 @@ footer,
         top: 0;
         z-index: 7;
         background-color: $bg;
+        width: 100%;
     }
-
     .store-body {
         margin-top: 184px;
     }
-
     &.min,
     &.min-up {
         .store-header {
             position: fixed;
         }
     }
-
     &.min {
         .store-header {
-
             .search-back-box,
             .store-info {
                 display: none;
@@ -2914,7 +2895,6 @@ footer,
         }
 
     }
-
     &.min-up {
         .store-header {
             .store-info {
@@ -2923,6 +2903,7 @@ footer,
         }
     }
 }
+
 
 .log-hr,
 .payment-hr {
@@ -3304,5 +3285,8 @@ footer,
     width: 80%;
     display: block;
     margin: 40px auto 0;
+}
+.hr {
+    border-bottom: 1px solid #333;
 }
 </style>

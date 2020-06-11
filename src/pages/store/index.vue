@@ -3,34 +3,31 @@
         <div class="store-page">
             <header class="store-header">
                 <div class="search-back-box">
-                    <a class="back" href="javascript:history.back(-1);">
+                    <view class="back" @click="tapBack">
                         <i class="fa fa-chevron-left" aria-hidden="true"></i>
-                    </a>
-                    <a class="search-entry" href="<?=$this->url('./mobile/search')?>">
+                    </view>
+                    <a class="search-entry" href="/pages/search/index">
                         <i class="fa fa-search" aria-hidden="true"></i>
                         <span>搜索本店商品</span>
                     </a>
                 </div>
                 <div class="store-info">
                     <div class="logo">
-                        <img src="/assets/images/avatar/1.png" alt="">
+                        <img :src="store.logo" alt="">
                     </div>
                     <div class="info">
-                        <div class="name">12345545</div>
-                        <p>233万人收藏</p>
+                        <div class="name">{{ store.name }}</div>
+                        <p>{{ store.collect_count }}人收藏</p>
                     </div>
                     <div class="action">
-                        <a href="">
-                            <i class="fa fa-star"></i>    
+                        <view class="item">
+                            <i :class="['fa', is_collected ? 'fa-collect': 'fa-uncollect']"></i>    
                             收藏
-                        </a>
+                        </view>
                     </div>
                 </div>
                 <div class="tab-bar">
-                    <a href="" class="active">首页</a>
-                    <a href="">全部商品</a>
-                    <a href="">促销</a>
-                    <a href="">动态</a>
+                    <text class="tab-item" v-for="(item, index) in tabList" :key="index" @click="tapTab(index)" :class="tabIndex == index ? 'active' : ''">{{ item.name }}</text>
                 </div>
             </header>
 
@@ -39,35 +36,169 @@
                 <div class="goods-list">
                     <div class="item-view" v-for="(item, index) in items" :key="index">
                         <div class="item-img">
-                            <a ><img :src="item.thumb" alt=""></a>
+                            <a href="/pages/goods/index?id={{ item.id }}"><img :src="item.thumb" mode="widthFix"></a>
                         </div>
                         <div class="item-title">
                             {{item.name}}
                         </div>
                         <div class="item-actions">
                             <span class="item-price">{{item.price}}</span>
-                            <span>加入购物车</span>
+                            <span @click="tapAddCart" data-id="{{ item.id }}">加入购物车</span>
                         </div>
                     </div>
                 </div>
 
             </div>
         </div>
+        <CartDialog :mode="mode" :product="goods" @close="tapCloseDialog"/>
     </div>
 </template>
 <script lang="ts">
-import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
+import { IProduct, IStore } from '../../api/model';
+import { getList, getInfo } from '../../api/product';
+import { getStore } from '../../api/store';
 
 interface IPageData {
-    items: any[]
+    items: IProduct[],
+    hasMore: boolean,
+    isLoading: boolean,
+    page: number,
+    tabIndex: number,
+    tabList: any[],
+    store: IStore,
+    goods: IProduct | null,
+    mode: number,
 }
+
 @WxJson({
+    usingComponents: {
+        CartDialog: '/pages/goods/Child/CartDialog'
+    },
     navigationBarTitleText: "店铺",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"
 })
 export class Index extends WxPage<IPageData> {
-    
+    public data: IPageData = {
+        store: {
+            id: 0,
+            logo: '',
+            name: '我的店铺',
+            collect_count: 1,
+            is_collected: false
+        },
+        items: [],
+        hasMore: false,
+        isLoading: false,
+        page: 1,
+        tabIndex: 0,
+        mode: 0,
+        goods: null,
+        tabList: [
+            {
+                name: '首页',
+                status: 0,
+            },
+            {
+                name: '全部商品',
+                status: 0,
+            },
+            {
+                name: '促销',
+                status: 0,
+            },
+            {
+                name: '动态',
+                status: 0,
+            },
+        ]
+    };
+
+    public onLoad(option: any) {
+        if (!option || !option.id) {
+            this.tapBack();
+            return;
+        }
+        getStore(option.id).then(res => {
+            this.setData({
+                store: res
+            });
+        });
+        this.tapRefresh();
+    }
+
+    public tapBack() {
+        wx.navigateBack({
+            delta: -1
+        });
+    }
+
+    public tapTab(index: number) {
+        this.setData({
+            tabIndex: index
+        });
+    }
+
+    public tapAddCart(e: TouchEvent) {
+        let id = e.currentTarget.dataset.id as number;
+        if (this.data.goods && this.data.goods.id === id) {
+            this.setData({
+                mode: 1
+            });
+            return;
+        }
+        getInfo(id).then(res => {
+            this.setData({
+                goods: res,
+                mode: 1
+            });
+        });
+    }
+
+    public tapCloseDialog() {
+        this.setData({
+            mode: 0
+        });
+    }
+
+    public tapRefresh() {
+        this.goPage(1);
+    }
+
+    public tapMore() {
+        if (!this.data.hasMore) {
+            return;
+        }
+        this.goPage(this.data.page + 1);
+    }
+
+    public goPage(page: number) {
+        if (this.data.isLoading) {
+            return;
+        }
+        this.setData({
+            isLoading: true
+        });
+        getList({
+            page,
+        }).then(res => {
+            let items = this.data.items;
+            if (page < 2) {
+                items = [];
+            }
+            res.data.forEach(item => {
+                item.amount = 0;
+                items.push(item);
+            });
+            this.setData({
+                page,
+                hasMore: res.paging.more,
+                isLoading: false,
+                items
+            });
+        });
+    }
 }
 </script>
 <style lang="scss" scoped>

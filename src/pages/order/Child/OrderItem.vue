@@ -111,5 +111,7 @@ export class OrderItem extends WxComponent<IComponentData>  {
 }
 </script>
 <style lang="scss" scoped>
-
+.order-item {
+    margin-bottom: 10px;
+}
 </style>

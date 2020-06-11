@@ -5,11 +5,9 @@
         </div>
 
         <div class="order-box">
-            <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
-                <OrderItem v-for="(item, index) in items" :key="index" item="{{item}}" @receive="tapReceive" @cancel="tapCancel"/>
-                <div class="order-empty" v-if="!items || items.length < 1">
-                    您还没有订单
-                </div>
+            <OrderItem v-for="(item, index) in items" :key="index" item="{{item}}" @receive="tapReceive" @cancel="tapCancel"/>
+            <div class="order-empty" v-if="!items || items.length < 1">
+                您还没有订单
             </div>
         </div>
     </div>
@@ -185,19 +183,22 @@ export class Index extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 .order-empty {
     font-size: 40px;
     color: #ccc;
     text-align: center;
     padding-top: 20vh;
 }
-.order-header {
+.tab-bar {
     text {
         color: #fff;
         &.active {
             border-bottom: 2px solid #333;
         }
     }
-
 }
+
 </style>

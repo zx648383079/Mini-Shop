@@ -12,8 +12,8 @@
                     <input type="password" name="password" required autocomplete="off" @keyup="tapKey" v-model="password" placeholder="请输入密码">
                 </div>
                 <div class="unlogin">
-                    <span @click="tapMode" data-mode="4">注册账号</span>
-                    <a href="">忘记密码</a>
+                    <span @click="tapMode" data-mode="5">注册账号</span>
+                    <span class="right" @click="tapMode" data-mode="6">忘记密码</span>
                 </div>
                 <button form-type="submit">登录</button>
                 <span @click="tapMode" data-mode="0" class="btn btn-none">其他登录方式</span>
@@ -50,12 +50,14 @@ export class EmailLogin extends WxComponent<any>  {
         const password = e.detail.value.password;
         if (!email || !/.+@.+/.test(email)) {
             wx.showToast({
+                icon: 'none',
                 title: '请输入邮箱'
             });
             return;
         }
         if (!password || password.length < 4) {
             wx.showToast({
+                icon: 'none',
                 title: '请输入密码'
             });
             return;

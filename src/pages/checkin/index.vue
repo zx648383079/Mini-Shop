@@ -200,7 +200,7 @@ export class Index extends WxPage<IPageData> {
                     &:before {
                         font-family: "iconfont" !important;
                         font-weight: 900;
-                        content: "\e8da";
+                        content: "\ef65";
                         color: rgba(255, 255, 255, .3);
                         font-size: 30px;
                         position: absolute;
