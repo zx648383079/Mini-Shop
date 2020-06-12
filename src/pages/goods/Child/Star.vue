@@ -31,5 +31,4 @@ export class Star extends WxComponent<IComponentData>  {
 }
 </script>
 <style lang="scss" scoped>
-
 </style>

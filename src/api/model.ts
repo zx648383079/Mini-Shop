@@ -76,6 +76,24 @@ export interface IProduct {
     shop?: string;
     is_collect?: boolean;
     amount?: number;
+    countdown?: ICountdown;
+    promotes?: IPromote[];
+}
+
+export interface ICountdown {
+    end_at: number;
+    name: string;
+    tip: string;
+}
+
+export interface IPromote {
+    name: string;
+    items: IPromoteItem[];
+}
+
+export interface IPromoteItem {
+    name: string;
+    icon: string;
 }
 
 export interface IHomeProduct {

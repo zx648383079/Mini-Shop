@@ -31,7 +31,7 @@
 			"outputPath": ""
 		},
 		"useIsolateContext": true,
-		"useCompilerModule": true,
+		"useCompilerModule": false,
 		"userConfirmedUseCompilerModuleSwitch": false
 	},
 	"appid": "wxfc5287e8354375f4",
@@ -62,8 +62,8 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/member/index",
-					"pathName": "pages/member/index",
+					"name": "pages/message/index",
+					"pathName": "pages/message/index",
 					"query": "id=1",
 					"scene": null
 				}

@@ -1,7 +1,7 @@
 <template>
     <div class="address-list slide-box">
         <div class="item" v-for="(item, index) in items" :key="index" :index="item.id">
-            <MpSlideView buttons="{{ item.is_default ? defaultButtons : slideButtons}}" bindbuttontap="slideButtonTap" :i="index">
+            <MpSlideView buttons="{{ item.buttons }}" bindbuttontap="slideButtonTap" >
                 <div class="address-item" :class="{active: selected == index}" @click="tapSelected" data-i="{{ index }}">
                     <div class="address-first">
                         <span>{{ item.name }}</span>
@@ -35,9 +35,8 @@ interface IPageData {
     items: IAddress[],
     selected: number,
     mode: number,
-    slideButtons: any[],
-    defaultButtons: any[],
 }
+
 @WxJson({
     usingComponents: {
         MpSlideView: 'weui-miniprogram/slideview/slideview'
@@ -52,32 +51,6 @@ export class Index extends WxPage<IPageData> {
         items: [],
         selected: 0,
         mode: 0,
-        slideButtons: [
-            {
-              text: '设为默认',
-              data: 0,
-            },
-            {
-              text: '编辑',
-              data: 1,
-            },
-            {
-              type: 'warn',
-              text: '删除',
-              data: 2,
-            }
-        ],
-        defaultButtons: [
-            {
-              text: '编辑',
-              data: 1,
-            },
-            {
-              type: 'warn',
-              text: '删除',
-              data: 2,
-            }
-        ]
     }
 
     public onLoad(query?: any) {
@@ -92,7 +65,7 @@ export class Index extends WxPage<IPageData> {
                 return;
             }
             this.setData({
-                items: res
+                items: this.formatButton(res)
             });
         });
     }
@@ -162,6 +135,38 @@ export class Index extends WxPage<IPageData> {
                 items
             });
         });
+    }
+
+    private formatButton(res: any[]): any[] {
+        return res.map(item => {
+                    item.buttons = item.is_default ? 
+                    [
+                        {
+                        text: '编辑',
+                        data: item.id,
+                        },
+                        {
+                        type: 'warn',
+                        text: '删除',
+                        data: item.id,
+                        }
+                    ] : [
+                        {
+                            text: '设为默认',
+                            data: item.id,
+                        },
+                        {
+                            text: '编辑',
+                            data: item.id,
+                        },
+                        {
+                            type: 'warn',
+                            text: '删除',
+                            data: item.id,
+                        }
+                    ];
+                    return item;
+                });
     }
 }
 </script>

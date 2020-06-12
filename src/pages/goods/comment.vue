@@ -1,17 +1,15 @@
 <template>
     <div>
-        <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
-            <div id="comments" class="comment-box">
-                <div class="comment-subtotal" v-if="comment">
-                    评分
-                    <StarBox star="{{comment.avg}}"/>
-                    <span>{{ comment.favorable_rate }}%</span>好评
-                </div>
-                <div class="comment-stats" v-if="comment && comment.tags && comment.tags.length > 0">
-                    <a v-for="(item, index) in comment.tags" :key="index">{{ item.label }}（{{ item.count }}）</a>
-                </div>
-                <CommentPage items="{{items}}"/>
+        <div id="comments" class="comment-box">
+            <div class="comment-subtotal" v-if="comment">
+                评分
+                <StarBox star="{{comment.avg}}"/>
+                <span>{{ comment.favorable_rate }}%</span>好评
             </div>
+            <div class="comment-stats" v-if="comment && comment.tags && comment.tags.length > 0">
+                <a v-for="(item, index) in comment.tags" :key="index">{{ item.label }}（{{ item.count }}）</a>
+            </div>
+            <CommentPage items="{{items}}"/>
         </div>
     </div>
 </template>
@@ -25,7 +23,7 @@ interface IPageData {
     item_id: number,
     item_type: number,
     items: IComment[],
-    has_more: boolean,
+    hasMore: boolean,
     page: number,
     isLoading: boolean
 }
@@ -47,7 +45,7 @@ export class Comment extends WxPage<IPageData> {
         item_id: 0,
         item_type: 0,
         items: [],
-        has_more: true,
+        hasMore: true,
         page: 1,
         isLoading: false
     }
@@ -90,21 +88,15 @@ export class Comment extends WxPage<IPageData> {
      * refresh
      */
     public tapRefresh() {
-        this.setData({
-            items: [],
-            isLoading: false,
-            has_more: true
-        });
         this.goPage(1);
     }
 
     public goPage(page: number) {
-        if (this.data.isLoading || !this.data.has_more) {
+        if (this.data.isLoading || !this.data.hasMore) {
             return;
         }
         this.setData({
             isLoading: true,
-            page
         });
         getCommentList({
             item_id: this.data.item_id,
@@ -118,7 +110,7 @@ export class Comment extends WxPage<IPageData> {
                 items = [].concat(this.data.items as never[], res.data as never[]);
             }
             this.setData({
-                has_more: res.paging.more,
+                hasMore: res.paging.more,
                 isLoading: false,
                 page,
                 items

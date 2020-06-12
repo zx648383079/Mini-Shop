@@ -3,25 +3,33 @@
         <div class="has-footer" v-if="goods">
             <div id="info">
                 <div class="goods-gallary-box">
-                    <img :src="goods.thumb" alt="">
+                    <swiper autoplay="{{ true }}"
+                        interval="{{ 3000 }}"
+                        duration="{{ 500 }}">
+                        <block wx:for="{{ goods.gallery }}" wx:key="id">
+                            <swiper-item>
+                                <image src="{{ item.image }}" class="slide-image"/>
+                            </swiper-item>
+                        </block>
+                    </swiper>
                 </div>
 
-                <div class="activity-box" v-if="goods.activty">
+                <div class="activity-box" v-if="countdown">
                     <div class="price">
                         <em>￥</em>{{ goods.price }}
                     </div>
                     <div class="info">
-                        <p class="old-price">{{ goods.market_price | price }}</p>
-                        <span class="time-block"><i class="fa fa-clock"></i>秒杀</span>
+                        <p class="old-price">￥{{ goods.market_price }}</p>
+                        <span class="time-block"><i class="fa fa-clock"></i>{{ goods.countdown.name }}</span>
                     </div>
                     <div class="countdown">
-                        <p class="text">距秒杀结束还剩</p>
+                        <p class="text">{{ goods.countdown.tip }}</p>
                         <p class="time">
-                            <span>01</span>
+                            <span>{{ countdown.hour }}</span>
                             :
-                            <span>01</span>
+                            <span>{{ countdown.minute }}</span>
                             :
-                            <span>01</span>
+                            <span>{{ countdown.second }}</span>
                         </p>
                     </div>
                 </div>
@@ -34,28 +42,19 @@
                             收藏
                         </div>
                     </div>
-                    <div class="goods-price">{{ goods.price | price }}</div>
+                    <div class="goods-price"><em>￥</em>{{ goods.price }}</div>
 
-                    <div class="promote-line">
-                        <div>支付</div>
-                        <div>
-                        11111
+                    <div class="promote-box" v-if="goods.promotes && goods.promotes.length > 0">
+                        <div class="promote-line" v-for="(promote, index) in goods.promotes" :key="index">
+                            <div class="name">{{ promote.name }}</div>
+                            <div class="items">
+                                <p v-for="(item, j) in promote.items" :key="j">
+                                    <span class="icon">{{ item.icon }}</span>
+                                    <span class="title">{{ item.name }}</span>
+                                </p>
+                            </div>
+                            <div class="toggle-icon">...</div>
                         </div>
-                        <div>...</div>
-                    </div>
-                    <div class="promote-line">
-                        <div>领券</div>
-                        <div>
-                        11111
-                        </div>
-                        <div>...</div>
-                    </div>
-                    <div class="promote-line">
-                        <div>促销</div>
-                        <div>
-                        11111
-                        </div>
-                        <div>...</div>
                     </div>
                 </div>
             </div>
@@ -99,7 +98,9 @@
                     <div class="tab-item {{tab == 1 ? 'active' : ''}}"  @click="tab = 1">规格参数</div>
                     <div class="tab-item {{tab == 2 ? 'active' : ''}}"  @click="tab = 2">售后保障</div></div>
                 <div class="tab-body">
-                    <div class="tab-item {{tab < 1 ? 'active' : ''}}" v-html="goods.content"></div>
+                    <div class="tab-item {{tab < 1 ? 'active' : ''}}">
+                        <rich-text nodes="{{goods.content}}"/>
+                    </div>
                     <div class="tab-item {{tab == 1 ? 'active' : ''}}">
                         <div class="static-properties-box" v-if="goods.static_properties">
                             <dl v-for="(item, index) in goods.static_properties" :key="index">
@@ -147,6 +148,7 @@ import { IProduct, ICommentSubtotal, SET_GOODS_HISTORY } from '../../api/model';
 import { getInfo, getRecommend } from '../../api/product';
 import { getCommentSubtotal } from '../../api/comment';
 import { toggleCollect } from '../../api/user';
+import { twoPad } from '../../utils/util';
 const app = getApp<IMyApp>();
 
 interface IPageData {
@@ -156,6 +158,7 @@ interface IPageData {
     tab: number,
     comment: ICommentSubtotal | null,
     items: IProduct[],
+    countdown: any | null;
 }
 @WxJson({
     usingComponents:{
@@ -175,27 +178,41 @@ export class Index extends WxPage<IPageData> {
         tab: 0,
         comment: null,
         items: [],
+        countdown: null
     };
 
     public onLoad(query?: any) {
         const id = parseInt(query.id);
         if (!id) {
-            wx.showToast({
-                title: '商品错误'
-            });
-            wx.switchTab({
-                url: '/pages/index/index'
-            });
+            this.tapBack();
             return;
         }
+        let data = this.data;
         getInfo(id).then(res => {
-            this.setData({
-                goods: res
-            });
+            if (!res) {
+                this.tapBack();
+                return;
+            }
+            data.goods = res;
+            if (res.countdown) {
+                data.countdown = res.countdown;
+            }
+            this.setData(data);
+            this.startCountdown();
             this.loadComment();
             this.loadRecommend();
             this.setHistory();
         });  
+    }
+
+    public tapBack() {
+        wx.showToast({
+            icon: 'none',
+            title: '商品错误'
+        });
+        wx.switchTab({
+            url: '/pages/index/index'
+        });
     }
 
     /**
@@ -290,10 +307,62 @@ export class Index extends WxPage<IPageData> {
             });
         });
     }
+
+    public startCountdown() {
+        let countdown = this.data.countdown;
+        if (!countdown) {
+            return;
+        }
+        const now = new Date();
+        const diff = Math.floor(countdown.end_at - now.getTime() / 1000);
+        if (diff <= 0) {
+            countdown = null;
+        } else {
+            countdown.hour = twoPad(Math.floor(diff / 3600));
+            countdown.minute = twoPad(Math.floor(diff % 3600 / 60));
+            countdown.second = twoPad(diff % 3600 % 60);
+        }
+        this.setData({countdown});
+        if (countdown) {
+            setTimeout(this.startCountdown.bind(this), 500);
+        }
+    }
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 .goods-gallary-box {
     text-align: center;
+    swiper {
+        height: 22.5rem;
+    }
+}
+.recomment-box {
+    margin-top: 20px;
+}
+.time-block {
+    .fa {
+        font-size: 10px;
+    }
+}
+.goods-content {
+    view {
+        padding: 0;
+        margin: 0;
+    }
+    image {
+        width: 100%;
+        display: inherit;
+    }
+}
+.promote-line {
+    .icon {
+        font-size: 10px;
+        color: red;
+        border: 1px solid red;
+        margin-right: 5px;
+    }
 }
 </style>

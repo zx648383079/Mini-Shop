@@ -9,6 +9,10 @@
     font-style: normal;
 }
 
+.fa-clock:before {
+    content: "\e651";
+}
+
 .fa-scan:before {
     content: "\e701";
 }
