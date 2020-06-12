@@ -6,7 +6,7 @@
 
         <div class="order-box">
             <OrderItem v-for="(item, index) in items" :key="index" item="{{item}}" @receive="tapReceive" @cancel="tapCancel"/>
-            <div class="order-empty" v-if="!items || items.length < 1">
+            <div class="empty-box" v-if="!items || items.length < 1">
                 您还没有订单
             </div>
         </div>
@@ -185,12 +185,6 @@ export class Index extends WxPage<IPageData> {
 <style lang="scss" scoped>
 page {
     background-color: #f4f4f4;
-}
-.order-empty {
-    font-size: 40px;
-    color: #ccc;
-    text-align: center;
-    padding-top: 20vh;
 }
 .tab-bar {
     text {

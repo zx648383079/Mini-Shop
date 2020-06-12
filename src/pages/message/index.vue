@@ -1,77 +1,198 @@
 <template>
-    <div>
-        <div class="address-list">
-            <SwipeRowBox>
-                <SwipeRow name="address-item" right-width="100" left-width="350" v-for="(item, index) in items" :key="index" index="index">
-                    <div slot="left" class="actions-left">
-                        <i class="read">标为已读</i>
+    <div class="slide-box">
+        <div class="item" v-for="(item, index) in items" :key="index" :index="item.id">
+            <MpSlideView buttons="{{ item.buttons }}" bindbuttontap="slideButtonTap" >
+                <div class="message-item" @click="tapRead" data-i="{{ index }}">
+                    <div class="icon-header">
+                        <span>{{ item.bulletin.icon }}</span>
                     </div>
-                    <div slot="content" class="swipe-content">
-                        <div class="address-first">
-                            <span>系</span>
+                    <div class="content">
+                        <div class="name">
+                            <span>{{ item.bulletin.user_name }}</span>
+                            <span>{{ item.bulletin.created_at }}</span>
                         </div>
-                        <div class="address-info">
-                            <h3>213213213123</h3>
-                            <p>
-                                2019-29
-                            </p>
+                        <div class="desc">
+                            {{ item.bulletin.title }} 
+                        </div>
+                        <div class="footer">
+                            <span>点击查看</span>
+                        </div>
+                        <div class="un-read" v-if="item.status < 1">
+                            未读
                         </div>
                     </div>
-                    <div slot="right" class="actions-right">
-                        <i class="fa fa-trash" @click="tapRemove"></i>
-                    </div>
-                </SwipeRow>
-            </SwipeRowBox>
+                </div>
+            </MpSlideView>
+        </div>
+        <div class="empty-box" v-if="items.length < 1">
+                暂无消息
         </div>
     </div>
 </template>
 <script lang="ts">
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
+import { IBulletinUser } from '../../api/model';
+import { getBulletinList } from '../../api/bulletin';
 
 interface IPageData {
-    items: any[];
+    items: IBulletinUser[],
+    page: number,
+    hasMore: boolean,
+    isLoading: boolean,
 }
 @WxJson({
     navigationBarTitleText: '我的消息',
     navigationBarBackgroundColor: "#05a6b1",
     navigationBarTextStyle: "white",
     usingComponents: {
-        SwipeRowBox: '/components/SwipeRow/box',
-        SwipeRow: '/components/SwipeRow/index'
-    }
+        MpSlideView: 'weui-miniprogram/slideview/slideview'
+    },
 })
 export class Index extends WxPage<IPageData> {
     public data: IPageData = {
-        items: ['1231231', 1002]
+        items: [],
+        page: 1,
+        hasMore: true,
+        isLoading: false,
     };
 
-    public tapRemove(item: any) {
-        console.log(item)
+    onLoad() {
+        this.tapRefresh();
+    }
+
+    onShow() {
+        
+    }
+
+    onPullDownRefresh() {
+        this.tapRefresh();
+        wx.stopPullDownRefresh();
+    }
+
+    onReachBottom() {
+        this.tapMore();
+    }
+
+    slideButtonTap(e: any) {
+        console.log(e);
+        
+    }
+
+    public tapRefresh() {
+        this.goPage(1);
+    }
+
+    public tapMore() {
+        if (!this.data.hasMore) {
+            return;
+        }  
+        this.goPage(this.data.page + 1);
+    }
+
+    public goPage(page: number) {
+        if (this.data.isLoading) {
+            return;
+        }
+        this.setData({
+            isLoading: true
+        });
+        getBulletinList({
+            page,
+        }).then(res => {
+            res.data = this.formatButton(res.data);
+            this.setData({
+                page: page,
+                hasMore: res.paging.more,
+                isLoading: false,
+                items: page < 2 ? res.data :  [].concat(this.data.items as never[], res.data as never[])
+            });
+        }, () => {
+            this.setData({
+                isLoading: false
+            });
+        });
+    }
+
+     private formatButton(res: any[]): any[] {
+        return res.map(item => {
+                    item.buttons = item.status > 0 ? 
+                    [
+                        {
+                            type: 'warn',
+                            text: '删除',
+                            data: item.id,
+                        }
+                    ] : [
+                        {
+                            text: '标记为已读',
+                            data: item.id,
+                        },
+                        {
+                            type: 'warn',
+                            text: '删除',
+                            data: item.id,
+                        }
+                    ];
+                    return item;
+                });
     }
 }
 </script>
 <style lang="scss" scoped>
-.swipe-content {
-    width: 750rpx;
+page {
+    background-color:#f4f4f4;
 }
-.actions-right,
-.actions-left {
-    height: 110rpx;
-    display: flex;
-    direction: row;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 110rpx;
-    .read {
-        background-color: #ccc;
-        color: #fff;
-        width: 350rpx;
+.message-item {
+    padding:10px;
+    position:relative;
+    background:#fff;
+    margin-bottom:10px;
+    .icon-header {
+        font-size:25px;
+        color:#41C4FF;
+        float:left;
+        margin-right:15px;
+        width:7%;
+        height: 80px;
+        text {
+            display: block;
+            line-height: 80px;
+        }
+        image {
+            width: 30px;
+            height: 30px;
+            margin-top: 15px;
+        }
     }
-    .fa-trash {
-        background-color: red;
-        color: #fff;
-        width: 150rpx; 
+    .content {
+        .name,
+        .footer {
+            font-size: 12px;
+            color: #999;
+            text {
+                margin-right: 10px;
+            }
+        }
+        .desc {
+            font-size: 14px;
+            line-height: 20px;
+            padding: 10px 0;
+            color: #000000;
+            overflow: hidden;
+            height: 40px;
+        }
+        .footer {
+            height: auto;
+            border: none;
+        }
+    }
+    .un-read {
+        position: absolute;
+        font-size: 30px;
+        right: 20px;
+        opacity: .1;
+        top: 20px;
+        transform: rotate(30deg);
     }
 }
-
 </style>

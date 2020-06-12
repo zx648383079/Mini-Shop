@@ -1,33 +1,30 @@
 <template>
     <div>
-        <div class="cart-box" v-if="items && items.length > 0">
+        <div class="cart-box slide-box" v-if="items && items.length > 0">
             <div class="cart-group-item" v-for="(item, index) in items" :key="index">
                 <div class="group-header">
                     <i class="fa check-box {{ item.checked ? 'active' : ''}}" @click="toggleCheckGroup" data-group="{{ index }}"></i>
                     <span>{{ item.name }}</span>
                 </div>
-                <SwipeRowBox class="swipe-box goods-list">
-                    <SwipeRow name="cart-item goods-item" v-for="(cart, i) in item.goods_list" :key="i" :index="cart.id" right-width="150">
-                        <div slot="content" class="swipe-content">
+                <div class="goods-list">
+                    <MpSlideView v-for="(cart, i) in item.goods_list" :key="i" buttons="{{ cart.buttons }}" bindbuttontap="slideButtonTap">
+                        <div class="cart-item goods-item">
                             <i class="fa check-box {{ cart.checked ? 'active' : ''}}" @click="toggleCheck" data-group="{{ index }}" data-cart="{{ i }}"></i>
                             <div class="goods-img">
                                 <img :src="cart.goods.thumb" alt="">
                             </div>
                             <div class="goods-info">
                                 <h4>{{ cart.goods.name }}</h4>
-                                <span>{{ cart.price | price }}</span>
+                                <span>￥{{ cart.price }}</span>
                                 <div class="number-box">
                                     <i class="fa fa-minus"></i>
                                     <input type="text" name="" value="{{cart.amount}}">
-                                    <i class="fa fa-plus"></i>
+                                    <i class="fa fa-add"></i>
                                 </div>
                             </div>
                         </div>
-                        <div slot="right" class="actions-right">
-                            <i class="fa fa-trash" @click="tapRemove"></i>
-                        </div>
-                    </SwipeRow>
-                </SwipeRowBox>
+                    </MpSlideView>
+                </div>
             </div>
         </div>
         <div class="cart-footer"  v-if="items && items.length > 0">
@@ -47,7 +44,7 @@
             </div>
             <div v-else>
                 <p>购物车时空的</p>
-                <a href="/pages/index/index" class="btn">去逛逛</a>
+                <a href="/pages/index/index" open-type="switchTab" class="btn">去逛逛</a>
             </div>
         </div>
     </div>
@@ -70,8 +67,7 @@ interface IPageData {
 }
 @WxJson({
     usingComponents: {
-        SwipeRowBox: '/components/SwipeRow/box',
-        SwipeRow: '/components/SwipeRow/index'
+        MpSlideView: 'weui-miniprogram/slideview/slideview'
     },
     navigationBarTitleText: "购物车",
     navigationBarBackgroundColor: "#05a6b1",
@@ -102,7 +98,10 @@ export class Index extends WxPage<IPageData> {
         getCart().then(res => {
             this.setData({
                 isLoading: false,
-                items: !res.data ? [] : res.data
+                items: !res.data ? [] : res.data.map(item => {
+                    item.goods_list = this.formatButton(item.goods_list);
+                    return item;
+                })
             });
         }); 
     }
@@ -195,24 +194,29 @@ export class Index extends WxPage<IPageData> {
             url: '/pages/cashier/index'
         });
     }
+
+    private formatButton(res: any[]): any[] {
+        return res.map(item => {
+            if (item.goods.name.length > 15) {
+                item.goods.name = item.goods.name.substr(0, 15) + '...';
+            }
+            item.buttons = [
+                {
+                    type: 'warn',
+                    text: '删除',
+                    data: item.id,
+                }
+            ];
+            return item;
+        });
+    }
 }
 </script>
 <style lang="scss" scoped>
-.swipe-content {
-    width: 750rpx;
-    margin: 0;
+page {
+    background-color:#f4f4f4;
 }
-.actions-right {
-    height: 100px;
-    display: flex;
-    direction: row;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 100px;
-    .fa-trash {
-        background-color: red;
-        color: #fff;
-        width: 150rpx; 
-    }
+.cart-group-item {
+    margin-bottom:10px;
 }
 </style>

@@ -412,7 +412,7 @@ $lineHeight: 2.5rem;
         .fa {
             position: absolute;
             right: 0.3125rem;
-            top: 0.4375rem;
+            top: 0;
         }
 
         text {
@@ -1254,10 +1254,8 @@ footer,
     }
 }
 
-.swipe-box {
-    overflow: hidden;
-
-    &.goods-list {
+.slide-box {
+    .goods-list {
         text-align: left;
 
         .goods-item {
@@ -1504,7 +1502,7 @@ footer,
 
         .group-header {
             line-height: 30px;
-            padding: 0 13px;
+            padding: 0 5px;
         }
 
         .goods-list {
@@ -3288,5 +3286,19 @@ footer,
 }
 .hr {
     border-bottom: 1px solid #333;
+}
+
+.empty-box {
+    line-height: 40px;
+    text-align: center;
+    font-size: 30px;
+    color: #999;
+    margin-top: 30vh;
+}
+
+.no-more-tip {
+    text-align: center;
+    color: #ccc;
+    line-height: 60px;
 }
 </style>

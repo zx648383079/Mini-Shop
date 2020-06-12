@@ -105,10 +105,6 @@ export class Index extends WxPage<IPageData> {
             for (const it of items) {
                 it.is_default = item.id == it.id;
             }
-            // const rows: SwipeRow[] = this.$refs.swiperow as SwipeRow[];
-            // for (const box of rows) {
-            //     box.reset();
-            // }
             if (this.data.mode > 0) {
                 app.setAddressIfEmpty(item);
             }

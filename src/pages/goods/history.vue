@@ -1,21 +1,23 @@
 <template>
     <div>
-        <div class="collect-page">
-            <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
-                <div class="swipe-box goods-list">
-                    <SwipeRow name="goods-item" v-for="(item, index) in items" :key="index" @remove="tapRemove(item)" :index="index" ref="swiperow">
-                        <div class="goods-img">
-                            <img :src="item.thumb" alt="">
+        <div class="collect-page slide-box">
+            <div class="swipe-box goods-list">
+                <div class="item" v-for="(item, index) in items" :key="index" :index="item.id">
+                    <MpSlideView buttons="{{ item.buttons }}" bindbuttontap="slideButtonTap" >
+                        <div class="goods-item">
+                            <div class="goods-img">
+                                <img :src="item.thumb" alt="">
+                            </div>
+                            <div class="goods-info">
+                                <h4>{{item.name}}</h4>
+                                <span>{{ item.price }}</span>
+                            </div>
                         </div>
-                        <div class="goods-info">
-                            <h4>{{item.name}}</h4>
-                            <span>{{ item.price }}</span>
-                        </div>
-                    </SwipeRow>
+                    </MpSlideView>
                 </div>
-                <div class="order-empty" v-if="!items || items.length < 1">
-                    您没有浏览记录
-                </div>
+            </div>
+            <div class="empty-box" v-if="!items || items.length < 1">
+                您没有浏览记录
             </div>
         </div>
         <div class="add-btn" @click="tapClear">清空</div>
@@ -29,11 +31,14 @@ import { getList } from '../../api/product';
 interface IPageData {
     goodsId: number[],
     items: IProduct[],
-    has_more: boolean,
+    hasMore: boolean,
     page: number,
     isLoading: boolean
 }
 @WxJson({
+    usingComponents: {
+        MpSlideView: 'weui-miniprogram/slideview/slideview'
+    },
     navigationBarTitleText: "我的足迹",
     navigationBarBackgroundColor: "#05a6b1",
     navigationBarTextStyle: "white",
@@ -45,7 +50,7 @@ export class History extends WxPage<IPageData> {
     public data: IPageData = {
         goodsId: [],
         items: [],
-        has_more: true,
+        hasMore: true,
         page: 1,
         isLoading: false
     }
@@ -77,7 +82,7 @@ export class History extends WxPage<IPageData> {
                 that.setData({
                     goodsId: [],
                     items: [],
-                    has_more: false,
+                    hasMore: false,
                     isLoading: false
                 });
                 wx.removeStorageSync(SET_GOODS_HISTORY);
@@ -104,12 +109,12 @@ export class History extends WxPage<IPageData> {
         this.setData({
             goodsId: wx.getStorageSync(SET_GOODS_HISTORY) || [],
             items: [],
-            has_more: true,
-            isLoading: true
+            hasMore: true,
+            isLoading: false
         });
         if (!this.data.goodsId || this.data.goodsId.length < 1) {
             this.setData({
-                has_more: false,
+                hasMore: false,
                 isLoading: false
             });
             return;
@@ -118,7 +123,7 @@ export class History extends WxPage<IPageData> {
     }
 
     public goPage(page: number) {
-        if (this.data.isLoading || !this.data.has_more) {
+        if (this.data.isLoading || !this.data.hasMore) {
             return;
         }
         this.setData({
@@ -135,21 +140,38 @@ export class History extends WxPage<IPageData> {
             } else {
                 items = [].concat(this.data.items as never[], res.data as never[]);
             }
+            items = this.formatButton(items);
             this.setData({
-                has_more: res.paging.more,
+                hasMore: res.paging.more,
                 isLoading: false,
                 page,
                 items
             });
         });
     }
+
+    private formatButton(res: any[]): any[] {
+        return res.map(item => {
+            if (item.name.length > 20) {
+                item.name = item.name.substr(0, 20) + '...';
+            }
+            item.buttons = [
+                {
+                    type: 'warn',
+                    text: '删除',
+                    data: item.id,
+                }
+            ];
+            return item;
+        });
+    }
 }
 </script>
 <style lang="scss" scoped>
-.order-empty {
-    font-size: 40px;
-    color: #ccc;
-    text-align: center;
-    padding-top: 20vh;
+page {
+    background-color:#f4f4f4;
+}
+.item {
+    margin-bottom:10px;
 }
 </style>

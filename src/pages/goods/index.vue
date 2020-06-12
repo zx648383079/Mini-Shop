@@ -365,4 +365,11 @@ page {
         margin-right: 5px;
     }
 }
+.goods-navbar {
+    navigator {
+        .fa {
+            font-size: 16px;
+        }
+    }
+}
 </style>

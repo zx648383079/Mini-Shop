@@ -1,19 +1,21 @@
 <template>
     <div class="collect-page slide-box">
         <div class="goods-list">
-            <MpSlideView v-for="(item, index) in items" :key="index" :index="index" buttons="{{slideButtons}}" bindbuttontap="slideButtonTap">
-                <div class="goods-item">
-                    <div class="goods-img">
-                        <img :src="item.goods.thumb" alt="">
+            <div class="item" v-for="(item, index) in items" :key="index" :index="item.id">
+                <MpSlideView buttons="{{ item.buttons }}" bindbuttontap="slideButtonTap" >
+                    <div class="goods-item">
+                        <div class="goods-img">
+                            <img :src="item.goods.thumb" alt="">
+                        </div>
+                        <div class="goods-info">
+                            <h4>{{item.goods.name}}</h4>
+                            <span>{{ item.goods.price }}</span>
+                        </div>
                     </div>
-                    <div class="goods-info">
-                        <h4>{{item.goods.name}}</h4>
-                        <span>{{ item.goods.price }}</span>
-                    </div>
-                </div>
-            </MpSlideView>
+                </MpSlideView>
+            </div>
         </div>
-        <div class="order-empty" v-if="!items || items.length < 1">
+        <div class="empty-box" v-if="!items || items.length < 1">
             您还没有收藏商品
         </div>
     </div>
@@ -28,7 +30,6 @@ interface IPageData {
     page: number,
     hasMore: boolean,
     isLoading: boolean,
-    slideButtons: any[],
 }
 @WxJson({
     usingComponents: {
@@ -46,12 +47,6 @@ export class Index extends WxPage<IPageData> {
         page: 1,
         hasMore: true,
         isLoading: false,
-        slideButtons: [
-            {
-              type: 'warn',
-              text: '删除',
-            }
-        ]
     };
 
     public onLoad() {
@@ -111,17 +106,30 @@ export class Index extends WxPage<IPageData> {
             data.items = [].concat(data.items as never[], res.data as never[]).filter((item: ICollect) => {
                 return item.goods;
             });
+            data.items = this.formatButton(data.items);
             this.setData(data);
         });
+    }
+
+    private formatButton(res: any[]): any[] {
+        return res.map(item => {
+                    item.buttons = [
+                        {
+                            type: 'warn',
+                            text: '删除',
+                            data: item.id,
+                        }
+                    ];
+                    return item;
+                });
     }
 }
 </script>
 <style lang="scss" scoped>
-.order-empty {
-    font-size: 40px;
-    color: #ccc;
-    text-align: center;
-    padding-top: 20vh;
+page {
+    background-color:#f4f4f4;
 }
-
+.item {
+    margin-bottom:10px;
+}
 </style>

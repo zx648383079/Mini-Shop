@@ -62,8 +62,8 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/message/index",
-					"pathName": "pages/message/index",
+					"name": "pages/cart/index",
+					"pathName": "pages/cart/index",
 					"query": "id=1",
 					"scene": null
 				}
