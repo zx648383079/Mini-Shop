@@ -28,7 +28,7 @@
             </div>
 
             <div class="menu-box">
-                <a v-for="(item, index) in categories" :key="index" class="menu-item" wx:key="id">
+                <a v-for="(item, index) in categories" :key="index" class="menu-item" wx:key="id" href="/pages/search/result?category={{ item.id }}">
                     <img class="menu-icon" :src="item.icon" alt="">
                     <div class="menu-name">{{ item.name }}</div>
                 </a>
@@ -102,6 +102,7 @@ import { IAd, ICategory, IProduct, ISubtotal, IHomeProduct } from '../../api/mod
 import { getHome, getInfo } from '../../api/product';
 import { getBanners } from '../../api/ad';
 import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
+import { LOGIN_PATH } from '../../utils/types';
 
 const app = getApp<IMyApp>();
 
@@ -163,6 +164,12 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapAddCart(e: TouchEvent) {
+        if (this.data.isGuest) {
+            wx.navigateTo({
+                url: LOGIN_PATH
+            })
+            return;
+        }
         let id = e.currentTarget.dataset.id as number;
         if (this.data.goods && this.data.goods.id === id) {
             this.setData({

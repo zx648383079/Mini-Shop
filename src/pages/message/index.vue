@@ -14,7 +14,7 @@
                         <div class="desc">
                             {{ item.bulletin.title }} 
                         </div>
-                        <div class="footer">
+                        <div class="bottom">
                             <span>点击查看</span>
                         </div>
                         <div class="un-read" v-if="item.status < 1">
@@ -166,7 +166,7 @@ page {
     }
     .content {
         .name,
-        .footer {
+        .bottom {
             font-size: 12px;
             color: #999;
             text {
@@ -180,10 +180,6 @@ page {
             color: #000000;
             overflow: hidden;
             height: 40px;
-        }
-        .footer {
-            height: auto;
-            border: none;
         }
     }
     .un-read {

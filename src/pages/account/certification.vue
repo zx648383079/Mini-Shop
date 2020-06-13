@@ -13,7 +13,7 @@
                 <a href="">查看详情</a>
             </div>
             <div class="menu-list">
-                <MenuItem title="上传证件" icon="fa-camera" uri="/checkin"/>
+                <MenuItem class="item" title="上传证件" icon="fa-camera" uri="/checkin"/>
             </div>
         </div>
     </div>
@@ -31,7 +31,8 @@ interface IPageData {
 
 @WxJson({
     usingComponents: {
-        ApplyCertification: 'Child/ApplyCertification'
+        ApplyCertification: 'Child/ApplyCertification',
+        MenuItem: "/components/MenuItem/index"
     },
     navigationBarTitleText: "实名认证",
     navigationBarBackgroundColor: "#05a6b1",
@@ -53,6 +54,9 @@ export default class Certification extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 .top-header {
     background: #05a6b1;
     color: #fff;
@@ -65,6 +69,7 @@ export default class Certification extends WxPage<IPageData> {
     margin: -120px auto 20px;
     position: relative;
     padding: 60px 20px 20px;
+    box-sizing: border-box;
     .avatar {
         border-radius: 50%;
         height: 80px;

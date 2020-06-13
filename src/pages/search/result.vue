@@ -8,13 +8,13 @@
                     </a>
                     <div class="form-box" @click="tapEnterSearch">
                         <i class="fa fa-search" ></i>
-                        <span class="search-input">{{keywords}}</span>
+                        <view class="search-input">{{keywords}}</view>
                         <i class="fa fa-close" @click="tapNewSearch"></i>
                     </div>
                 </div>
             </header>
             <div class="has-header">
-                <div :loading="isLoading" :more="hasMore"   bind:refresh="tapRefresh" bind:more="tapMore">
+                <div >
                     <div class="goods-list">
                         <div class="item-view" v-for="(item, index) in items" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
                             <div class="item-img">
@@ -30,6 +30,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="empty-box" v-if="items.length < 1">
+                        暂无商品
                 </div>
             </div>
         </div>
@@ -168,5 +171,6 @@ export class Index extends WxPage<IPageData> {
     color: #333;
     text-align: left;
     padding: 0 24px;
+    height: 35px;
 }
 </style>

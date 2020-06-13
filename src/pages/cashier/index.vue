@@ -50,14 +50,14 @@ import {
     IMyApp
 } from '../../app.vue';
 import { WxPage, WxJson, CustomEvent } from '../../../typings/wx/lib.vue';
-import { IAddress, ICart, IOrder, IPayment, IShipping, ICartItem } from '../../api/model';
+import { IAddress, ICart, IOrder, IPayment, IShipping, ICartItem, ICartGroup } from '../../api/model';
 import { getPaymentList, getShippingList, previewOrder, checkoutOrder } from '../../api/cart';
 const app = getApp<IMyApp>();
 
 interface IPageData {
     address: IAddress | null,
     address_list: IAddress[],
-    cart: ICart[],
+    cart: ICartGroup[],
     order: IOrder| null,
     payment_list: IPayment[],
     payment: IPayment| null,
@@ -199,7 +199,7 @@ export class Index extends WxPage<IPageData> {
 
 
 
-    public getGoodsIds(carts: ICart[]): ICartBox {
+    public getGoodsIds(carts: ICartGroup[]): ICartBox {
         if (!carts || carts.length < 1) {
             return {type: 0, goods: []};
         }

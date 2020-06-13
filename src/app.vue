@@ -3,7 +3,7 @@ import {
     TOKEN_KEY
 } from "./utils/types";
 import {
-    ISubtotal, ICategory, ICart, IAddress, IOrder, IUser, ILogin, IDataOne, IRegister
+    ISubtotal, ICategory, IAddress, IOrder, IUser, ILogin, IDataOne, IRegister, ICartGroup
 } from "./api/model";
 import { getSubtotal } from "./api/product";
 import { getProfile, login, logout, authLogin, sendFindEmail, register } from "./api/user";
@@ -16,7 +16,7 @@ interface IAppData {
     token: string | null,
     subtotal: ISubtotal | null,
     categories: ICategory[],
-    cart: ICart[];
+    cart: ICartGroup[];
     addressList: IAddress[];
     address: IAddress | null;
     order: IOrder | null;
@@ -34,7 +34,7 @@ export interface IMyApp {
     logoutUser(): Promise<void>;
     sendFindEmail(email: string): Promise<IDataOne<boolean>>;
     registerUser(params: IRegister): Promise<IUser| void>;
-    setCart(cart: ICart[]): void,
+    setCart(cart: ICartGroup[]): void,
     getCategories(): Promise<ICategory[]>,
     getAddressList(): Promise<IAddress[]>,
     setAddressList(data: IAddress[]): void,
@@ -255,7 +255,7 @@ export class Application extends WxApp<IAppData> implements IMyApp {
         });
     }
     
-    public setCart(cart: ICart[]) {
+    public setCart(cart: ICartGroup[]) {
         this.globalData.cart = cart;
     }
     
@@ -435,6 +435,7 @@ $lineHeight: 2.5rem;
         float: right;
         margin-right: 0.625rem;
         line-height: 20px;
+        margin-top: 3px;
     }
 }
 
@@ -2586,31 +2587,6 @@ footer,
         text-align: left;
     }
 
-    .input-box,
-    .code-input {
-        border-bottom: $hr;
-
-        input {
-            height: 40px;
-            border: 0;
-            background: transparent;
-            width: 100%;
-            outline: none;
-            text-align: left;
-        }
-    }
-
-    .code-input {
-        display: grid;
-        grid-template-columns: 1fr 80px;
-
-        text {
-            border: 1px solid;
-            font-size: 12px;
-            line-height: 40px;
-        }
-    }
-
     .unlogin {
         line-height: 40px;
         text-align: left;
@@ -2622,6 +2598,31 @@ footer,
                 top: 3px;
             }
         }
+    }
+}
+
+.input-box,
+.code-input {
+    border-bottom: $hr;
+    input {
+        height: 40px;
+        border: 0;
+        background: transparent;
+        width: 100%;
+        outline: none;
+        text-align: left;
+    }
+}
+
+.code-input {
+    display: grid;
+    grid-template-columns: 1fr 80px;
+
+    navigator,
+    text {
+        border: 1px solid;
+        font-size: 12px;
+        line-height: 40px;
     }
 }
 
@@ -3286,6 +3287,31 @@ footer,
 }
 .hr {
     border-bottom: 1px solid #333;
+}
+
+.large-header {
+    background-color: $headerBg;
+    color: $white;
+    height: 100px;
+    position: relative;
+    margin-bottom: 20px;
+    .title {
+        padding: 40px 0 0 20px;
+        font-size: 30px;
+    }
+    .fa {
+        position: absolute;
+        bottom: -20px;
+        font-size: 30px;
+        display: block;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        right: 20px;
+        border-radius: 50%;
+        background-color: #1d8686;
+    }
 }
 
 .empty-box {

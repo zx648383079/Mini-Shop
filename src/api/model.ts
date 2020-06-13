@@ -148,11 +148,42 @@ export interface ICartItem {
     goods?: IProduct;
 }
 
-export interface ICart {
+export interface ICartGroup {
     shop?: IStore;
     name: string;
     checked?: boolean;
     goods_list: ICartItem[];
+}
+
+export interface IButton {
+    action: string;
+    text: string;
+    reason?: any;
+}
+
+export interface ILink {
+    text: string;
+    url: string;
+}
+
+export interface ICartCell {
+    popup_tip: string;
+    link?: ILink;
+}
+
+export interface ICartSubtotal {
+    total: number;
+    total_weight: number;
+    original_total: number;
+    discount_amount: number;
+    count: number;
+}
+
+export interface ICart {
+    checkout_button?: IButton;
+    data: ICartGroup[];
+    promotion_cell?: ICartCell[];
+    subtotal: ICartSubtotal;
 }
 
 export interface IPayment {

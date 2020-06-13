@@ -1,20 +1,20 @@
 import {fetch, post} from '../utils/http';
 import { IData, ICart, IPayment, IShipping, ICartItem, IOrder } from './model';
 
-export const getCart = (params?: any) => fetch<IData<ICart>>('shop/cart', params)
+export const getCart = (params?: any) => fetch<ICart>('shop/cart', params)
 
-export const addGoods = (goods: number, amount: number = 1, properties = []) => post<IData<ICart>>('shop/cart/add', {
+export const addGoods = (goods: number, amount: number = 1, properties = []) => post<ICart>('shop/cart/add', {
     goods,
     amount,
     properties,
 });
 
-export const updateItem = (id: number, amount: number = 1) => post<IData<ICart>>('shop/cart/update', {
+export const updateItem = (id: number, amount: number = 1) => post<ICart>('shop/cart/update', {
     id,
     amount,
 });
 
-export const deleteItem = (id: number) => post<IData<ICart>>('shop/cart/delete', {
+export const deleteItem = (id: number) => post<ICart>('shop/cart/delete', {
     id,
 });
 

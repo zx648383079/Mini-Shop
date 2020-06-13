@@ -33,7 +33,7 @@
 </template>
 <script lang="ts">
 import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
-import { IProduct, ICart } from "../../../api/model";
+import { IProduct, ICart, ICartGroup } from "../../../api/model";
 import { addGoods } from "../../../api/cart";
 import {
     IMyApp
@@ -123,7 +123,7 @@ export class CartDialog extends WxComponent<IComponentData>  {
             });
             return;
         }
-        const data: ICart[] = [
+        const data: ICartGroup[] = [
             {
                 name: this.data.product.shop + '',
                 goods_list: [

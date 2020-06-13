@@ -19,7 +19,7 @@
                                 <div class="number-box">
                                     <i class="fa fa-minus"></i>
                                     <input type="text" name="" value="{{cart.amount}}">
-                                    <i class="fa fa-add"></i>
+                                    <i class="fa fa-plus"></i>
                                 </div>
                             </div>
                         </div>
@@ -53,14 +53,14 @@
 import {
     IMyApp
 } from '../../app.vue';
-import { ICart, ICartItem } from '../../api/model';
+import { ICartItem, ICartGroup } from '../../api/model';
 import { getCart } from '../../api/cart';
 import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 
 const app = getApp<IMyApp>();
 
 interface IPageData {
-    items: ICart[],
+    items: ICartGroup[],
     checkedAll: boolean,
     isGuest: boolean,
     isLoading: boolean
@@ -170,7 +170,7 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapCashier() {
-        const data: ICart[] = [];
+        const data: ICartGroup[] = [];
         for (const item of this.data.items) {
             const items: ICartItem[] = [];
             for (const cart of item.goods_list) {
@@ -185,6 +185,7 @@ export class Index extends WxPage<IPageData> {
         }
         if (data.length < 1) {
             wx.showToast({
+                icon: 'none',
                 title: '请选择结算的商品'
             })
             return;
