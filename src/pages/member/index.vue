@@ -48,19 +48,19 @@
             </a>
             <div class="panel-body">
                 <a href="/pages/account/index" class="item">
-                    <span class="menu-item-icon">0
+                    <span class="menu-item-icon">{{ accountSubtotal.money || 0 }}
                     </span>
                     余额
                 </a><a href="" class="item">
-                    <span class="menu-item-icon">0
+                    <span class="menu-item-icon">{{ accountSubtotal.integral || 0 }}
                     </span>
                     积分
                 </a><a href="" class="item">
-                    <span class="menu-item-icon">0
+                    <span class="menu-item-icon">{{ accountSubtotal.bonus || 0 }}
                     </span>
                     红包
                 </a><a href="/pages/coupon/my" class="item">
-                    <span class="menu-item-icon">0
+                    <span class="menu-item-icon">{{ accountSubtotal.coupon || 0 }}
                     </span>
                     优惠券
                 </a>
@@ -81,9 +81,10 @@
 import {
     IMyApp
 } from '../../app.vue';
-import { IUser, ORDER_STATUS, IOrderCount } from '../../api/model';
+import { IUser, ORDER_STATUS, IOrderCount, ISubtotal } from '../../api/model';
 import { getOrderSubtotal } from '../../api/order';
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
+import { getAccountSubtotal } from '../../api/account';
 
 const app = getApp<IMyApp>();
 
@@ -91,6 +92,7 @@ interface IPageData {
     user: IUser | null,
     ORDER_STATUS: any,
     order_subtotal: IOrderCount | null,
+    accountSubtotal: ISubtotal | null
 }
 @WxJson({
     usingComponents: {
@@ -106,6 +108,7 @@ export class Index extends WxPage<IPageData> {
         user: null,
         ORDER_STATUS: ORDER_STATUS,
         order_subtotal: {},
+        accountSubtotal: {}
     };
 
     onLoad() {
@@ -131,6 +134,11 @@ export class Index extends WxPage<IPageData> {
                 order_subtotal: res
             });
         });
+        getAccountSubtotal().then(res => {
+            this.setData({
+                accountSubtotal: res
+            });
+        })
     }
 
     public tapScan() {

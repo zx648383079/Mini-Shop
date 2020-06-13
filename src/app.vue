@@ -1131,7 +1131,7 @@ footer,
         text-align: center;
         color: #666;
 
-        span {
+        text {
             display: block;
             margin-top: .09333rem;
             font-size: .32rem;
@@ -1161,7 +1161,7 @@ footer,
 
         &.active {
 
-            span,
+            text,
             .fa {
                 color: #b4282d;
             }
@@ -3287,6 +3287,22 @@ footer,
 }
 .hr {
     border-bottom: 1px solid #333;
+}
+
+.fixed-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: aquamarine;
+    color: #fff;
+    line-height: 40px;
+    text-align: center;
+    .fa {
+        font-size: 30px;
+    }
 }
 
 .large-header {

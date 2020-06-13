@@ -1,47 +1,106 @@
 <template>
     <div>
-        <div class="has-header">
-            <div v-for="(item, index) in itemGroups" :key="index" :class="item.id ? 'log-item' : ''">
-                <div class="log-hr" v-if="!item.id">
-                    {{ item.remark }}
+        <div v-for="(item, index) in formatItems" :key="index" :class="item.id ? 'log-item' : ''">
+            <div class="log-hr" v-if="!item.id">
+                {{ item.remark }}
+            </div>
+            <div v-else>
+                <div class="info">
+                    <div class="name">{{ item.remark }}</div>
+                    <p>{{ item.created_at }}</p>
                 </div>
-                <div v-else>
-                    <div class="info">
-                        <div class="name">{{ item.remark }}</div>
-                        <p>{{ item.created_at }}</p>
-                    </div>
-                    <div class="amount">
-                        {{ item.money > 0 ? '+' + item.money : item.money }}
-                    </div>
+                <div class="amount">
+                    {{ item.money > 0 ? '+' + item.money : item.money }}
                 </div>
             </div>
+        </div>
+         <div class="empty-box" v-if="!items || items.length < 1">
+            明细为空
         </div>
     </div>
 </template>
 <script lang="ts">
 import { IAccountLog } from '../../api/model';
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
+import { getAccountLog } from '../../api/account';
+
 interface IPageData {
     items: IAccountLog[],
+    formatItems: any[],
+    page: number,
+    hasMore: boolean,
+    isLoading: boolean,
 }
 @WxJson({
     navigationBarTitleText: "明细",
     navigationBarBackgroundColor: "#05a6b1",
-    navigationBarTextStyle: "white"
+    navigationBarTextStyle: "white",
+    onReachBottomDistance: 10,
+    enablePullDownRefresh: true
 })
 export class Card extends WxPage<IPageData> {
     
     public data: IPageData = {
-        items: []
-    };
-    public has_more = true;
-    public page = 1;
-    public isLoading = false;
+        items: [],
+        formatItems: [],
+        page: 1,
+        hasMore: true,
+        isLoading: false,
+    }
 
-    itemGroups(): any[] {
+    public onLoad() {
+        this.tapRefresh();
+    }
+
+    onPullDownRefresh() {
+        this.tapRefresh();
+    }
+
+    onReachBottom() {
+        this.tapMore();
+    }
+
+    public tapMore() {
+        if (!this.data.hasMore) {
+            return;
+        }
+        this.goPage(this.data.page + 1);
+    }
+
+    /**
+     * refresh
+     */
+    public tapRefresh() {
+        this.goPage(1);
+    }
+
+    public goPage(page: number) {
+        let data = this.data;
+        if (data.isLoading || !data.hasMore) {
+            return;
+        }
+        data.isLoading = true;
+        this.setData(data);
+        getAccountLog({
+            page,
+        }).then(res => {
+            wx.stopPullDownRefresh();
+            data.hasMore = res.paging.more;
+            data.isLoading = false;
+            if (!res.data) {
+                return;
+            }
+            data.items = [].concat(data.items as never[], res.data as never[]);
+            data.formatItems = this.formatTime(data.items);
+            this.setData(data);
+        });
+    }
+
+
+    public formatTime(items: any[]) {
         const data = [];
         let last: string = '';
-        for (const item of this.data.items) {
+        for (const item of items) {
             let match = (item.created_at + '').match(/(\d{4})-(\d{2})(-\d{2} \d{2}:\d{2})/);
             if (!match) {
                 continue;
@@ -56,41 +115,6 @@ export class Card extends WxPage<IPageData> {
             data.push({remark: last}, item);
         }
         return data;
-    }
-
-    public created() {
-        this.refresh();
-    }
-
-    public loadMore() {
-        this.goPage( ++ this.page);
-    }
-
-    /**
-     * refresh
-     */
-    public refresh() {
-        this.items = [];
-        this.isLoading = false;
-        this.has_more = true;
-        this.goPage(this.page = 1);
-    }
-
-    public goPage(page: number) {
-        if (this.isLoading || !this.has_more) {
-            return;
-        }
-        this.isLoading = true;
-        getAccountLog({
-            page,
-        }).then(res => {
-            this.has_more = res.paging.more;
-            this.isLoading = false;
-            if (!res.data) {
-                return;
-            }
-            this.items = [].concat(this.items as never[], res.data as never[]);
-        });
     }
 }
 </script>

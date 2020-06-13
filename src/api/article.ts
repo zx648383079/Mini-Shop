@@ -6,3 +6,6 @@ export const getArticleList = (params: any) => fetch<IPage<IArticle>>('shop/arti
 export const getCategories = (parent_id: number = 0) => 
     fetch<IData<IArticleCategory>>('shop/article/category', {parent_id});
 export const getArticle = (id: number) => fetch<IArticle>('shop/article', {id});
+
+
+export const getSuggestion = (keywords: string) => fetch<IData<IArticle>>('shop/article/suggest', {keywords});

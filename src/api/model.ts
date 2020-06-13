@@ -434,4 +434,16 @@ export interface IRegister {
     agree: boolean;
 }
 
+export interface ICertification {
+    name: string;
+    sex: string;
+    country: string;
+    type: number;
+    card_no: string;
+    expiry_date: string;
+    profession: string;
+    address: string;
+    status: number;
+}
+
 export const SET_GOODS_HISTORY = 'SET_GOODS_HISTORY';

@@ -7,7 +7,7 @@
 
         <div class="menu-list">
             <a href="apply">
-                <i class="fa fa-money-check-alt" aria-hidden="true"></i>
+                <i class="fa fa-money-o" aria-hidden="true"></i>
                 申请开票
                 <i class="fa fa-chevron-right" aria-hidden="true"></i>
             </a>
@@ -17,7 +17,7 @@
                 <i class="fa fa-chevron-right" aria-hidden="true"></i>
             </a>
             <a href="log">
-                <i class="fa fa-bookmark" aria-hidden="true"></i>
+                <i class="fa fa-history" aria-hidden="true"></i>
                 近期开票
                 <i class="fa fa-chevron-right" aria-hidden="true"></i>
             </a>

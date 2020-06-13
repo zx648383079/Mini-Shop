@@ -1,36 +1,123 @@
 <template>
     <div>
-        <div class="log-hr">
-            2018年12月
+        <div v-for="(item, index) in formatItems" :key="index" :class="item.id ? 'log-item' : ''">
+            <div class="log-hr" v-if="!item.id">
+                {{ item.remark }}
+            </div>
+            <div v-else>
+                <div class="info">
+                    <div class="name">{{ item.remark }}</div>
+                    <p>{{ item.created_at }}</p>
+                </div>
+                <div class="amount">
+                    {{ item.money > 0 ? '+' + item.money : item.money }}
+                </div>
+            </div>
         </div>
-        <div class="log-item" v-for="(item, index) in items" :key="index">
-            <div class="info">
-                <div class="name">12312332312</div>
-                <p>222</p>
-            </div>
-            <div class="amount">
-                +10
-            </div>
+         <div class="empty-box" v-if="!items || items.length < 1">
+            您没有推荐订单
         </div>
     </div>
 </template>
 <script lang="ts">
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
+import { getOrders } from '../../api/affiliate';
 
 interface IPageData {
-    items: number[],
+    items: any[],
+    formatItems: any[],
+    page: number,
+    hasMore: boolean,
+    isLoading: boolean,
 }
 @WxJson({
     navigationBarTitleText: "推荐记录",
     navigationBarBackgroundColor: "#05a6b1",
-    navigationBarTextStyle: "white"
+    navigationBarTextStyle: "white",
+    onReachBottomDistance: 10,
+    enablePullDownRefresh: true
 })
 export class Order extends WxPage<IPageData> {
     public data: IPageData = {
-        items: [1]
+        items: [],
+        formatItems: [],
+        page: 1,
+        hasMore: true,
+        isLoading: false,
+    }
+
+    public onLoad() {
+        this.tapRefresh();
+    }
+
+    onPullDownRefresh() {
+        this.tapRefresh();
+    }
+
+    onReachBottom() {
+        this.tapMore();
+    }
+
+    public tapMore() {
+        if (!this.data.hasMore) {
+            return;
+        }
+        this.goPage(this.data.page + 1);
+    }
+
+    /**
+     * refresh
+     */
+    public tapRefresh() {
+        this.goPage(1);
+    }
+
+    public goPage(page: number) {
+        let data = this.data;
+        if (data.isLoading || !data.hasMore) {
+            return;
+        }
+        data.isLoading = true;
+        this.setData(data);
+        getOrders({
+            page,
+        }).then(res => {
+            wx.stopPullDownRefresh();
+            data.hasMore = res.paging.more;
+            data.isLoading = false;
+            if (!res.data) {
+                return;
+            }
+            data.items = [].concat(data.items as never[], res.data as never[]);
+            data.formatItems = this.formatTime(data.items);
+            this.setData(data);
+        });
+    }
+
+
+    public formatTime(items: any[]) {
+        const data = [];
+        let last: string = '';
+        for (const item of items) {
+            let match = (item.created_at + '').match(/(\d{4})-(\d{2})(-\d{2} \d{2}:\d{2})/);
+            if (!match) {
+                continue;
+            }
+            let current = match[1] + '年' + match[2] + '月';
+            item.created_at = match[2] + match[3];
+            if (last == current) {
+                data.push(item);
+                continue;
+            }
+            last = current;
+            data.push({remark: last}, item);
+        }
+        return data;
     }
 }
 </script>
 <style lang="scss" scoped>
-
+page {
+    background-color: #f4f4f4;
+}
 </style>

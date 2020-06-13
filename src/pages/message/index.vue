@@ -85,7 +85,7 @@ export class Index extends WxPage<IPageData> {
     public tapMore() {
         if (!this.data.hasMore) {
             return;
-        }  
+        }
         this.goPage(this.data.page + 1);
     }
 

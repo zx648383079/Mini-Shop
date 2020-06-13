@@ -2,7 +2,7 @@
     <div>
         <div class="account-header">
             <p>余额账户(元)</p>
-            <div class="money">0.00</div>
+            <div class="money">{{ money }}</div>
         </div>
 
         <div class="menu-list">
@@ -29,9 +29,10 @@
 </template>
 <script lang="ts">
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
+import { getAccountSubtotal } from '../../api/account';
 
 interface IPageData {
-    
+    money: number;
 }
 @WxJson({
     usingComponents: {
@@ -44,6 +45,17 @@ interface IPageData {
 })
 export class Index extends WxPage<IPageData> {
     
+    public data = {
+        money: 0
+    };
+
+    onLoad() {
+        getAccountSubtotal().then(res => {
+            this.setData({
+                money: res.money || 0
+            });
+        });
+    }
 }
 </script>
 <style lang="scss" scoped>

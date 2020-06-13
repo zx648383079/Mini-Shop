@@ -9,6 +9,42 @@
     font-style: normal;
 }
 
+.fa-gift:before {
+    content: "\e69f";
+}
+
+.fa-money-o:before {
+    content: "\e6e4";
+}
+
+.fa-qq:before {
+    content: "\e69e";
+}
+
+.fa-github:before {
+    content: "\e691";
+}
+
+.fa-weibo:before {
+    content: "\e6b5";
+}
+
+.fa-google:before {
+    content: "\e8f1";
+}
+
+.fa-paypal:before {
+    content: "\e905";
+}
+
+.fa-alipay:before {
+    content: "\e602";
+}
+
+.fa-coins:before {
+    content: "\f3a0";
+}
+
 .fa-clock:before {
     content: "\e651";
 }
@@ -23,6 +59,10 @@
 
 .fa-plus-circle:before {
     content: "\e6f6";
+}
+
+.fa-weixin:before {
+    content: "\f152";
 }
 
 .fa-minus:before {

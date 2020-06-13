@@ -21,7 +21,7 @@ interface IPageData {
     status_list: any[],
     items: IOrder[],
     status: number,
-    has_more: boolean,
+    hasMore: boolean,
     page: number,
     isLoading: boolean
 }
@@ -62,7 +62,7 @@ export class Index extends WxPage<IPageData> {
         ],
         items: [],
         status: 0,
-        has_more: true,
+        hasMore: true,
         page: 1,
         isLoading: false
     }
@@ -85,16 +85,11 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapRefresh() {
-        this.setData({
-            items: [],
-            isLoading: false,
-            has_more: true
-        });
         this.goPage(1);
     }
 
     public tapMore() {
-        if (!this.data.has_more) {
+        if (!this.data.hasMore) {
             return;
         }  
         this.goPage(this.data.page + 1);
@@ -111,6 +106,7 @@ export class Index extends WxPage<IPageData> {
             status: this.data.status,
             page,
         }).then(res => {
+            wx.stopPullDownRefresh();
             let items = [];
             if (page < 2) {
                 items = res.data as never[];
@@ -118,7 +114,7 @@ export class Index extends WxPage<IPageData> {
                 items = [].concat(this.data.items as never[], res.data as never[]);
             }
             this.setData({
-                has_more: res.paging.more,
+                hasMore: res.paging.more,
                 isLoading: false,
                 page,
                 items

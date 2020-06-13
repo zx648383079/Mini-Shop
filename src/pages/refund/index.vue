@@ -5,7 +5,7 @@
         </div>
 
         <div class="order-box">
-            <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
+            <div>
                 <div class="goods-list">
                     <div class="goods-item" v-for="(item, index) in items" :key="index">
                         <div class="goods-img">
@@ -43,7 +43,7 @@ interface IPageData {
     onReachBottomDistance: 10,
 })
 export class Index extends WxPage<IPageData> {
-        public data: IPageData = {
+    public data: IPageData = {
         status_list: [
             {
                 name: '售后申请',

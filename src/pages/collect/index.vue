@@ -38,7 +38,7 @@ interface IPageData {
     navigationBarTitleText: "我的收藏",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black",
-    onReachBottomDistance: 100,
+    onReachBottomDistance: 10,
 })
 export class Index extends WxPage<IPageData> {
     
@@ -78,7 +78,10 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapMore() {
-        this.goPage(this.data.page);
+        if (!this.data.hasMore) {
+            return;
+        }
+        this.goPage(this.data.page + 1);
     }
 
     /**
@@ -90,7 +93,7 @@ export class Index extends WxPage<IPageData> {
 
     public goPage(page: number) {
         let data = this.data;
-        if (data.isLoading || !data.hasMore) {
+        if (data.isLoading) {
             return;
         }
         data.isLoading = true;
@@ -98,6 +101,7 @@ export class Index extends WxPage<IPageData> {
         getCollect({
             page,
         }).then(res => {
+            wx.stopPullDownRefresh();
             data.hasMore = res.paging.more;
             data.isLoading = false;
             if (!res.data) {

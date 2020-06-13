@@ -26,7 +26,7 @@
 </template>
 <script lang="ts">
 import { ICard } from '../../api/model';
-import { getBankCardList } from '../../api/user';
+import { getBankCardList } from '../../api/account';
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
 
 interface IPageData {

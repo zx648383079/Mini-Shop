@@ -113,6 +113,7 @@ export class Index extends WxPage<IPageData> {
             category: this.data.category,
             brand: this.data.brand,
         }).then(res => {
+            wx.stopPullDownRefresh();
             this.setData({
                 page: page,
                 hasMore: res.paging.more,

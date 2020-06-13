@@ -210,7 +210,7 @@ page {
         text-align: center;
         background-color: #05a6b1;
         &::before {
-            content: "\e60b";
+            content: "\e649";
         }
     }
     &.unfold {
@@ -221,7 +221,7 @@ page {
         }
         .nav-arrow {
             &::before {
-                content: "\e611";
+                content: "\e64c";
             }
         }
     }

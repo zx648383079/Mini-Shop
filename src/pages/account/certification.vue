@@ -1,15 +1,15 @@
 <template>
     <div>
-        <ApplyCertification v-if="!user"></ApplyCertification>
+        <ApplyCertification v-if="!info"></ApplyCertification>
         <div v-else>
             <div class="top-header"></div>
             <div class="user-box">
                 <div class="avatar">
-                    <img :src="user ? user.avatar : '/assets/images/avatar/1.png' | assets">
+                    <img :src="user.avatar">
                 </div>
-                <h3>您已实名制</h3>
-                <div class="name">*zz</div>
-                <div class="card">4************</div>
+                <h3>{{ status }}</h3>
+                <div class="name">{{ info.name }}</div>
+                <div class="card">{{ info.card_no }}</div>
                 <a href="">查看详情</a>
             </div>
             <div class="menu-list">
@@ -20,13 +20,16 @@
 </template>
 <script lang="ts">
 import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
-import { IUser } from '../../api/model';
+import { IUser, ICertification } from '../../api/model';
 import { IMyApp } from '../../app.vue';
+import { getCertification } from '../../api/account';
 
 const app = getApp<IMyApp>();
 
 interface IPageData {
-    user: IUser| null,
+    user: IUser| null;
+    info: ICertification | null;
+    status: string;
 }
 
 @WxJson({
@@ -41,7 +44,9 @@ interface IPageData {
 export default class Certification extends WxPage<IPageData> {
 
     public data: IPageData = {
-        user: null
+        user: null,
+        info: null,
+        status: '您已实名制'
     }
 
     public onLoad() {
@@ -49,7 +54,15 @@ export default class Certification extends WxPage<IPageData> {
             this.setData({
                 user: res
             });
-        })
+        });
+        getCertification().then(res => {
+            if (!res.data) {
+                return;
+            }
+            this.setData({
+                info: res.data
+            });
+        });
     }
 }
 </script>

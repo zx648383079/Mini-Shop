@@ -42,6 +42,10 @@ interface IComponentData {
 })
 export class ApplyCertification extends WxComponent<IComponentData>  {
 
+    public options = {
+        addGlobalClass: true,
+    };
+
     public data: IComponentData = {
         step: 1
     }
