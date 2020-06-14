@@ -1400,9 +1400,10 @@ footer,
         top: 0;
         height: 100%;
         right: 0;
-        left: 90px;
+        left: 0;
         padding-top: 44px;
         box-sizing:border-box;
+        padding-left: 90px;
         >.item {
             display: none;
 
@@ -2794,6 +2795,7 @@ footer,
         font-size: 1.5625rem;
         color: $white;
         left: 0.625rem;
+        top: 0;
     }
 
     .search-entry {

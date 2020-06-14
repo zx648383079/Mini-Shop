@@ -20,7 +20,7 @@
                     <div class="price">{{ item.price }}</div>
                     <div class="item-actions">
                         <i class="fa fa-minus-circle" v-if="item.amount && item.amount > 0"  @click="tapMinus(index, j)"></i>
-                        <span v-if="item.amount && item.amount > 0">{{ item.amount }}</span>
+                        <span class="amount-input" v-if="item.amount && item.amount > 0">{{ item.amount }}</span>
                         <i class="fa fa-plus-circle" @click="tapPlus(index, j)"></i>
                     </div>
                 </div>
@@ -29,11 +29,11 @@
         <div class="mini-footer">
             <div class="icon" @click="tapExpand">
                 <i class="fa fa-cart"></i>
-                <span class="amount-tip" v-if="amount > 0">{{ amount > 99 ? '99+' : amount }}</span>
+                <span class="amount-tip" v-if="cart && cart.subtotal.count > 0">{{ cart.subtotal.count > 99 ? '99+' : cart.subtotal.count }}</span>
             </div>
             <div class="subtotal">
                 <div class="price">{{ cart.data.length > 0 ? cart.subtotal.total : '未选购商品' }}</div>
-                <p>另需配送费</p>
+                <p class="tip">另需配送费</p>
             </div>
             <div class="checkout">
                 {{ cart.checkout_button.text }}
@@ -42,13 +42,11 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent, WxMethod, WxLifeTime } from "../../../../typings/wx/lib.vue";
+import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
 import { ICart } from "../../../api/model";
-import { getCart } from "../../../api/cart";
 
 interface IComponentData {
-    cart: ICart|null,
-    amount: number,
+    cart?: ICart,
     expaned: boolean
 }
 
@@ -61,56 +59,55 @@ export default class FixedCart extends WxComponent<IComponentData> {
         addGlobalClass: true,
     };
 
-    public data = {
-        cart: null,
-        amount: 100,
+    public properties = {
+        cart: Object,
+    }
+
+    public data: IComponentData = {
         expaned: false
     };
 
-    @WxLifeTime()
-    public attached() {
-        getCart().then(res => {
-            this.setData({
-                cart: res
-            });
-        });
+    @WxMethod()
+    public notifyCart(cart: ICart) {
+        this.triggerEvent('change', cart);
     }
 
     @WxMethod()
     public tapPlus(i: number, j: number) {
-        let data = this.data;
-        if (!data.cart) {
+        let cart = this.data.cart;
+        if (!cart) {
             return;
         }
-        const item = data.cart.data[j].goods_list[i];
+        const item = cart.data[j].goods_list[i];
         if (!item.amount) {
             item.amount = 0;
         }
         item.amount ++;
-        this.setData(data);
+        this.notifyCart(cart);
     }
 
     @WxMethod()
     public tapMinus(i: number, j: number) {
-        let data = this.data;
-        if (!data.cart) {
+        let cart = this.data.cart;
+        if (!cart) {
             return;
         }
-        const item = data.cart.data[j].goods_list[i];
+        const item = cart.data[j].goods_list[i];
         if (!item.amount) {
             item.amount = 0;
         }
         item.amount = Math.max(0, item.amount - 1);
-        this.setData(data);
+        this.notifyCart(cart);
     }
 
     
     @WxMethod()
     public tapExpand() {
-        let data = this.data;
-        if (!data.cart || data.cart.data.length < 1) {
+        let cart = this.data.cart;
+        if (!cart || cart.data.length < 1) {
             return;
         }
+        let data = this.data;
         data.expaned = !data.expaned;
         this.setData(data);
     }
@@ -163,7 +160,7 @@ navigator {
             }
             .item-actions {
                 text-align: center;
-                span {
+                .amount-input {
                     display: inline-block;
                     padding: 0 5px;
                 }
@@ -204,7 +201,7 @@ navigator {
         }
         .subtotal {
             padding: 5px 0;
-            p {
+            .tip {
                 font-size: 12px;
                 color: #ccc;
             }

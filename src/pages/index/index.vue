@@ -2,7 +2,7 @@
     <div>
         <header class="top top-search-box">
             <div class="logo">
-                <img src="/images/wap_logo.png" alt="">
+                <img :src="subtotal.logo" alt="">
             </div>
             <a class="search-entry" href="/pages/search/index">
                 <i class="fa fa-search"></i>

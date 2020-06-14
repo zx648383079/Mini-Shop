@@ -451,6 +451,7 @@ export interface ICertification {
 export interface ISite {
     name: string;
     version: string;
+    logo: string;
     goods: number;
     category: number;
     brand: number;

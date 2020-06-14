@@ -19,10 +19,10 @@
                     <p>{{ store.collect_count }}人收藏</p>
                 </div>
                 <div class="action">
-                    <view class="item">
-                        <i :class="['fa', is_collected ? 'fa-collect': 'fa-uncollect']"></i>    
-                        收藏
-                    </view>
+                    <div class="item" @click="tapCollect">
+                        <i :class="['fa', store.is_collected ? 'fa-collect': 'fa-uncollect']"></i>    
+                        {{ store.is_collected ? '已收藏' : '收藏' }}
+                    </div>
                 </div>
             </div>
             <div class="tab-bar">
@@ -49,14 +49,18 @@
                 </div>
             </div>
         </div>
-        <MiniCart></MiniCart>
+        <MiniCart :cart="cart" @change="tapCartChange"></MiniCart>
     </div>
 </template>
 <script lang="ts">
-import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
-import { IProduct, IStore } from '../../api/model';
+import { WxPage, WxJson, CustomEvent } from '../../../typings/wx/lib.vue';
+import { IProduct, IStore, ICart } from '../../api/model';
 import { getList } from '../../api/product';
-import { getStore } from '../../api/store';
+import { getStore, toggleCollect } from '../../api/store';
+import { IMyApp } from '../../app.vue';
+import { getCart } from '../../api/cart';
+
+const app = getApp<IMyApp>();
 
 interface IPageData {
     items: IProduct[],
@@ -65,7 +69,8 @@ interface IPageData {
     page: number,
     tabIndex: number,
     tabList: any[],
-    store: IStore
+    store: IStore,
+    cart: ICart | null,
 }
 @WxJson({
     usingComponents: {
@@ -108,7 +113,8 @@ export class Quick extends WxPage<IPageData> {
                 name: '动态',
                 status: 0,
             },
-        ]
+        ],
+        cart: null
     };
 
     public onLoad(option: any) {
@@ -122,6 +128,33 @@ export class Quick extends WxPage<IPageData> {
             });
         });
         this.tapRefresh();
+        getCart().then(res => {
+            this.setData({
+                cart: res
+            });
+        });
+    }
+
+    public tapCartChange(e: CustomEvent) {
+        this.setData({
+            cart: e.detail
+        });
+    }
+
+    public tapCollect() {
+        if (!this.data.store) {
+            return;
+        }
+        if (!app.globalData.token) {
+            return;
+        }
+        let store = this.data.store;
+        toggleCollect(store.id).then(res => {
+            store.is_collected = res.data;
+            this.setData({
+                store
+            });
+        });
     }
 
     public onReachBottom() {
@@ -191,6 +224,9 @@ export class Quick extends WxPage<IPageData> {
             }
             res.data.forEach(item => {
                 item.amount = 0;
+                if (item.name.length > 20) {
+                    item.name = item.name.substr(0, 20) + '...';
+                }
                 items.push(item);
             });
             this.setData({
@@ -204,6 +240,9 @@ export class Quick extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 .tab-bar {
     border-bottom: 1px solid #ccc;
 }
@@ -215,6 +254,7 @@ export class Quick extends WxPage<IPageData> {
         display: grid;
         background-color: #fff;
         grid-template-columns: 100px 1fr;
+        margin-bottom: 10px;
         .item-img {
             height: 100px;
             image {

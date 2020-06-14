@@ -1,8 +1,5 @@
 <template>
     <div>
-        <div class="logo">
-            <img src="/images/wap_logo.png" mode="widthFix">
-        </div>
         <form bindsubmit="formSubmit">
             <div class="input-box">
                 <input type="text" name="name" required autocomplete="off" v-model="name" placeholder="请输入昵称">

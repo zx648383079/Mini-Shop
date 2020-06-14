@@ -3,7 +3,7 @@
         <div>
             <div class="login-type-box" v-if="mode < 1">
                 <div class="logo">
-                    <img src="/images/wap_logo.png" mode="widthFix">
+                    <img :src="site.logo" mode="widthFix">
                 </div>
                 <span @click="tapMode" data-mode="1" class="btn">手机号登录</span>
                 <span @click="tapMode" data-mode="3" class="btn btn-none">邮箱登录</span>
@@ -14,11 +14,17 @@
                 </div>
             </div>
             <div class="login-box" v-if="mode > 0 && mode < 4">
+                <div class="logo">
+                    <img :src="site.logo" mode="widthFix">
+                </div>
                 <MobileLogin v-if="mode == 1" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
                 <MobileCodeLogin v-if="mode == 2" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
                 <EmailLogin v-if="mode == 3" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
             </div>
             <div class="register-box" v-if="mode >= 4">
+                <div class="logo">
+                    <img :src="site.logo" mode="widthFix">
+                </div>
                 <MobileRegister v-if="mode == 4" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
                 <EmailRegister v-if="mode == 5" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
                 <EmailFind v-if="mode == 6" bind:click="tapChangeMode"/>
@@ -32,10 +38,12 @@ import {
     IMyApp
 } from '../../app.vue';
 import { WxJson, WxPage, TouchEvent } from '../../../typings/wx/lib.vue';
+import { ISite } from '../../api/model';
 const app = getApp<IMyApp>();
 
 interface IPageData {
-    mode: number
+    mode: number,
+    site: ISite | null
 }
 @WxJson({
     usingComponents: {
@@ -53,8 +61,17 @@ interface IPageData {
 export class Index extends WxPage<IPageData> {
 
     public data: IPageData = {
-        mode: 0
+        mode: 0,
+        site: null
     };
+
+    onLoad() {
+        app.getSite().then(res => {
+            this.setData({
+                site: res
+            });
+        });
+    }
 
     tapMode(e: TouchEvent) {
         this.tapChange(e.currentTarget.dataset.mode as number);

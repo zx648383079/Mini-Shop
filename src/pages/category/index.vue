@@ -51,7 +51,7 @@
 </template>
 <script lang="ts">
 import { IMyApp } from '../../app.vue';
-import { ICategory, ISubtotal } from '../../api/model';
+import { ICategory, ISite } from '../../api/model';
 import { getCategory } from '../../api/category';
 import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 
@@ -60,7 +60,7 @@ const app = getApp<IMyApp>();
 interface IPageData {
     categories: ICategory[],
     category: ICategory | null,
-    subtotal: ISubtotal| null
+    subtotal: ISite | null
 }
 @WxJson({
     navigationBarTitleText: "分类",
@@ -75,7 +75,7 @@ export class Index extends WxPage<IPageData> {
     };
 
     onLoad() {
-        app.getSubtotal().then(res => {
+        app.getSite().then(res => {
             this.setData({
                 subtotal: res,
             });

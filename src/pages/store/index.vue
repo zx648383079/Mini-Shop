@@ -20,10 +20,10 @@
                         <p>{{ store.collect_count }}人收藏</p>
                     </div>
                     <div class="action">
-                        <view class="item">
-                            <i :class="['fa', is_collected ? 'fa-collect': 'fa-uncollect']"></i>    
-                            收藏
-                        </view>
+                        <div class="item" @click="tapCollect">
+                            <i :class="['fa', store.is_collected ? 'fa-collect': 'fa-uncollect']"></i>    
+                            {{ store.is_collected ? '已收藏' : '收藏' }}
+                        </div>
                     </div>
                 </div>
                 <div class="tab-bar">
@@ -57,7 +57,10 @@
 import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 import { IProduct, IStore } from '../../api/model';
 import { getList, getInfo } from '../../api/product';
-import { getStore } from '../../api/store';
+import { getStore, toggleCollect } from '../../api/store';
+import { IMyApp } from '../../app.vue';
+
+const app = getApp<IMyApp>();
 
 interface IPageData {
     items: IProduct[],
@@ -126,6 +129,22 @@ export class Index extends WxPage<IPageData> {
             });
         });
         this.tapRefresh();
+    }
+
+    public tapCollect() {
+        if (!this.data.store) {
+            return;
+        }
+        if (!app.globalData.token) {
+            return;
+        }
+        let store = this.data.store;
+        toggleCollect(store.id).then(res => {
+            store.is_collected = res.data;
+            this.setData({
+                store
+            });
+        });
     }
 
     public tapBack() {
@@ -203,5 +222,7 @@ export class Index extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
-
+page {
+    background-color: #f4f4f4;
+}
 </style>
