@@ -443,7 +443,17 @@ export interface ICertification {
     expiry_date: string;
     profession: string;
     address: string;
+    front_side: string;
+    back_side: string;
     status: number;
+}
+
+export interface ISite {
+    name: string;
+    version: string;
+    goods: number;
+    category: number;
+    brand: number;
 }
 
 export const SET_GOODS_HISTORY = 'SET_GOODS_HISTORY';

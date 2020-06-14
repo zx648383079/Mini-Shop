@@ -59,4 +59,7 @@ export class Index extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 </style>

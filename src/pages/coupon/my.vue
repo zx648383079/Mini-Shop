@@ -2,9 +2,7 @@
     <div>
         <div class="has-footer">
             <div class="tab-header">
-                <div class="tab-item active">未使用</div>
-                <div class="tab-item">使用记录</div>
-                <div class="tab-item">已过期</div>
+                <div class="tab-item" v-for="(item, index) in statusList" :key="index" :class="{active: index == status}" @click="tapStatus" data-status="{{ index }}">{{ item }}</div>
             </div>
 
             <div>
@@ -45,7 +43,7 @@ interface IPageData {
     status: number,
     items: any[],
     isExpand: boolean,
-    has_more: boolean,
+    hasMore: boolean,
     page: number,
     isLoading: boolean
 }
@@ -66,7 +64,7 @@ export class My extends WxPage<IPageData> {
         status: 0,
         items: [],
         isExpand: false,
-        has_more: true,
+        hasMore: true,
         page: 1,
         isLoading: false
     }
@@ -97,16 +95,11 @@ export class My extends WxPage<IPageData> {
     }
 
     public tapRefresh() {
-        this.setData({
-            items: [],
-            isLoading: false,
-            has_more: true
-        });
         this.goPage(1);
     }
 
     public tapMore() {
-        if (!this.data.has_more) {
+        if (!this.data.hasMore) {
             return;
         }  
         this.goPage(this.data.page + 1);
@@ -123,6 +116,7 @@ export class My extends WxPage<IPageData> {
             status: this.data.status,
             page,
         }).then(res => {
+            wx.stopPullDownRefresh();
             let items = [];
             if (page < 2) {
                 items = res.data as never[];
@@ -130,7 +124,7 @@ export class My extends WxPage<IPageData> {
                 items = [].concat(this.data.items as never[], res.data as never[]);
             }
             this.setData({
-                has_more: res.paging.more,
+                hasMore: res.paging.more,
                 isLoading: false,
                 page,
                 items
@@ -140,5 +134,11 @@ export class My extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
-
+page {
+    background-color: #f4f4f4;
+}
+.tab-header {
+    background-color: #05a6b1;
+    color: #fff;
+}
 </style>

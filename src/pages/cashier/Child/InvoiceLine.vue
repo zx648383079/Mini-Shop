@@ -1,5 +1,5 @@
 <template>
-    <DialogPanel title="发票">
+    <DialogPanel title="发票" bodyHeight="45vh">
         <div class="line-item inovice-box" slot="input">
             <span>发票</span>
             <span>
@@ -85,14 +85,14 @@ export class InvoiceLine extends WxComponent<IComponentData>  {
 }
 .input-line {
     line-height: 40px;
-    span {
+    text {
         &:first-child {
             width: 120px;
         }
     }
 }
 .radio-box {
-    span {
+    text {
         display: inline-block;
         background-color: #fff;
         border: 1px solid #ccc;

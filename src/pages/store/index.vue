@@ -183,6 +183,7 @@ export class Index extends WxPage<IPageData> {
         getList({
             page,
         }).then(res => {
+            wx.stopPullDownRefresh();
             let items = this.data.items;
             if (page < 2) {
                 items = [];

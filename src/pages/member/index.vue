@@ -7,7 +7,7 @@
             <div class="name">
                 欢迎您，
                 <a v-if="user" href="profile">{{ user.name }}</a>
-                <a v-else href="login">请登陆</a>
+                <a v-else href="login">请登录</a>
                 ~
             </div>
         </div>
@@ -74,6 +74,7 @@
             <MenuItem class="item" title="浏览历史" icon="fa-history" uri="/pages/goods/history"/>
             <MenuItem class="item" title="我的推荐" icon="fa-share" uri="/pages/affiliate/index" v-if="user"/>
             <MenuItem class="item" title="帮助" icon="fa-help" uri="/pages/article/index"/>
+            <MenuItem class="item" title="反馈" icon="fa-comment" uri="/pages/feedback/index"/>
         </div>
     </div>
 </template>

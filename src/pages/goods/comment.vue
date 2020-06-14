@@ -81,6 +81,9 @@ export class Comment extends WxPage<IPageData> {
     }
 
     public tapMore() {
+        if (!this.data.hasMore) {
+            return;
+        }
         this.goPage(this.data.page + 1);
     }
 
@@ -92,7 +95,7 @@ export class Comment extends WxPage<IPageData> {
     }
 
     public goPage(page: number) {
-        if (this.data.isLoading || !this.data.hasMore) {
+        if (this.data.isLoading) {
             return;
         }
         this.setData({
@@ -103,6 +106,7 @@ export class Comment extends WxPage<IPageData> {
             item_type: this.data.item_type,
             page,
         }).then(res => {
+            wx.stopPullDownRefresh();
             let items = [];
             if (page < 2) {
                 items = res.data as never[];

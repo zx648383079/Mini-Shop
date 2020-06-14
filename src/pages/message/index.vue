@@ -30,9 +30,9 @@
     </div>
 </template>
 <script lang="ts">
-import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
+import { WxPage, WxJson, CustomEvent } from '../../../typings/wx/lib.vue';
 import { IBulletinUser } from '../../api/model';
-import { getBulletinList } from '../../api/bulletin';
+import { getBulletinList, readBulletin, deleteBulletin } from '../../api/bulletin';
 
 interface IPageData {
     items: IBulletinUser[],
@@ -73,9 +73,39 @@ export class Index extends WxPage<IPageData> {
         this.tapMore();
     }
 
-    slideButtonTap(e: any) {
-        console.log(e);
-        
+    slideButtonTap(e: CustomEvent) {
+        const id = e.detail.data as number;
+        let index = e.detail.index as number;
+        for (let i = 0; i < this.data.items.length; i++) {
+            const item = this.data.items[i];
+            if (item.id === id) {
+                if (item.status > 0) {
+                    index ++;
+                }
+                if (index < 1) {
+                    return this.tapRead(item);
+                }
+                return this.tapRemove(i);
+            }
+        }
+    }
+
+    public tapRead(item: IBulletinUser) {
+        readBulletin(item.bulletin_id).then(_ => {
+            item.status = 1;
+            this.setData(this.data);
+        });
+    }
+
+    public tapRemove(index: number) {
+        let data = this.data;
+        const item = data.items[index];
+        deleteBulletin(item.bulletin_id).then(res => {
+            if (!res.data) {
+                data.items.splice(index, 1);
+                this.setData(data);
+            }
+        });
     }
 
     public tapRefresh() {
@@ -99,6 +129,7 @@ export class Index extends WxPage<IPageData> {
         getBulletinList({
             page,
         }).then(res => {
+            wx.stopPullDownRefresh();
             res.data = this.formatButton(res.data);
             this.setData({
                 page: page,

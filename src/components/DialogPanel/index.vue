@@ -8,7 +8,7 @@
                <div class="dialog-title">{{ title }}</div>
                 <i class="fa fa-close dialog-close" @click="hideCalerdar"></i>
             </div>
-            <div class="dialog-body">
+            <div class="dialog-body" style="height: {{ bodyHeight }};">
                 <slot name="panel"></slot>
             </div>
             <div class="dialog-footer">
@@ -39,7 +39,11 @@ export class DialogPanel extends WxComponent<IComponentPage>  {
     public properties = {
         title: String,
         hide: Boolean,
-    }
+        bodyHeight: {
+            type: String,
+            value: 'auto'
+        }
+    };
 
     public data: IComponentPage = {
         calendarVisible: false

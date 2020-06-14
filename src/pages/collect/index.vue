@@ -21,7 +21,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
+import { WxJson, WxPage, CustomEvent } from '../../../typings/wx/lib.vue';
 import { removeCollect, getCollect } from '../../api/user';
 import { ICollect } from '../../api/model';
 
@@ -39,6 +39,7 @@ interface IPageData {
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black",
     onReachBottomDistance: 10,
+    enablePullDownRefresh: true,
 })
 export class Index extends WxPage<IPageData> {
     
@@ -61,9 +62,13 @@ export class Index extends WxPage<IPageData> {
         this.tapMore();
     }
 
-    slideButtonTap(e: any) {
-        console.log(e);
-        
+    slideButtonTap(e: CustomEvent) {
+        const id = e.detail.data as number;
+        for (let i = 0; i < this.data.items.length; i++) {
+            if (this.data.items[i].id === id) {
+                return this.tapRemove(i);
+            }
+        }
     }
 
     public tapRemove(index: number) {
@@ -105,6 +110,7 @@ export class Index extends WxPage<IPageData> {
             data.hasMore = res.paging.more;
             data.isLoading = false;
             if (!res.data) {
+                this.setData(data);
                 return;
             }
             data.items = [].concat(data.items as never[], res.data as never[]).filter((item: ICollect) => {
@@ -117,15 +123,18 @@ export class Index extends WxPage<IPageData> {
 
     private formatButton(res: any[]): any[] {
         return res.map(item => {
-                    item.buttons = [
-                        {
-                            type: 'warn',
-                            text: '删除',
-                            data: item.id,
-                        }
-                    ];
-                    return item;
-                });
+            if (item.goods.name.length > 15) {
+                item.goods.name = item.goods.name.substr(0, 15) + '...';
+            }
+            item.buttons = [
+                {
+                    type: 'warn',
+                    text: '删除',
+                    data: item.id,
+                }
+            ];
+            return item;
+        });
     }
 }
 </script>

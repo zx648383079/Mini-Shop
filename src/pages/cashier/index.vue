@@ -15,7 +15,7 @@
                     </div>
                     <div class="goods-info">
                         <h4>{{ goods.goods.name }}</h4>
-                        <span class="price">{{ goods.price | price }}</span>
+                        <span class="price">￥{{ goods.price }}</span>
                         <span class="amount"> x {{ goods.amount }}</span>
                     </div>
                 </div>
@@ -28,18 +28,18 @@
             
 
             <div class="checkout-amount" v-if="order">
-                <p class="line-item"><span>商品总价</span> <span data-key="goods_amount">{{ order.goods_amount | price }}</span> </p>
-                <p class="line-item"><span>+运费</span> <span data-key="shipping_fee">{{ order.shipping_fee | price }}</span> </p>
-                <p class="line-item"><span>+支付手续费</span> <span data-key="pay_fee">{{ order.pay_fee | price }}</span> </p>
-                <p class="line-item"><span>-优惠</span> <span data-key="discount">{{ order.discount | price }}</span> </p>
-                <p class="line-item"><span>订单总价</span> <span data-key="order_amount">{{ order.order_amount | price }}</span> </p>
+                <p class="line-item"><span>商品总价</span> <span data-key="goods_amount">{{ order.goods_amount }}</span> </p>
+                <p class="line-item"><span>+运费</span> <span data-key="shipping_fee">{{ order.shipping_fee }}</span> </p>
+                <p class="line-item"><span>+支付手续费</span> <span data-key="pay_fee">{{ order.pay_fee }}</span> </p>
+                <p class="line-item"><span>-优惠</span> <span data-key="discount">{{ order.discount }}</span> </p>
+                <p class="line-item"><span>订单总价</span> <span data-key="order_amount">{{ order.order_amount }}</span> </p>
             </div>
 
             <div class="address-tip" v-if="address">
                 {{ address.region.full_name }} {{ address.address }}
             </div>
             <div class="checkout-footer" v-if="order">
-                <span data-key="order_amount">{{ order.order_amount | price }}</span>
+                <span data-key="order_amount">{{ order.order_amount }}</span>
                 <div @click="tapCheckout" class="btn">立即支付</div>
             </div>
         </div>
@@ -50,7 +50,7 @@ import {
     IMyApp
 } from '../../app.vue';
 import { WxPage, WxJson, CustomEvent } from '../../../typings/wx/lib.vue';
-import { IAddress, ICart, IOrder, IPayment, IShipping, ICartItem, ICartGroup } from '../../api/model';
+import { IAddress, IOrder, IPayment, IShipping, ICartItem, ICartGroup } from '../../api/model';
 import { getPaymentList, getShippingList, previewOrder, checkoutOrder } from '../../api/cart';
 const app = getApp<IMyApp>();
 
@@ -109,7 +109,10 @@ export class Index extends WxPage<IPageData> {
             return;
         }
         this.setData({
-            cart,
+            cart: cart.map(item => {
+                item.goods_list = this.formatName(item.goods_list);
+                return item;
+            }),
             cart_box: this.getGoodsIds(cart)
         });
         app.getAddress().then(res => {
@@ -222,6 +225,18 @@ export class Index extends WxPage<IPageData> {
             }
         }
         return type > 0 ? {type, goods} : {type, goods: cart};
+    }
+
+    private formatName(res: any[]): any[] {
+        return res.map(item => {
+            if (item.goods.name.length > 15) {
+                item.goods.name = item.goods.name.substr(0, 15) + '...';
+            }
+            if (item.buttons) {
+                item.buttons = undefined;
+            }
+            return item;
+        });
     }
 }
 </script>

@@ -98,7 +98,7 @@
 import {
     IMyApp
 } from '../../app.vue';
-import { IAd, ICategory, IProduct, ISubtotal, IHomeProduct } from '../../api/model';
+import { IAd, ICategory, IProduct, ISite, IHomeProduct } from '../../api/model';
 import { getHome, getInfo } from '../../api/product';
 import { getBanners } from '../../api/ad';
 import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
@@ -110,7 +110,7 @@ interface IPageData {
     banners: IAd[];
     categories: ICategory[];
     data: IHomeProduct;
-    subtotal: ISubtotal| null;
+    subtotal: ISite| null;
     mode: number;
     goods: IProduct | null,
     isGuest: boolean;
@@ -156,10 +156,15 @@ export class Index extends WxPage<IPageData> {
                 banners: res.data
             });
         });
-        app.getSubtotal().then(res => {
+        app.getSite().then(res => {
             this.setData({
                 subtotal: res
             });
+            if (res.name) {
+                wx.setNavigationBarTitle({
+                    title: res.name
+                });
+            }
         });
     }
 
@@ -193,6 +198,9 @@ export class Index extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 .banner {
     swiper {
         height: 50vw;

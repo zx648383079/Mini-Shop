@@ -3,18 +3,18 @@ import {
     TOKEN_KEY
 } from "./utils/types";
 import {
-    ISubtotal, ICategory, IAddress, IOrder, IUser, ILogin, IDataOne, IRegister, ICartGroup
+    ICategory, IAddress, IOrder, IUser, ILogin, IDataOne, IRegister, ICartGroup, ISite
 } from "./api/model";
-import { getSubtotal } from "./api/product";
 import { getProfile, login, logout, authLogin, sendFindEmail, register } from "./api/user";
 import { getCategories } from "./api/category";
 import { getAddressList } from "./api/address";
 import { getOrderInfo } from "./api/order";
+import { getSiteInfo } from './api/site';
 import { WxPage, WxApp, WxAppJson } from "typings/wx/lib.vue";
 
 interface IAppData {
     token: string | null,
-    subtotal: ISubtotal | null,
+    site: ISite | null,
     categories: ICategory[],
     cart: ICartGroup[];
     addressList: IAddress[];
@@ -25,7 +25,7 @@ interface IAppData {
 
 export interface IMyApp {
     globalData: IAppData,
-    getSubtotal(): Promise<ISubtotal>,
+    getSite(): Promise<ISite>,
     getUser(): Promise<IUser|null>,
     setUser(user: IUser|null): void,
     setToken(token?: string): void,
@@ -154,7 +154,7 @@ export class Application extends WxApp<IAppData> implements IMyApp {
 
     public globalData: IAppData = {
         token: null,
-        subtotal: null,
+        site: null,
         categories: [],
         cart: [],
         addressList: [],
@@ -168,14 +168,14 @@ export class Application extends WxApp<IAppData> implements IMyApp {
         this.globalData.token = wx.getStorageSync(TOKEN_KEY);
     }
 
-    public getSubtotal(): Promise<ISubtotal> {
+    public getSite(): Promise<ISite> {
         return new Promise((resolve, reject) => {
-            if (this.globalData.subtotal) {
-                resolve(this.globalData.subtotal);
+            if (this.globalData.site) {
+                resolve(this.globalData.site);
                 return;
             }
-            getSubtotal().then(res => {
-                this.globalData.subtotal = res;
+            getSiteInfo().then(res => {
+                this.globalData.site = res;
                 resolve(res);
             }).catch(reject);
         });
@@ -549,6 +549,7 @@ $lineHeight: 2.5rem;
             min-height: 100px;
             overflow: auto;
             padding: 10px;
+            box-sizing: border-box;
         }
 
         .dialog-footer {
@@ -756,33 +757,31 @@ $lineHeight: 2.5rem;
 .scroll-nav {
     position: relative;
     height: 45px;
-    background-color: $white;
+    background-color: #05a6b1;
+    color: #fff;
     z-index: 10;
-
-    .box {
+    .nav-ul {
         padding-right: 35px;
         font-size: 0;
         font-family: none;
         white-space: nowrap;
         overflow: hidden;
         overflow-x: auto;
-        background-color: $white;
+        background-color:  #05a6b1;
     }
-
-    .item {
-        width: 3.75rem;
+    .nav-li {
+        min-width: 3.75rem;
+        padding: 0 5px;
         text-align: center;
         font-size: 13px;
         display: inline-block;
         vertical-align: top;
-
         text {
             display: inline-block;
             height: 45px;
             line-height: 45px;
-            color: #333;
+            color: #fff;
         }
-
         &.active {
             text {
                 color: #e4393c;
@@ -790,7 +789,6 @@ $lineHeight: 2.5rem;
             }
         }
     }
-
     .nav-arrow {
         position: absolute;
         top: 0;
@@ -799,23 +797,20 @@ $lineHeight: 2.5rem;
         height: 45px;
         line-height: 45px;
         text-align: center;
-        background: $white;
-
+        background-color: #05a6b1;
         &::before {
-            content: "\e60b";
+            content: "\e649";
         }
     }
-
     &.unfold {
-        .box {
+        .nav-ul {
             padding-right: 0;
             white-space: normal;
             padding-right: 30px;
         }
-
         .nav-arrow {
             &::before {
-                content: "\e611";
+                content: "\e64c";
             }
         }
     }
@@ -1095,20 +1090,19 @@ footer,
     }
 
     &.goods-navbar {
+        .btn {
+            width: 29%;
+            padding: 0;
+            text-align: center;
+            line-height: 3.125rem;
+            margin: 0;
+            &.btn-orange {
+                background: #ff9600;
+            }
+        }
         navigator {
             width: 14%;
             margin: 0;
-
-            &.btn {
-                width: 29%;
-                padding: 0;
-                text-align: center;
-                line-height: 3.125rem;
-
-                &.btn-orange {
-                    background: #ff9600;
-                }
-            }
         }
     }
 }
@@ -1533,8 +1527,7 @@ footer,
             }
 
             .goods-info {
-                width: calc(100% - 8rem);
-                height: 70px;
+
                 margin: 0;
 
                 h4 {
@@ -1600,7 +1593,7 @@ footer,
         .fa {
             position: absolute;
             font-size: 2.5rem;
-            top: 0.75rem;
+            top: 0;
 
             &.fa-map {
                 left: 10px;
@@ -1749,8 +1742,8 @@ footer,
 
         .goods-name {
             margin-right: 3.125rem;
-            line-height: 3.125rem;
             font-size: 16px;
+            padding: 5px 0;
         }
 
         .goods-collect {
@@ -2967,7 +2960,7 @@ footer,
     width: 100%;
     padding-left: 20px;
     background-color: $white;
-
+    box-sizing: border-box;
     >view {
 
         &:first-child,
@@ -2993,13 +2986,14 @@ footer,
         }
     }
 
-    navigator {
+    .btn {
         width: 100%;
         line-height: 44px;
         text-align: center;
         background-color: $red;
         color: $white;
         display: block;
+        padding: 0;
     }
 }
 
@@ -3197,6 +3191,7 @@ footer,
         .dialog-yes {
             background-color: $red;
             width: 80%;
+            margin: 0 auto;
         }
     }
 
@@ -3218,12 +3213,24 @@ footer,
     .row-input {
 
         input,
-        select {
-            width: 100%;
+        .select-input {
+            // width: 100%;
             height: 36px;
             outline: 0;
             border: 1px solid #eee;
-            padding: 0 10px
+            padding: 0 10px;
+        }
+        .select-input {
+            line-height: 36px;
+            position: relative;
+            &::after {
+                font-family: "iconfont";
+                content: '\e649';
+                position: absolute;
+                right: 5px;
+                top: 0;
+                color: #777;
+            }
         }
     }
 }

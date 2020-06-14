@@ -26,7 +26,7 @@
 import {
     IMyApp
 } from '../../app.vue';
-import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
+import { WxPage, WxJson, TouchEvent, CustomEvent } from '../../../typings/wx/lib.vue';
 import { IAddress } from '../../api/model';
 import { defaultAddress, deleteAddress } from '../../api/address';
 const app = getApp<IMyApp>();
@@ -114,9 +114,24 @@ export class Index extends WxPage<IPageData> {
         });
     }
 
-    slideButtonTap(e: any) {
-        console.log(e);
-        
+    slideButtonTap(e: CustomEvent) {
+        const id = e.detail.data as number;
+        let index = e.detail.index as number;
+        for (let i = 0; i < this.data.items.length; i++) {
+            const item = this.data.items[i];
+            if (item.id === id) {
+                if (item.is_default) {
+                    index ++;
+                }
+                if (index < 1) {
+                    return this.tapDefault(item);
+                }
+                if (index === 1) {
+                    return this.tapEdit(item);
+                }
+                return this.tapRemove(item);
+            }
+        }
     }
 
     public tapRemove(item: IAddress) {

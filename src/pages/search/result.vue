@@ -16,7 +16,7 @@
             <div class="has-header">
                 <div >
                     <div class="goods-list">
-                        <div class="item-view" v-for="(item, index) in items" :key="index"  wx:key="id" @enter="tapProduct" :item="item" @addCart="tapAddCart">
+                        <div class="item-view" v-for="(item, index) in items" :key="index"  wx:key="id">
                             <div class="item-img">
                                 <a href="/pages/goods/index?id={{ item.id }}"><img :src="item.thumb" alt="" mode="widthFix"></a>
                             </div>
@@ -26,7 +26,7 @@
                             <div class="item-actions">
                                 <span class="item-price">{{ item.price | price }}
                                 </span>
-                                <span @click="tapAddCart">加入购物车</span>
+                                <span @click="tapAddCart" data-id="{{ item.id }}">加入购物车</span>
                             </div>
                         </div>
                     </div>
@@ -36,13 +36,17 @@
                 </div>
             </div>
         </div>
-        <CartDialog :mode="mode" :product="goods" @close="mode = 0"/>
+        <CartDialog :mode="mode" :product="goods" @close="tapCloseDialog"/>
     </div>
 </template>
 <script lang="ts">
 import { IProduct } from '../../api/model';
-import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
+import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 import { getList, getInfo } from '../../api/product';
+import { IMyApp } from '../../app.vue';
+import { LOGIN_PATH } from '../../utils/types';
+
+const app = getApp<IMyApp>();
 
 interface IPageData {
     items: IProduct[],
@@ -57,12 +61,16 @@ interface IPageData {
 }
 
 @WxJson({
+    usingComponents: {
+        CartDialog: '/pages/goods/Child/CartDialog'
+    },
     navigationBarTitleText: "搜索",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black",
     enablePullDownRefresh: true,
+    onReachBottomDistance: 10
 })
-export class Index extends WxPage<IPageData> {
+export class Result extends WxPage<IPageData> {
 
     public data: IPageData = {
         items: [],
@@ -122,17 +130,31 @@ export class Index extends WxPage<IPageData> {
             });
         });
     }
+
+    public tapCloseDialog() {
+        this.setData({
+            mode: 0
+        });
+    }
+
     public tapProduct(item: IProduct) {
         wx.navigateTo({url: '/pages/goods/index?id=' + item.id});
     }
-    public tapAddCart(item: IProduct) {
-        if (this.data.goods && this.data.goods.id == item.id) {
+    public tapAddCart(e: TouchEvent) {
+        if (!app.globalData.token) {
+            wx.navigateTo({
+                url: LOGIN_PATH
+            })
+            return;
+        }
+        let id = e.currentTarget.dataset.id as number;
+        if (this.data.goods && this.data.goods.id == id) {
             this.setData({
                 mode: 1
             });
             return;
         }
-        getInfo(item.id).then(res => {
+        getInfo(id).then(res => {
             this.setData({
                 goods: res,
                 mode: 1

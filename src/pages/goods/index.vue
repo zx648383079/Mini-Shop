@@ -128,12 +128,12 @@
                 <i class="fa fa-cart" aria-hidden="true"></i>
                 购物车
             </a>
-            <a class="btn btn-orange" @click="tapAddCart">
+            <span class="btn btn-orange" @click="tapAddCart">
                 加入购物车
-            </a>
-            <a class="btn" @click="tapBuy">
+            </span>
+            <span class="btn" @click="tapBuy">
                 立即购买
-            </a>
+            </span>
         </div>
 
         <CartDialog mode="{{mode}}" product="{{goods}}" bind:close="tapDialogClose"/>
@@ -368,7 +368,11 @@ page {
 .goods-navbar {
     navigator {
         .fa {
-            font-size: 16px;
+            padding: 0;
+            line-height: 20px;
+        }
+        text {
+            font-size: 10px;
         }
     }
 }

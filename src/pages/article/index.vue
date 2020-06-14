@@ -117,6 +117,7 @@ export class Index extends WxPage<IPageData> {
             keywords: this.data.keywords,
             page: page,
         }).then(res => {
+            wx.stopPullDownRefresh();
             this.setData({
                 page: page,
                 hasMore: res.paging.more,
@@ -165,67 +166,7 @@ export class Index extends WxPage<IPageData> {
 page {
     background-color: #f4f4f4;
 }
-.scroll-nav {
-    position: relative;
-    height: 45px;
-    background-color: #05a6b1;
-    color: #fff;
-    z-index: 10;
-    .nav-ul {
-        padding-right: 35px;
-        font-size: 0;
-        font-family: none;
-        white-space: nowrap;
-        overflow: hidden;
-        overflow-x: auto;
-        background-color:  #05a6b1;
-    }
-    .nav-li {
-        min-width: 3.75rem;
-        padding: 0 5px;
-        text-align: center;
-        font-size: 13px;
-        display: inline-block;
-        vertical-align: top;
-        text {
-            display: inline-block;
-            height: 45px;
-            line-height: 45px;
-            color: #fff;
-        }
-        &.active {
-            text {
-                color: #e4393c;
-                border-bottom: 2px solid #e4393c;
-            }
-        }
-    }
-    .nav-arrow {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 35px;
-        height: 45px;
-        line-height: 45px;
-        text-align: center;
-        background-color: #05a6b1;
-        &::before {
-            content: "\e649";
-        }
-    }
-    &.unfold {
-        .nav-ul {
-            padding-right: 0;
-            white-space: normal;
-            padding-right: 30px;
-        }
-        .nav-arrow {
-            &::before {
-                content: "\e64c";
-            }
-        }
-    }
-}
+
 .article-item {
     background-color: #fff;
     margin-top: 10px;

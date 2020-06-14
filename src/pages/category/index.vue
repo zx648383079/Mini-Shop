@@ -17,12 +17,12 @@
                         <img :src="category.banner" mode="widthFix">
                     </div>
                     <div class="header">
-                        <a @click="tapSearch(category)">{{ category.name }}</a>
+                        <a href="/pages/search/result?category={{ category.id }}">{{ category.name }}</a>
                     </div>
                     <div class="goods-list" v-if="category.goods_list && category.goods_list.length > 0">
                         <div class="item-view" v-for="(item, index) in category.goods_list" :key="index" wx:key="id">
                             <div class="item-img">
-                                <a  @click="tapProduct(item)"><img :src="item.thumb" mode="widthFix"></a>
+                                <a  href="/pages/goods/index?id={{ item.id }}"><img :src="item.thumb" mode="widthFix"></a>
                             </div>
                             <div class="item-title">
                                 {{item.name}}
@@ -35,10 +35,10 @@
                     </div>
                     <ul class="tree-grid" v-if="category.children && category.children.length > 0">
                         <li class="tree-item" v-for="(item, index) in category.children" :key="index" wx:key="id">
-                            <a  @click="tapSearch(item)">{{ item.name }}</a>
+                            <a  href="/pages/search/result?category={{ item.id }}">{{ item.name }}</a>
                             <ul class="tree-item-chidren" v-if="item.children && item.children.length > 0">
                                 <li class="tree-item" v-for="(it, i) in item.children" :key="i" wx:key="id">
-                                    <a  @click="tapSearch(it)">{{ it.name }}</a>
+                                    <a  href="/pages/search/result?category={{ it.id }}">{{ it.name }}</a>
                                 </li>
                             </ul>
                         </li>

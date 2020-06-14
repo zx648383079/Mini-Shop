@@ -2,15 +2,18 @@
     <div>
         <div class="has-footer">
             <div :class="['scroll-nav', isExpand ? 'unfold' : '']">
-                <ul class="box">
-                    <li v-for="(item, index) in categories" :key="index" class="item {{category == item.id ? 'active' : ''}}">
-                        <span>{{ item.name }}</span>
+                <ul class="nav-ul">
+                    <li class="nav-li" :class="{active: category == 0}" @click="tapCat(0)">
+                            <text>全部</text>
+                    </li>
+                    <li  class="nav-li" v-for="(item, index) in categories" :key="index" :class="{active: category == item.id}" @click="tapCat(item.id)">
+                            <text>{{ item.name }}</text>
                     </li>
                 </ul>
-                <a @click="isExpand = !isExpand" class="fa nav-arrow"></a>
+                <span @click="isExpand = !isExpand" class="fa nav-arrow"></span>
             </div>
 
-            <div :loading="isLoading" :more="has_more" @refresh="tapRefresh" @more="tapMore">
+            <div>
                 <div class="coupon-item" v-for="(item, index) in items" :key="index">
                     <div class="thumb">
                         <img :src="item.thumb" alt="">
@@ -27,9 +30,14 @@
                         </div>
                     </div>
                     <div class="action">
-                        <span class="status-icon">立即<br>领取</span>
-                        <i>剩余76%</i>
+                        <span v-if="item.can_receive && item.received >= item.send_value" class="status-icon status-close">已抢完</span>
+                        <span v-if="item.received < item.send_value && item.can_receive" class="status-icon" @click="tapRecieve(index)">立即<br>领取</span>
+                        <span v-if="!item.can_receive" class="status-icon status-received">已领</span>
+                        <i v-if="item.received < item.send_value">剩余 {{ item.send_value > 0 ? 100 - Math.ceil(item.received * 100 / item.send_value) : 100 }} %</i>
                     </div>
+                </div>
+                <div class="empty-box" v-if="items.length < 1">
+                    没有可领优惠券哦
                 </div>
             </div>
         </div>
@@ -51,15 +59,16 @@ import {
     IMyApp
 } from '../../app.vue';
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
-import { ICategory } from '../../api/model';
+import { ICategory, ICoupon } from '../../api/model';
+import { getCouponList, receiveCoupon } from '../../api/coupon';
 const app = getApp<IMyApp>();
 
 interface IPageData {
     categories: ICategory[],
-    status: number,
-    items: any[],
+    category: number,
+    items: ICoupon[],
     isExpand: boolean,
-    has_more: boolean,
+    hasMore: boolean,
     page: number,
     isLoading: boolean
 }
@@ -73,10 +82,10 @@ interface IPageData {
 export class Index extends WxPage<IPageData> {
     public data: IPageData = {
         categories: [],
-        status: 0,
+        category: 0,
         items: [],
         isExpand: false,
-        has_more: true,
+        hasMore: true,
         page: 1,
         isLoading: false
     }
@@ -96,29 +105,72 @@ export class Index extends WxPage<IPageData> {
         this.tapMore();
     }
 
+    /**
+     * tapCat
+     */
+    public tapCat(id: number) {
+        this.setData({
+            category: id,
+            isExpand: false
+        });
+        this.tapRefresh();
+    }
+
+    public tapRecieve(i: number) {
+        const data = this.data;
+        const item: ICoupon = data.items[i];
+        if (!item.can_receive) {
+            return;
+        }
+        receiveCoupon(item.id).then(res => {
+            if (res.data) {
+                wx.showToast({
+                    title: '领取成功'
+                });
+                item.can_receive = false;
+                this.setData(data);
+            }
+        });
+    }
+
     public tapRefresh() {
         this.goPage(1);
     }
 
     public tapMore() {
-        if (!this.data.has_more) {
+        if (!this.data.hasMore) {
             return;
         }  
         this.goPage(this.data.page + 1);
     }
 
     public goPage(page: number) {
-        if (this.data.isLoading) {
+        let data = this.data;
+        if (data.isLoading) {
             return;
         }
-        this.setData({
-            isLoading: true
-        });
-
+        data.isLoading = true;
+        this.setData(data);
+        getCouponList({
+            category: data.category,
+            page
+        }).then(res => {
+            wx.stopPullDownRefresh();
+            data.hasMore = res.paging.more;
+            data.isLoading = false;
+            data.items = [].concat(data.items as never[], res.data as never[]);
+            this.setData(data);
+        }, () => {
+            this.setData({
+                isLoading: false
+            });
+        })
     }
 
 }
 </script>
 <style lang="scss" scoped>
-
+page {
+    background-color: #f4f4f4;
+}
 </style>

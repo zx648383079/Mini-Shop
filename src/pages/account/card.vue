@@ -31,7 +31,7 @@ import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
 
 interface IPageData {
     items: ICard[],
-    has_more: boolean,
+    hasMore: boolean,
     page: number,
     isLoading: boolean
 }
@@ -46,7 +46,7 @@ export class Card extends WxPage<IPageData> {
     
     public data: IPageData = {
         items: [],
-        has_more: true,
+        hasMore: true,
         page: 1,
         isLoading: false
     };
@@ -64,6 +64,9 @@ export class Card extends WxPage<IPageData> {
     }
 
     public tapMore() {
+        if (!this.data.hasMore) {
+            return;
+        }
         this.goPage(this.data.page + 1);
     }
 
@@ -71,16 +74,11 @@ export class Card extends WxPage<IPageData> {
      * refresh
      */
     public tapRefresh() {
-        this.setData({
-            items: [],
-            isLoading: false,
-            has_more: true
-        });
         this.goPage(1);
     }
 
     public goPage(page: number) {
-        if (this.data.isLoading || !this.data.has_more) {
+        if (this.data.isLoading) {
             return;
         }
         this.setData({
@@ -90,6 +88,7 @@ export class Card extends WxPage<IPageData> {
         getBankCardList({
             page,
         }).then(res => {
+            wx.stopPullDownRefresh();
             let items = [];
             if (page < 2) {
                 items = res.data as never[];
@@ -97,7 +96,7 @@ export class Card extends WxPage<IPageData> {
                 items = [].concat(this.data.items as never[], res.data as never[]);
             }
             this.setData({
-                has_more: res.paging.more,
+                hasMore: res.paging.more,
                 isLoading: false,
                 page,
                 items
@@ -107,6 +106,9 @@ export class Card extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 .card-item {
     position: relative;
     background-color: #fff;

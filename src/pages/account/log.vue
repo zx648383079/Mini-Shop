@@ -76,7 +76,7 @@ export class Card extends WxPage<IPageData> {
 
     public goPage(page: number) {
         let data = this.data;
-        if (data.isLoading || !data.hasMore) {
+        if (data.isLoading) {
             return;
         }
         data.isLoading = true;

@@ -24,7 +24,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
+import { WxJson, WxPage, CustomEvent } from '../../../typings/wx/lib.vue';
 import { IProduct, SET_GOODS_HISTORY } from '../../api/model';
 import { getList } from '../../api/product';
 
@@ -59,18 +59,26 @@ export class History extends WxPage<IPageData> {
         this.tapRefresh();
     }
 
-    public tapRemove(item: IProduct) {
-        let goodsId = this.data.goodsId;
-        for (let i = 0; i < goodsId.length; i++) {
-            if (goodsId[i] === item.id) {
-                goodsId.splice(i, 1);
+    slideButtonTap(e: CustomEvent) {
+        const id = e.detail.data as number;
+        for (let i = 0; i < this.data.items.length; i++) {
+            if (this.data.items[i].id === id) {
+                return this.tapRemove(i, id);
+            }
+        }
+    }
+
+    public tapRemove(j: number, id: number) {
+        const data = this.data;
+        for (let i = 0; i < data.goodsId.length; i++) {
+            if (data.goodsId[i] === id) {
+                data.goodsId.splice(i, 1);
                 break;
             }
         }
-        wx.setStorageSync(SET_GOODS_HISTORY, goodsId);
-        this.setData({
-            goodsId
-        });
+        data.items.splice(j, 1);
+        wx.setStorageSync(SET_GOODS_HISTORY, data.goodsId);
+        this.setData(data);
     }
 
     public tapClear() {
@@ -99,6 +107,9 @@ export class History extends WxPage<IPageData> {
     }
 
     public tapMore() {
+        if (!this.data.hasMore) {
+            return;
+        }
         this.goPage(this.data.page + 1);
     }
 
@@ -123,7 +134,7 @@ export class History extends WxPage<IPageData> {
     }
 
     public goPage(page: number) {
-        if (this.data.isLoading || !this.data.hasMore) {
+        if (this.data.isLoading) {
             return;
         }
         this.setData({
@@ -134,6 +145,7 @@ export class History extends WxPage<IPageData> {
             id: this.data.goodsId,
             page,
         }).then(res => {
+            wx.stopPullDownRefresh();
             let items = [];
             if (page < 2) {
                 items = res.data as never[];
@@ -152,8 +164,8 @@ export class History extends WxPage<IPageData> {
 
     private formatButton(res: any[]): any[] {
         return res.map(item => {
-            if (item.name.length > 20) {
-                item.name = item.name.substr(0, 20) + '...';
+            if (item.name.length > 15) {
+                item.name = item.name.substr(0, 15) + '...';
             }
             item.buttons = [
                 {

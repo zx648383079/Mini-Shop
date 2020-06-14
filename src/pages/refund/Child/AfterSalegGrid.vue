@@ -38,7 +38,7 @@
             <label>收货地址</label>
             <span class="tip">(该地址是商城回寄给您的地址)</span>
             <div class="address-box" @click="tapAddress">
-                <i class="fa fa-map-marker"></i>
+                <i class="fa fa-map"></i>
                 <p v-if="address">{{ address.region.full_name }} {{ address.address }}</p>
                 <p v-else>请选择地址</p>
                 <i class="fa fa-chevron-right"></i>
@@ -118,7 +118,7 @@ export class AfterSalegGrid extends WxComponent<IComponentData>  {
 </script>
 <style lang="scss" scoped>
 .comment-input {
-    p {
+    view {
         line-height: 30px;
     }
     textarea {
@@ -128,7 +128,7 @@ export class AfterSalegGrid extends WxComponent<IComponentData>  {
     }
 }
 .radio-box {
-    span {
+    text {
         display: inline-block;
         background-color: #fff;
         border: 1px solid #ccc;
@@ -157,7 +157,7 @@ export class AfterSalegGrid extends WxComponent<IComponentData>  {
         font-size: 16px;
         top: 50%;
         margin-top: -8px;
-        &.fa-map-marker {
+        &.fa-map {
             left: 1.1875rem;
         }
         &.fa-chevron-right {

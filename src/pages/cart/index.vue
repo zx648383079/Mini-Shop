@@ -32,7 +32,7 @@
             <span @click="toggleCheckAll">全选</span>
 
             <div class="cart-amount">
-                <span>{{ total() | price }}</span>
+                <span>{{ total }}</span>
                 <span @click="tapCashier" class="btn">结算</span>
             </div>
         </div>
@@ -54,8 +54,8 @@ import {
     IMyApp
 } from '../../app.vue';
 import { ICartItem, ICartGroup } from '../../api/model';
-import { getCart } from '../../api/cart';
-import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
+import { getCart, deleteItem } from '../../api/cart';
+import { WxPage, WxJson, TouchEvent, CustomEvent } from '../../../typings/wx/lib.vue';
 
 const app = getApp<IMyApp>();
 
@@ -63,7 +63,9 @@ interface IPageData {
     items: ICartGroup[],
     checkedAll: boolean,
     isGuest: boolean,
-    isLoading: boolean
+    isLoading: boolean,
+    total: number;
+    checkId: number[];
 }
 @WxJson({
     usingComponents: {
@@ -78,7 +80,9 @@ export class Index extends WxPage<IPageData> {
         items: [],
         checkedAll: false,
         isGuest: true,
-        isLoading: false
+        isLoading: false,
+        total: 0,
+        checkId: []
     };
 
     onLoad() {
@@ -96,20 +100,29 @@ export class Index extends WxPage<IPageData> {
             isLoading: true
         });
         getCart().then(res => {
-            this.setData({
-                isLoading: false,
-                items: !res.data ? [] : res.data.map(item => {
-                    item.goods_list = this.formatButton(item.goods_list);
-                    return item;
-                })
-            });
+            this.formatCart(res.data);
         }); 
     }
 
-    public total(): number {
+    public formatCart(cart: ICartGroup[]) {
+        this.setData({
+            isLoading: false,
+            items: !cart ? [] : cart.map(item => {
+                item.checked = this.isCheckGroup(item);
+                item.goods_list = this.formatButton(item.goods_list);
+                return item;
+            })
+        });
+        this.refresh();
+    }
+
+    public refresh() {
         let total = 0;
         if (!this.data.items || this.data.items.length < 1) {
-            return total;
+            this.setData({
+                total
+            });
+            return;
         }
         for (const item of this.data.items) {
             for (const cart of item.goods_list) {
@@ -118,30 +131,45 @@ export class Index extends WxPage<IPageData> {
                 }
             }
         }
-        return total;
+        this.setData({
+            total
+        });
     }
 
     public toggleCheckAll() {
         let check = !this.data.checkedAll;
         let items = this.data.items;
+        let checkId: number[] = [];
         for (const item of items) {
             item.checked = check;
             for (const cart of item.goods_list) {
                 cart.checked = check;
+                if (check) {
+                    checkId.push(cart.id as number);
+                }
             }
         }
         this.setData({
             items: items,
-            checkedAll: check
+            checkedAll: check,
+            checkId,
         });
+        this.refresh();
     }
 
     public toggleCheckGroup(e: TouchEvent) {
         let items = this.data.items;
         let item = items[e.currentTarget.dataset.group as number];
         item.checked = !item.checked;
+        let checkId = this.data.checkId;
         for (const cart of item.goods_list) {
             cart.checked = item.checked;
+            const i = checkId.indexOf(cart.id as number);
+            if (item.checked && i < 0) {
+                checkId.push(cart.id as number);
+            } else if (!item.checked && i >= 0) {
+                checkId.splice(i, 1);
+            }
         }
         let check = this.data.checkedAll;
         if (!item.checked) {
@@ -149,8 +177,10 @@ export class Index extends WxPage<IPageData> {
         }
         this.setData({
             items: items,
-            checkedAll: check
+            checkedAll: check,
+            checkId
         });
+        this.refresh();
     }
 
     public toggleCheck(e: TouchEvent) {
@@ -159,13 +189,28 @@ export class Index extends WxPage<IPageData> {
         let cart = item.goods_list[e.currentTarget.dataset.cart as number];
         cart.checked = !cart.checked;
         let check = this.data.checkedAll;
+        let checkId = this.data.checkId;
+        const i = checkId.indexOf(cart.id as number);
+        if (cart.checked && i < 0) {
+            checkId.push(cart.id as number);
+        } else if (!cart.checked && i >= 0) {
+            checkId.splice(i, 1);
+        }
         if (!cart.checked) {
             check = false;
             item.checked = false;
         }
         this.setData({
             items: items,
-            checkedAll: check
+            checkedAll: check,
+            checkId
+        });
+        this.refresh();
+    }
+
+    public slideButtonTap(e: CustomEvent) {
+        deleteItem(e.detail.data).then(res => {
+            this.formatCart(res.data);
         });
     }
 
@@ -196,11 +241,26 @@ export class Index extends WxPage<IPageData> {
         });
     }
 
+    private isCheckItem(item: any) {
+        return this.data.checkId.indexOf(item.id) >= 0;
+    }
+
+    private isCheckGroup(item: ICartGroup) {
+        for (let index = 0; index < item.goods_list.length; index++) {
+            if (!this.isCheckItem(item.goods_list[index])) {
+
+                return false;
+            }
+        }
+        return true;
+    }
+
     private formatButton(res: any[]): any[] {
         return res.map(item => {
             if (item.goods.name.length > 15) {
                 item.goods.name = item.goods.name.substr(0, 15) + '...';
             }
+            item.checked = this.isCheckItem(item);
             item.buttons = [
                 {
                     type: 'warn',

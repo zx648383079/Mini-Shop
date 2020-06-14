@@ -1,5 +1,5 @@
 import {fetch} from '../utils/http'
-import { IPage, IProduct, IHomeProduct, IData, ISubtotal } from './model';
+import { IPage, IProduct, IHomeProduct, IData } from './model';
 
 export const getList = (params: any) => fetch<IPage<IProduct>>('shop/goods', params);
 
@@ -18,5 +18,3 @@ export const getHotKeywords = () => fetch<IData<string>>('shop/search/keywords')
 export const getTips = (keywords: string) => fetch<IData<string>>('shop/search/tips', {
     keywords,
 });
-
-export const getSubtotal = () => fetch<ISubtotal>('shop/goods/count');

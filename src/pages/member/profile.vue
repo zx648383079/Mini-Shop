@@ -155,7 +155,7 @@ export class Profile extends WxPage<IPageData> {
                     });
                 }
             }
-        })
+        });
     }
 
     public updateProfile(name: string, value: any) {

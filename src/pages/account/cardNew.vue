@@ -1,21 +1,21 @@
 <template>
-    <div>
-        <form class="form-inline">
-            <div class="tip">
-                请输入您的银行卡号
-            </div>
-            <div class="input-group">
-                <input type="text" placeholder="请输入卡号">
-            </div>
+    <div class="form-inline">
+        <div class="tip">
+            请输入您的银行卡号
+        </div>
+        <div class="input-group">
+            <input type="text" v-model="card_no" placeholder="请输入卡号">
+        </div>
 
-            <button class="btn">下一步</button>
-        </form>
+        <button class="btn" @click="tapSubmit">下一步</button>
     </div>
 </template>
 <script lang="ts">
 import { WxPage, WxJson } from "../../../typings/wx/lib.vue";
+import { addBankCard } from "../../api/account";
 
 interface IPageData {
+    card_no: string;
 }
 @WxJson({
     navigationBarTitleText: "添加银行卡",
@@ -24,6 +24,28 @@ interface IPageData {
 })
 export class CardNew extends WxPage<IPageData> {
     
+    public data = {
+        card_no: ''
+    };
+
+    public tapSubmit() {
+        let data = this.data;
+        if (data.card_no.length < 5) {
+            wx.showToast({
+                icon: 'none',
+                title: '请输入正确的卡号'
+            });
+            return;
+        }
+        addBankCard(data).then(_ => {
+            wx.showToast({
+                title: '添加成功'
+            });
+            wx.navigateBack({
+                delta: 0
+            });
+        });
+    }
 }
 </script>
 <style lang="scss" scoped>

@@ -9,7 +9,7 @@
                     <input type="email" name="email" required autocomplete="off" v-model="email" placeholder="请输入账号">
                 </div>
                 <div class="input-box">
-                    <input type="password" name="password" required autocomplete="off" @keyup="tapKey" v-model="password" placeholder="请输入密码">
+                    <input type="password" name="password" required autocomplete="off" v-model="password" placeholder="请输入密码" bindconfirm="tapSubmit">
                 </div>
                 <div class="unlogin">
                     <span @click="tapMode" data-mode="5">注册账号</span>
@@ -28,13 +28,23 @@ import {
 import { WxMethod, TouchEvent, WxComponent, WxJson } from '../../../../typings/wx/lib.vue';
 const app = getApp<IMyApp>();
 
+interface IComponentData {
+    email: string,
+    password: string,
+}
+
 @WxJson({
     component: true
 })
-export class EmailLogin extends WxComponent<any>  {
+export class EmailLogin extends WxComponent<IComponentData>  {
     public options = {
         addGlobalClass: true
     }
+
+    public data = {
+        email: '',
+        password: ''
+    };
 
     @WxMethod()
     tapMode(e: TouchEvent) {
@@ -44,10 +54,19 @@ export class EmailLogin extends WxComponent<any>  {
     tapChange(mode: number) {
         this.triggerEvent('click', mode);
     }
+
+    @WxMethod()
+    tapSubmit() {
+        this.signIn(this.data.email, this.data.password);
+    }
+
     @WxMethod()
     formSubmit(e: any) {
-        const email = e.detail.value.email;
-        const password = e.detail.value.password;
+        this.signIn(e.detail.value.email, e.detail.value.password);
+    }
+
+    @WxMethod()
+    signIn(email: string, password: string) {
         if (!email || !/.+@.+/.test(email)) {
             wx.showToast({
                 icon: 'none',
