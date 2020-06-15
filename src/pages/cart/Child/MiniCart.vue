@@ -9,7 +9,7 @@
         <div class="goods-box" v-show="expaned">
             <div class="header">
                 已选商品
-                <span class="right">
+                <span class="right" @click="tapClear">
                     <i class="fa fa-trash"></i>
                     清空
                 </span>
@@ -33,7 +33,8 @@
             </div>
             <div class="subtotal">
                 <div class="price">{{ cart.data.length > 0 ? cart.subtotal.total : '未选购商品' }}</div>
-                <p class="tip">另需配送费</p>
+                <p class="tip" v-if="cart.promotion_cell && cart.promotion_cell.length > 0">另需配送费</p>
+                <p class="tip" v-else>已包邮</p>
             </div>
             <div class="checkout">
                 {{ cart.checkout_button.text }}
@@ -44,10 +45,11 @@
 <script lang="ts">
 import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
 import { ICart } from "../../../api/model";
+import { updateItem, deleteAll } from "../../../api/cart";
 
 interface IComponentData {
     cart?: ICart,
-    expaned: boolean
+    expaned: boolean,
 }
 
 @WxJson({
@@ -64,7 +66,7 @@ export default class FixedCart extends WxComponent<IComponentData> {
     }
 
     public data: IComponentData = {
-        expaned: false
+        expaned: false,
     };
 
     @WxMethod()
@@ -83,7 +85,9 @@ export default class FixedCart extends WxComponent<IComponentData> {
             item.amount = 0;
         }
         item.amount ++;
-        this.notifyCart(cart);
+        updateItem(item.id as number, item.amount).then(res => {
+            this.notifyCart(res);
+        });
     }
 
     @WxMethod()
@@ -97,7 +101,9 @@ export default class FixedCart extends WxComponent<IComponentData> {
             item.amount = 0;
         }
         item.amount = Math.max(0, item.amount - 1);
-        this.notifyCart(cart);
+        updateItem(item.id as number, item.amount).then(res => {
+            this.notifyCart(res);
+        });
     }
 
     
@@ -110,6 +116,16 @@ export default class FixedCart extends WxComponent<IComponentData> {
         let data = this.data;
         data.expaned = !data.expaned;
         this.setData(data);
+    }
+
+    @WxMethod()
+    public tapClear() {
+        deleteAll().then(res => {
+            this.setData({
+                expaned: false
+            });
+            this.notifyCart(res);
+        });
     }
 }
 </script>
@@ -154,6 +170,7 @@ navigator {
                 word-break: keep-all;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                white-space:nowrap;
             }
             .price {
                 color: red;

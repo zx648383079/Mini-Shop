@@ -58,7 +58,8 @@ import { IProduct, IStore, ICart } from '../../api/model';
 import { getList } from '../../api/product';
 import { getStore, toggleCollect } from '../../api/store';
 import { IMyApp } from '../../app.vue';
-import { getCart } from '../../api/cart';
+import { getCart, updateGoods } from '../../api/cart';
+import { LOGIN_PATH } from '../../utils/types';
 
 const app = getApp<IMyApp>();
 
@@ -130,15 +131,17 @@ export class Quick extends WxPage<IPageData> {
         this.tapRefresh();
         getCart().then(res => {
             this.setData({
-                cart: res
+                cart: res, 
             });
+            this.formatAmount(this.data.items)
         });
     }
 
     public tapCartChange(e: CustomEvent) {
         this.setData({
-            cart: e.detail
+            cart: e.detail,
         });
+        this.formatAmount(this.data.items)
     }
 
     public tapCollect() {
@@ -177,23 +180,48 @@ export class Quick extends WxPage<IPageData> {
      * tapPlus
      */
     public tapPlus(index: number) {
+        if (!app.globalData.token) {
+            wx.navigateTo({
+                url: LOGIN_PATH
+            });
+            return;
+        }
         const data = this.data;
         const item = data.items[index];
         if (!item.amount) {
             item.amount = 0;
         }
         item.amount ++;
-        this.setData(data);
+        updateGoods(item.id, item.amount).then(res => {
+            if (res.dialog) {
+                return
+            }
+            data.cart = res as ICart;
+            this.setData(data);
+        });
+        
     }
 
     public tapMinus(index: number) {
+        if (!app.globalData.token) {
+            wx.navigateTo({
+                url: LOGIN_PATH
+            });
+            return;
+        }
         const data = this.data;
         const item = data.items[index];
         if (!item.amount) {
             item.amount = 0;
         }
         item.amount = Math.max(0, item.amount - 1);
-        this.setData(data);
+        updateGoods(item.id, item.amount).then(res => {
+            if (res.dialog) {
+                return
+            }
+            data.cart = res as ICart;
+            this.setData(data);
+        });
     }
 
     public tapRefresh() {
@@ -233,9 +261,32 @@ export class Quick extends WxPage<IPageData> {
                 page,
                 hasMore: res.paging.more,
                 isLoading: false,
-                items
             });
+            this.formatAmount(items);
         });
+    }
+
+    private formatAmount(items: IProduct[]) {
+        const maps: {[key: number]: number} = {};
+        const cart = this.data.cart;
+        if (cart && cart.data) {
+            cart.data.forEach(group => {
+                group.goods_list.forEach(item => {
+                    if (item.product_id && item.product_id > 0) {
+                        return;
+                    }
+                    if (maps[item.goods_id]) {
+                        maps[item.goods_id] += item.amount;
+                    } else {
+                        maps[item.goods_id] = item.amount;
+                    }
+                });
+            })
+        }
+        for (const item of items) {
+            item.amount = maps[item.id] || 0;
+        }
+        this.setData({items});
     }
 }
 </script>
@@ -245,6 +296,9 @@ page {
 }
 .tab-bar {
     border-bottom: 1px solid #ccc;
+}
+.store-body {
+    margin-bottom: 80px;
 }
 .goods-list {
     display: block;

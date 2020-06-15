@@ -2872,7 +2872,7 @@ footer,
         width: 100%;
     }
     .store-body {
-        margin-top: 184px;
+        margin-top: 190px;
     }
     &.min,
     &.min-up {

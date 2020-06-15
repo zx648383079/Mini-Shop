@@ -1,22 +1,28 @@
-import {fetch, post} from '../utils/http';
-import { IData, ICart, IPayment, IShipping, ICartItem, IOrder } from './model';
+import {fetch, post, put, deleteRequest} from '../utils/http';
+import { IData, ICart, IPayment, IShipping, ICartItem, IOrder, ICartDialog } from './model';
 
 export const getCart = (params?: any) => fetch<ICart>('shop/cart', params)
 
-export const addGoods = (goods: number, amount: number = 1, properties = []) => post<ICart>('shop/cart/add', {
+export const addGoods = (goods: number, amount: number = 1, properties = []) => post<ICart | ICartDialog>('shop/cart/add', {
     goods,
     amount,
     properties,
 });
 
-export const updateItem = (id: number, amount: number = 1) => post<ICart>('shop/cart/update', {
+export const updateGoods = (goods: number, amount: number = 1, properties = []) => post<ICart | ICartDialog>('shop/cart/update_goods', {
+    goods,
+    amount,
+    properties,
+});
+
+export const updateItem = (id: number, amount: number = 1) => put<ICart>('shop/cart/update', {
     id,
     amount,
 });
 
-export const deleteItem = (id: number) => post<ICart>('shop/cart/delete', {
-    id,
-});
+export const deleteItem = (id: number) => deleteRequest<ICart>('shop/cart/delete?id=' + id);
+
+export const deleteAll = () => post<ICart>('shop/cart/clear', {});
 
 export const getPaymentList = (goods?: number[], shipping?: number) =>
     post<IData<IPayment>>('shop/cashier/payment', {goods, shipping});

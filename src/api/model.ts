@@ -145,6 +145,7 @@ export interface ICartItem {
     price?: number;
     checked?: boolean;
     goods_id: number,
+    product_id?: number,
     goods?: IProduct;
 }
 
@@ -177,6 +178,11 @@ export interface ICartSubtotal {
     original_total: number;
     discount_amount: number;
     count: number;
+}
+
+export interface ICartDialog {
+    dialog: boolean; // 需要弹窗选择属性
+    data: IProduct;
 }
 
 export interface ICart {
@@ -455,6 +461,7 @@ export interface ISite {
     goods: number;
     category: number;
     brand: number;
+    currency: string;
 }
 
 export const SET_GOODS_HISTORY = 'SET_GOODS_HISTORY';
