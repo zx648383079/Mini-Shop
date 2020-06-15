@@ -23,25 +23,25 @@
                         </div>
                         <div class="goods-info">
                             <h4>{{ goods.name }}</h4>
-                            <span class="price">{{ goods.price | price }}</span>
+                            <span class="price">￥{{ goods.price }}</span>
                             <span class="amount"> x {{ goods.amount }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="order-amount">
-                    <p class="text-right">共 {{ order.goods.length }} 件 合计：{{ order.goods_amount }}</p>
+                    <p class="text-right">共 {{ order.goods.length }} 件 合计：￥{{ order.goods_amount }}</p>
                     <p class="line-item"><span>订单号</span> <span>{{ order.series_number }}</span> </p>
                     <p class="line-item"><span>下单时间</span> <span>{{ order.created_at }}</span> </p>
-                    <p class="line-item" v-if="order.pay_at > 0"><span>支付时间</span> <span>{{ order.pay_at | time }}</span> </p>
-                    <p class="line-item" v-if="order.shipping_at > 0"><span>发货时间</span> <span>{{ order.shipping_at | time }}</span> </p>
-                    <p class="line-item" v-if="order.receive_at > 0"><span>签收时间</span> <span>{{ order.receive_at | time }}</span> </p>
-                    <p class="line-item" v-if="order.finish_at > 0"><span>完成时间</span> <span>{{ order.finish_at | time }}</span> </p>
+                    <p class="line-item" v-if="order.pay_at > 0"><span>支付时间</span> <span>{{ order.pay_at }}</span> </p>
+                    <p class="line-item" v-if="order.shipping_at > 0"><span>发货时间</span> <span>{{ order.shipping_at }}</span> </p>
+                    <p class="line-item" v-if="order.receive_at > 0"><span>签收时间</span> <span>{{ order.receive_at }}</span> </p>
+                    <p class="line-item" v-if="order.finish_at > 0"><span>完成时间</span> <span>{{ order.finish_at }}</span> </p>
                     <div class="hr"></div>
-                    <p class="line-item"><span>商品总价</span> <span>{{ order.goods_amount }}</span> </p>
-                    <p class="line-item"><span>+运费</span> <span>{{ order.shipping_fee }}</span> </p>
-                    <p class="line-item"><span>+支付手续费</span> <span>{{ order.pay_fee }}</span> </p>
-                    <p class="line-item"><span>-优惠</span> <span>{{ order.discount }}</span> </p>
-                    <p class="line-item"><span>订单总价</span> <span>{{ order.order_amount }}</span> </p>
+                    <p class="line-item"><span>商品总价</span> <span>￥{{ order.goods_amount }}</span> </p>
+                    <p class="line-item"><span>+运费</span> <span>￥{{ order.shipping_fee }}</span> </p>
+                    <p class="line-item"><span>+支付手续费</span> <span>￥{{ order.pay_fee }}</span> </p>
+                    <p class="line-item"><span>-优惠</span> <span>￥{{ order.discount }}</span> </p>
+                    <p class="line-item"><span>订单总价</span> <span>￥{{ order.order_amount }}</span> </p>
                 </div>
                 <div class="order-footer">
                     <div class="order-actions">

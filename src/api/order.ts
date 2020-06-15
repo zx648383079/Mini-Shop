@@ -1,4 +1,4 @@
-import { IOrder, IPage, IOrderCount, IOrderGoods, IData, IDataOne, IPrePay } from './model';
+import { IOrder, IPage, IOrderCount, IOrderGoods, IData, IDataOne, IPrePay, ILogistics } from './model';
 import { fetch, post } from '../utils/http';
 
 
@@ -23,3 +23,5 @@ export const getCommentGoods = (params: any) => fetch<IPage<IOrderGoods>>('shop/
 export const getUnCommentGoods = (params: any) => fetch<IData<IOrderGoods>>('shop/order/comment_goods', params);
 
 export const commentGoods = (params: any) => post<IDataOne<boolean>>('shop/order/comment_save', params);
+
+export const orderLogistics = (id: number) => fetch<IData<ILogistics>>('shop/order/logistics', {id});

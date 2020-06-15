@@ -17,7 +17,7 @@
             <div class="group-item" v-for="(group, j) in cart.data" :key="j">
                 <div class="item" v-for="(item, index) in group.goods_list" :key="index">
                     <div class="name">{{ item.goods.name }}</div>
-                    <div class="price">{{ item.price }}</div>
+                    <div class="price">￥{{ item.price }}</div>
                     <div class="item-actions">
                         <i class="fa fa-minus-circle" v-if="item.amount && item.amount > 0"  @click="tapMinus(index, j)"></i>
                         <span class="amount-input" v-if="item.amount && item.amount > 0">{{ item.amount }}</span>
@@ -32,7 +32,7 @@
                 <span class="amount-tip" v-if="cart && cart.subtotal.count > 0">{{ cart.subtotal.count > 99 ? '99+' : cart.subtotal.count }}</span>
             </div>
             <div class="subtotal">
-                <div class="price">{{ cart.data.length > 0 ? cart.subtotal.total : '未选购商品' }}</div>
+                <div class="price">{{ cart.data.length > 0 ? '￥' + cart.subtotal.total : '未选购商品' }}</div>
                 <p class="tip" v-if="cart.promotion_cell && cart.promotion_cell.length > 0">另需配送费</p>
                 <p class="tip" v-else>已包邮</p>
             </div>

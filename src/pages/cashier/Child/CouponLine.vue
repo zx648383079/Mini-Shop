@@ -13,7 +13,7 @@
 
         </div>
         <div slot="footer">
-            <button>确定</button>
+            <button class="dialog-yes">确定</button>
         </div>
     </DialogPanel>
 </template>

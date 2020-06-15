@@ -321,6 +321,12 @@ export interface IOrderGoods {
     goods: IProduct;
 }
 
+export interface ILogistics {
+    id: number;
+    content: string;
+    created_at: string;
+}
+
 export interface ICheckIn {
     id: number,
     created_at: string,

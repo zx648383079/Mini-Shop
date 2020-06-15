@@ -6,9 +6,9 @@
                 {{ order.order_amount }}
             </div>
             <div class="checkout-amount">
-                <p class="line-item"><span>商品总价</span> <span>{{ order.goods_amount | price }}</span> </p>
-                <p class="line-item"><span>运费</span> <span>{{ order.shipping_fee | price }}</span> </p>
-                <p class="line-item"><span>订单总价</span> <span>{{ order.order_amount | price }}</span> </p>
+                <p class="line-item"><span>商品总价</span> <span>￥{{ order.goods_amount }}</span> </p>
+                <p class="line-item"><span>运费</span> <span>￥{{ order.shipping_fee }}</span> </p>
+                <p class="line-item"><span>订单总价</span> <span>￥{{ order.order_amount }}</span> </p>
             </div>
             <div class="payment-item {{payment.id == order.payment_id ? 'active' : ''}}" v-if="payment" @click="tapMainSelected">
                 <div class="icon">

@@ -7,7 +7,7 @@
             {{ item.name }}
         </div>
         <div class="item-actions">
-            <span class="item-price">{{ item.price | price }}
+            <span class="item-price">￥{{ item.price }}
             </span>
             <span @click="tapAddCart">加入购物车</span>
         </div>

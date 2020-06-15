@@ -38,7 +38,7 @@
                     </div>
                     <div class="item-info">
                         <div class="item-title">{{item.name}}</div>
-                        <span class="item-price">{{item.price}}</span>
+                        <span class="item-price">￥{{item.price}}</span>
                         <div class="item-actions">
                             <i class="fa fa-minus" v-if="item.amount && item.amount > 0"  @click="tapMinus(index)"></i>
                             <span v-if="item.amount && item.amount > 0">{{ item.amount }}</span>

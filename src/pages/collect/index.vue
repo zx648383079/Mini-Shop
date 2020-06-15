@@ -9,7 +9,7 @@
                         </div>
                         <div class="goods-info">
                             <h4>{{item.goods.name}}</h4>
-                            <span>{{ item.goods.price }}</span>
+                            <span>￥{{ item.goods.price }}</span>
                         </div>
                     </div>
                 </MpSlideView>

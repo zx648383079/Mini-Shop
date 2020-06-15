@@ -32,7 +32,7 @@
             <span @click="toggleCheckAll">全选</span>
 
             <div class="cart-amount">
-                <span>{{ total }}</span>
+                <span>￥{{ total }}</span>
                 <span @click="tapCashier" class="btn">结算</span>
             </div>
         </div>
@@ -86,6 +86,10 @@ export class Index extends WxPage<IPageData> {
     };
 
     onLoad() {
+        
+    }
+
+    onShow() {
         this.setData({
             isGuest: !app.globalData.token
         });

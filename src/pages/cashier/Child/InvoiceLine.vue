@@ -11,22 +11,23 @@
             <div class="input-group">
                 <label>发票类型</label>
                 <div class="radio-box">
-                    <span class="active">普通发票</span>
-                    <span>电子普通发票</span>
-                    <span class="disable">增值税专用发票</span>
+                    <span v-for="(item, index) in typeList" :key="index"  :class="{active: value.type == index}" @click="value.type = index">
+                            {{ item }}
+                     </span>
                 </div>
                 <div class="tip">电子普通发票与纸质普通发票具备同等法律效力，可支持报销入账</div>
             </div>
             <div class="input-group">
                 <label>发票抬头</label>
                 <div class="radio-box">
-                    <span class="active">个人</span>
-                    <span>单位</span>
+                    <span v-for="(item, index) in titleTypeList" :key="index" :class="{active: value.title_type == index}" @click="value.title_type = index">
+                            {{ item }}
+                    </span>
                 </div>
             </div>
             <div class="input-group">
-                <input type="text" placeholder="抬头">
-                <input type="text" placeholder="税号">
+                <input type="text" placeholder="抬头" v-model="value.title">
+                <input type="text" placeholder="税号" v-model="value.tax_no">
             </div>
             <div class="input-line">
                 <p><span>收票人手机</span><span></span></p>
@@ -35,21 +36,26 @@
             <div class="input-group">
                 <label>发票内容</label>
                 <div class="radio-box">
-                    <span class="active">商品明细</span>
-                    <span>商品类别</span>
+                    <span v-for="(item, index) in detailType" :key="index"  :class="{active: value.detail_type == index}" @click="value.detail_type = index">
+                            {{ item }}
+                     </span>
                 </div>
             </div>
         </div>
         <div slot="footer">
-            <button>确定</button>
+            <button class="dialog-yes" @click="tapConfirm">确定</button>
         </div>
     </DialogPanel>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent } from "../../../../typings/wx/lib.vue";
+import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
+import { IInvoiceTitle } from "../../../api/model";
 
 interface IComponentData {
-    value?: any,
+    value?: IInvoiceTitle,
+    titleTypeList: string[];
+    typeList: string[];
+    detailType: string[];
 }
 
 @WxJson({
@@ -65,6 +71,17 @@ export class InvoiceLine extends WxComponent<IComponentData>  {
 
     public properties = {
         value: Object,
+    }
+
+    public data: IComponentData = {
+        titleTypeList: ['个人', '企业'],
+        typeList: ['增值税普通发票', '增值税专用发票'],
+        detailType: ['商品明细', '商品类别'],
+    }
+
+    @WxMethod()
+    tapConfirm() {
+        this.triggerEvent('input', this.data.value);
     }
 }
 </script>

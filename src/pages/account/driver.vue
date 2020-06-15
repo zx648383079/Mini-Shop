@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="tip">
-            最新登陆设备：点击可以查看登陆时间
+            最新登录设备：点击可以查看登录时间
         </div>
         <div class="item" v-for="(item, index) in items" :key="index">
             <div class="name">{{ item.name }}</div>
@@ -21,7 +21,7 @@ interface IPageData {
 }
 
 @WxJson({
-    navigationBarTitleText: "登陆设备管理",
+    navigationBarTitleText: "登录设备管理",
     navigationBarBackgroundColor: "#05a6b1",
     navigationBarTextStyle: "white"
 })

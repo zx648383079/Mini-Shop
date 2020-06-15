@@ -28,11 +28,11 @@
             
 
             <div class="checkout-amount" v-if="order">
-                <p class="line-item"><span>商品总价</span> <span data-key="goods_amount">{{ order.goods_amount }}</span> </p>
-                <p class="line-item"><span>+运费</span> <span data-key="shipping_fee">{{ order.shipping_fee }}</span> </p>
-                <p class="line-item"><span>+支付手续费</span> <span data-key="pay_fee">{{ order.pay_fee }}</span> </p>
-                <p class="line-item"><span>-优惠</span> <span data-key="discount">{{ order.discount }}</span> </p>
-                <p class="line-item"><span>订单总价</span> <span data-key="order_amount">{{ order.order_amount }}</span> </p>
+                <p class="line-item"><span>商品总价</span> <span data-key="goods_amount">￥{{ order.goods_amount }}</span> </p>
+                <p class="line-item"><span>+运费</span> <span data-key="shipping_fee">￥{{ order.shipping_fee }}</span> </p>
+                <p class="line-item"><span>+支付手续费</span> <span data-key="pay_fee">￥{{ order.pay_fee }}</span> </p>
+                <p class="line-item"><span>-优惠</span> <span data-key="discount">￥{{ order.discount }}</span> </p>
+                <p class="line-item"><span>订单总价</span> <span data-key="order_amount">￥{{ order.order_amount }}</span> </p>
             </div>
 
             <div class="address-tip" v-if="address">

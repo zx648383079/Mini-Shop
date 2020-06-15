@@ -52,7 +52,7 @@
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
                 <a class="item" href="/pages/account/driver">
-                    登陆设备管理
+                    登录设备管理
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
                 <a class="item" href="/pages/account/cancel">

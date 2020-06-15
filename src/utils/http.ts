@@ -119,16 +119,17 @@ export function post<T>(url: string, data = {}, option?: IRequestOption): Promis
     return request<T>('POST', {
         url,
         data,
-    });
+    }, option);
 }
 /**
  * 删除请求
  * @param url 
  * @param loading 是否显示加载中
  */
-export function deleteRequest<T>(url: string, option?: IRequestOption): Promise<T> {
+export function deleteRequest<T>(url: string, params = {}, option?: IRequestOption): Promise<T> {
     return request<T>('DELETE', {
         url,
+        params,
     }, option);
 }
 

@@ -85,7 +85,7 @@
                             {{ item.name }}
                         </div>
                         <div class="item-actions">
-                            <span class="item-price">{{ item.price | price }}</span>
+                            <span class="item-price">￥{{ item.price }}</span>
                         </div>
                     </div>
                 </div>

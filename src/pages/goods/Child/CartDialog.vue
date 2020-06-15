@@ -3,7 +3,7 @@
         <div class="dialog-body" @click.stop>
             <div class="dialog-header">
                 <img :src="product.thumb" alt="">
-                <p class="price">{{ product.price }}</p>
+                <p class="price">￥{{ product.price }}</p>
                 <p class="stock">库存：{{ product.stock }}</p>
                 <p class="selected-property"></p>
                 <i class="fa fa-close dialog-close" @click="tapClose"></i>
@@ -33,7 +33,7 @@
 </template>
 <script lang="ts">
 import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
-import { IProduct, ICart, ICartGroup } from "../../../api/model";
+import { IProduct, ICartGroup } from "../../../api/model";
 import { addGoods } from "../../../api/cart";
 import {
     IMyApp

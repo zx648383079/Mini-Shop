@@ -11,13 +11,13 @@
                 </div>
                 <div class="goods-info">
                     <h4>{{ goods.name }}</h4>
-                    <span class="price">{{ goods.price | price }}</span>
+                    <span class="price">￥{{ goods.price }}</span>
                     <span class="amount"> x {{ goods.amount }}</span>
                 </div>
             </div>
         </div>
         <div class="order-amount">
-            共 {{ item.goods.length }} 件 合计：{{ item.goods_amount }}
+            共 {{ item.goods.length }} 件 合计：￥{{ item.goods_amount }}
         </div>
         <div class="order-footer">
             <div class="order-actions">
