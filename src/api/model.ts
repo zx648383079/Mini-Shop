@@ -238,7 +238,7 @@ export interface ICard {
     type: number,
     icon: string,
     bank: string,
-    card_number: string,
+    card_no: string,
     status: number,
     created_at: string
 }

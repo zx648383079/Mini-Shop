@@ -13,7 +13,7 @@
                     {{ item.type == 1 ? '信用卡' : '储蓄卡' }}
                 </div>
                 <div class="card-no">
-                    {{ item.card_number }}
+                    {{ item.card_no }}
                 </div>
             </div>
         </div>
