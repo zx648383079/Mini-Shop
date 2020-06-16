@@ -29,9 +29,9 @@
 
             <div class="checkout-amount" v-if="order">
                 <p class="line-item"><span>商品总价</span> <span data-key="goods_amount">￥{{ order.goods_amount }}</span> </p>
-                <p class="line-item"><span>+运费</span> <span data-key="shipping_fee">￥{{ order.shipping_fee }}</span> </p>
-                <p class="line-item"><span>+支付手续费</span> <span data-key="pay_fee">￥{{ order.pay_fee }}</span> </p>
-                <p class="line-item"><span>-优惠</span> <span data-key="discount">￥{{ order.discount }}</span> </p>
+                <p class="line-item"><span>+运费</span> <span data-key="shipping_fee">￥{{ order.shipping_fee || 0 }}</span> </p>
+                <p class="line-item"><span>+支付手续费</span> <span data-key="pay_fee">￥{{ order.pay_fee || 0 }}</span> </p>
+                <p class="line-item"><span>-优惠</span> <span data-key="discount">￥{{ order.discount || 0 }}</span> </p>
                 <p class="line-item"><span>订单总价</span> <span data-key="order_amount">￥{{ order.order_amount }}</span> </p>
             </div>
 
@@ -39,7 +39,7 @@
                 {{ address.region.full_name }} {{ address.address }}
             </div>
             <div class="checkout-footer" v-if="order">
-                <span data-key="order_amount">{{ order.order_amount }}</span>
+                <span data-key="order_amount">￥{{ order.order_amount }}</span>
                 <div @click="tapCheckout" class="btn">立即支付</div>
             </div>
         </div>
@@ -137,11 +137,16 @@ export class Index extends WxPage<IPageData> {
             return;
         }
         getShippingList(this.data.cart_box.goods, this.data.address.id, this.data.cart_box.type).then(res => {
-            if (res.data) {
+            if (res.data && res.data.length > 0) {
                 this.setData({
                     shipping_list: res.data
                 });
+                return;
             }
+            wx.showToast({
+                icon: 'none',
+                title: '当前地址不支持配送',
+            })
         })
     }
 
@@ -174,7 +179,32 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapCheckout() {
-        if (!this.data.address || !this.data.cart_box || !this.data.shipping || !this.data.payment) {
+        if (!this.data.address) {
+            wx.showToast({
+                icon: 'none',
+                title: '请选择收货地址'
+            });
+            return;
+        }
+        if (!this.data.cart_box) {
+            wx.showToast({
+                icon: 'none',
+                title: '请选择结算商品'
+            });
+            return;
+        }
+        if (!this.data.shipping) {
+            wx.showToast({
+                icon: 'none',
+                title: '请选择配送方式'
+            });
+            return;
+        }
+        if (!this.data.payment) {
+            wx.showToast({
+                icon: 'none',
+                title: '请选择支付方式'
+            });
             return;
         }
         checkoutOrder(

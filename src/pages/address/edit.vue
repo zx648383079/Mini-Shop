@@ -92,7 +92,7 @@ export class Edit extends WxPage<IPageData> {
             }
             this.setData({
                 address: res,
-                region: res.region_name ? res.region_name.split(' ') : [],
+                region: res.region ? (res.region.full_name as string).split(' ') : [],
             });
         });
     }
@@ -217,5 +217,9 @@ switch {
     background-color: #d22222;
     color: #fff;
     display: block;
+}
+.region-box {
+    padding-top: 5px;
+    box-sizing: border-box;
 }
 </style>

@@ -115,7 +115,7 @@ export class CartDialog extends WxComponent<IComponentData>  {
             return;
         }
         if (this.data.mode == 1) {
-            addGoods(this.data.product.id, this.data.amount).then(res => {
+            addGoods(this.data.product.id, this.data.amount).then(_ => {
                 wx.showToast({
                     title: '已成功加入购物车'
                 });

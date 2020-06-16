@@ -6,7 +6,7 @@
                 <span class="name">{{ address.name }}</span>
                 <span class="tel">{{ address.tel }}</span>
             </p>
-            <p>{{ address.region.full_name }} {{ address.address }}</p>
+            <p class="desc">{{ address.region.full_name }} {{ address.address }}</p>
             <i class="fa fa-chevron-right"></i>
         </div>
         <div class="address-box empty-address" v-else>
@@ -49,6 +49,9 @@ export class AddressLine extends WxComponent<IComponentData>  {
 <style lang="scss" scoped>
 .address-box {
     background-color: #fff;
+}
+.desc {
+    font-size: 10px;
 }
 .empty-address {
     view {

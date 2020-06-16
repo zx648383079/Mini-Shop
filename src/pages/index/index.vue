@@ -99,10 +99,11 @@ import {
     IMyApp
 } from '../../app.vue';
 import { IAd, ICategory, IProduct, ISite, IHomeProduct } from '../../api/model';
-import { getHome, getInfo } from '../../api/product';
+import { getHome } from '../../api/product';
 import { getBanners } from '../../api/ad';
 import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 import { LOGIN_PATH } from '../../utils/types';
+import { addGoods } from '../../api/cart';
 
 const app = getApp<IMyApp>();
 
@@ -182,9 +183,15 @@ export class Index extends WxPage<IPageData> {
             });
             return;
         }
-        getInfo(id).then(res => {
+        addGoods(id, 1).then(res => {
+            if (!res.dialog) {
+                wx.showToast({
+                    title: '已成功加入购物车'
+                });
+                return;
+            }
             this.setData({
-                goods: res,
+                goods: res.data,
                 mode: 1
             });
         });

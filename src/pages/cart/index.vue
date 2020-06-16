@@ -17,9 +17,9 @@
                                 <h4>{{ cart.goods.name }}</h4>
                                 <span>￥{{ cart.price }}</span>
                                 <div class="number-box">
-                                    <i class="fa fa-minus"></i>
-                                    <input type="text" name="" value="{{cart.amount}}">
-                                    <i class="fa fa-plus"></i>
+                                    <i class="fa fa-minus" @click="tapMinus" data-group="{{ index }}" data-cart="{{ i }}"></i>
+                                    <input type="text" value="{{cart.amount}}" bind:input="tapAmountChange" data-group="{{ index }}" data-cart="{{ i }}">
+                                    <i class="fa fa-plus" @click="tapPlus" data-group="{{ index }}" data-cart="{{ i }}"></i>
                                 </div>
                             </div>
                         </div>
@@ -54,8 +54,8 @@ import {
     IMyApp
 } from '../../app.vue';
 import { ICartItem, ICartGroup } from '../../api/model';
-import { getCart, deleteItem } from '../../api/cart';
-import { WxPage, WxJson, TouchEvent, CustomEvent } from '../../../typings/wx/lib.vue';
+import { getCart, deleteItem, updateItem } from '../../api/cart';
+import { WxPage, WxJson, TouchEvent, CustomEvent, InputEvent } from '../../../typings/wx/lib.vue';
 
 const app = getApp<IMyApp>();
 
@@ -210,6 +210,40 @@ export class Index extends WxPage<IPageData> {
             checkId
         });
         this.refresh();
+    }
+
+    public tapMinus(e: TouchEvent) {
+        let items = this.data.items;
+        let item = items[e.currentTarget.dataset.group as number];
+        let cart = item.goods_list[e.currentTarget.dataset.cart as number];
+        if (cart.amount < 2) {
+            return;
+        }
+        updateItem(cart.id as number, cart.amount - 1).then(res => {
+            this.formatCart(res.data);
+        });
+    }
+
+    public tapPlus(e: TouchEvent) {
+        let items = this.data.items;
+        let item = items[e.currentTarget.dataset.group as number];
+        let cart = item.goods_list[e.currentTarget.dataset.cart as number];
+        updateItem(cart.id as number, cart.amount + 1).then(res => {
+            this.formatCart(res.data);
+        });
+    }
+
+    public tapAmountChange(e: InputEvent) {
+        let items = this.data.items;
+        let item = items[e.currentTarget.dataset.group as number];
+        let cart = item.goods_list[e.currentTarget.dataset.cart as number];
+        let amount = parseInt(e.detail.value, 10);
+        if (amount < 1) {
+            amount = 1;
+        }
+        updateItem(cart.id as number, amount).then(res => {
+            this.formatCart(res.data);
+        });
     }
 
     public slideButtonTap(e: CustomEvent) {

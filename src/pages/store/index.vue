@@ -56,9 +56,10 @@
 <script lang="ts">
 import { WxPage, WxJson, TouchEvent } from '../../../typings/wx/lib.vue';
 import { IProduct, IStore } from '../../api/model';
-import { getList, getInfo } from '../../api/product';
+import { getList } from '../../api/product';
 import { getStore, toggleCollect } from '../../api/store';
 import { IMyApp } from '../../app.vue';
+import { addGoods } from '../../api/cart';
 
 const app = getApp<IMyApp>();
 
@@ -167,9 +168,15 @@ export class Index extends WxPage<IPageData> {
             });
             return;
         }
-        getInfo(id).then(res => {
+        addGoods(id, 1).then(res => {
+            if (!res.dialog) {
+                wx.showToast({
+                    title: '已成功加入购物车'
+                });
+                return;
+            }
             this.setData({
-                goods: res,
+                goods: res.data,
                 mode: 1
             });
         });
