@@ -15,7 +15,7 @@
     "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-typescript": "^5.0.1",
-    "gulp-vue2mini": "^1.0.5",
+    "gulp-vue2mini": "^1.0.6",
     "node-sass": "^4.14.1",
     "typescript": "^3.9.5"
   },
