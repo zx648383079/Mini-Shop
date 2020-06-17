@@ -50,27 +50,16 @@ export interface IMyApp {
 @WxAppJson({
     pages: [
         "pages/index/index",
-        "pages/account/index",
-        "pages/account/card",
-        "pages/account/cardNew",
-        "pages/account/log",
         "pages/account/center",
         "pages/account/bind",
         "pages/account/cancel",
         "pages/account/connect",
         "pages/account/driver",
-        "pages/account/certification",
-        "pages/authorize/index",
         "pages/address/index",
         "pages/address/edit",
         "pages/article/index",
         "pages/article/detail",
         "pages/article/category",
-        "pages/affiliate/index",
-        "pages/affiliate/order",
-        "pages/affiliate/rule",
-        "pages/affiliate/share",
-        "pages/affiliate/user",
         "pages/comment/index",
         "pages/comment/create",
         'pages/collect/index',
@@ -78,8 +67,6 @@ export interface IMyApp {
         "pages/goods/history",
         "pages/goods/comment",
         "pages/cart/index",
-        "pages/coupon/index",
-        "pages/coupon/my",
         "pages/cashier/index",
         "pages/cashier/pay",
         "pages/checkin/index",
@@ -96,16 +83,12 @@ export interface IMyApp {
         "pages/order/index",
         "pages/order/detail",
         "pages/order/logistics",
-        "pages/refund/index",
-        "pages/refund/create",
-        "pages/invoice/index",
-        "pages/invoice/apply",
-        "pages/invoice/edit",
-        "pages/invoice/log",
-        "pages/invoice/title",
-        "pages/setting/index",
         "pages/store/index",
         "pages/store/quick",
+        "pages/legwork/index",
+        "pages/legwork/order",
+        "pages/legwork/room",
+        "pages/legwork/runner",
     ],
     window: {
         backgroundTextStyle: 'light',
@@ -1546,7 +1529,8 @@ footer,
 
 .cart-footer {
     background-color: $white;
-
+    line-height: 2.5rem;
+    padding-left: 5px;
     .check-box {
         font-size: 1rem;
         width: 3.125rem;
@@ -1564,7 +1548,7 @@ footer,
             margin-right: 0;
             background-color: #b4282d;
             color: $white;
-            line-height: 2rem;
+            line-height: 2.5rem;
         }
     }
 }

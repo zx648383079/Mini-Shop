@@ -1,5 +1,4 @@
 import { Md5 } from 'ts-md5';
-
 import { appId, secret } from '../config/config';
 export * from '../config/config';
 

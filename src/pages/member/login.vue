@@ -5,27 +5,22 @@
                 <div class="logo">
                     <img :src="site.logo" mode="widthFix">
                 </div>
-                <span @click="tapMode" data-mode="1" class="btn">手机号登录</span>
-                <span @click="tapMode" data-mode="3" class="btn btn-none">邮箱登录</span>
-                <span @click="tapMode" data-mode="4">手机号快捷注册</span>
 
-                <div class="login-oauth-box">
-                    <button open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="tapAuth"><i class="fa fa-wechat"></i></button>
-                </div>
+                <button class="auth-btn" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="tapAuth">
+                    <i class="fa fa-wechat"></i> 微信登录</button>
+                <span @click="tapMode" data-mode="3" class="btn btn-none">邮箱登录</span>
+                <span @click="tapMode" data-mode="5">邮箱注册</span>
             </div>
             <div class="login-box" v-if="mode > 0 && mode < 4">
                 <div class="logo">
                     <img :src="site.logo" mode="widthFix">
                 </div>
-                <MobileLogin v-if="mode == 1" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
-                <MobileCodeLogin v-if="mode == 2" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
                 <EmailLogin v-if="mode == 3" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
             </div>
             <div class="register-box" v-if="mode >= 4">
                 <div class="logo">
                     <img :src="site.logo" mode="widthFix">
                 </div>
-                <MobileRegister v-if="mode == 4" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
                 <EmailRegister v-if="mode == 5" bind:click="tapChangeMode" bind:back="tapLoginBack"/>
                 <EmailFind v-if="mode == 6" bind:click="tapChangeMode"/>
             </div>
@@ -49,9 +44,6 @@ interface IPageData {
     usingComponents: {
         "EmailLogin": "/pages/member/Child/EmailLogin",
         "EmailRegister": "/pages/member/Child/EmailRegister",
-        "MobileCodeLogin": "/pages/member/Child/MobileCodeLogin",
-        "MobileLogin": "/pages/member/Child/MobileLogin",
-        "MobileRegister": "/pages/member/Child/MobileRegister",
         "EmailFind": "/pages/member/Child/EmailFind",
     },
     navigationBarTitleText: "登录",
@@ -174,5 +166,14 @@ export class Index extends WxPage<IPageData> {
 }
 navigator {
     display: inline-block;
+}
+.auth-btn {
+    display: block;
+    margin: 0 0 10px;
+    line-height: 40px;
+    height: 40px;
+    background-color: #b4282d;
+    color: #fff;
+
 }
 </style>

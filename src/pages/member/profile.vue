@@ -47,10 +47,6 @@
                     修改密码
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
-                <a class="item" href="/pages/account/certification">
-                    实名认证
-                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
-                </a>
                 <a class="item" href="/pages/account/driver">
                     登录设备管理
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>

@@ -9,7 +9,7 @@ import { WxJson, WxPage } from '../../../typings/wx/lib.vue';
 interface IPageData {
 }
 @WxJson({
-    navigationBarTitleText: "售后",
+    navigationBarTitleText: "查看消息",
     navigationBarBackgroundColor: "#f4f4f4",
     navigationBarTextStyle: "black"
 })

@@ -1,7 +1,7 @@
 <template>
     <div>
         <header class="top">
-            <a class="search-entry" @click="$router.push('/search')">
+            <a class="search-entry" href="/pages/search/index">
                 <i class="fa fa-search"></i>
                 <span>搜索商品, 共 {{ subtotal ? subtotal.goods : 0 }} 款好物</span>
             </a>
@@ -13,7 +13,7 @@
 
             <scroll-view class="category-main" v-if="category" scroll-y="true"> 
                 <div class="item active">
-                    <div class="banner">
+                    <div class="banner" v-if="category.banner">
                         <img :src="category.banner" mode="widthFix">
                     </div>
                     <div class="header">
@@ -112,5 +112,7 @@ export class Index extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
-
+page {
+    background-color: #f4f4f4;
+}
 </style>

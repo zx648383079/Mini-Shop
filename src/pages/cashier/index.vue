@@ -22,9 +22,6 @@
                 <ShippingLine v-model="shipping" :items="shipping_list"/>
                 
             </div>
-
-            <InvoiceLine v-model="invoice"/>
-            <CouponLine v-model="coupon"/>
             
 
             <div class="checkout-amount" v-if="order">
@@ -212,7 +209,7 @@ export class Index extends WxPage<IPageData> {
             this.data.address.id, this.data.shipping.id, this.data.payment.id, this.data.cart_box.type).then(res => {
             app.globalData.cart = [];
             app.globalData.order = res;
-            wx.navigateTo({
+            wx.redirectTo({
                 url: 'pay?id=' + res.id
             });
         });

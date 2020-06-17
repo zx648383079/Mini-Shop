@@ -37,7 +37,7 @@ export class Create extends WxPage<IPageData> {
     }
 
     public tapCommented(i: number) {
-        if (this.items.length < 2) {
+        if (this.data.items.length < 2) {
             wx.navigateBack({
                 delta: 0
             });
@@ -52,5 +52,8 @@ export class Create extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 
 </style>

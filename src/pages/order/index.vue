@@ -13,7 +13,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxPage, TouchEvent } from '../../../typings/wx/lib.vue';
+import { WxJson, WxPage, TouchEvent, InputEvent } from '../../../typings/wx/lib.vue';
 import { ORDER_STATUS, IOrder } from '../../api/model';
 import { getOrder, receiveOrder, cancelOrder } from '../../api/order';
 
@@ -133,13 +133,14 @@ export class Index extends WxPage<IPageData> {
         this.tapRefresh();
     }
 
-    public tapReceive(item: IOrder) {
+    public tapReceive(e: InputEvent) {
+        const id = e.detail as number;
         let that = this;
         wx.showModal({
             title: '提示',
             content: '确认已收到商品？',
             success() {
-                receiveOrder(item.id).then(res => {
+                receiveOrder(id).then(res => {
                     that.refreshItem(res);
                 });
             }
@@ -152,7 +153,7 @@ export class Index extends WxPage<IPageData> {
             if (items[i].id !== item.id) {
                 continue;
             }
-            if (this.data.status > 0 && item.status !== this.data.status) {
+            if (this.data.status > 0 && item.status != this.data.status) {
                 items.splice(i, 1);
                 break;
             }
@@ -164,13 +165,14 @@ export class Index extends WxPage<IPageData> {
         });
     }
 
-    public tapCancel(item: IOrder) {
+    public tapCancel(e: InputEvent) {
+        const id = e.detail as number;
         let that = this;
         wx.showModal({
             title: '提示',
             content: '确认取消此订单？',
             success() {
-                cancelOrder(item.id).then(res => {
+                cancelOrder(id).then(res => {
                     that.refreshItem(res);
                 })
             }

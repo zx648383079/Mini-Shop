@@ -2,7 +2,7 @@
     <div class="slide-box">
         <div class="item" v-for="(item, index) in items" :key="index" :index="item.id">
             <MpSlideView buttons="{{ item.buttons }}" bindbuttontap="slideButtonTap" >
-                <div class="message-item" @click="tapRead" data-i="{{ index }}">
+                <div class="message-item" @click="tapReadIndex(index)">
                     <div class="icon-header">
                         <span>{{ item.bulletin.icon }}</span>
                     </div>
@@ -88,6 +88,11 @@ export class Index extends WxPage<IPageData> {
                 return this.tapRemove(i);
             }
         }
+    }
+
+    public tapReadIndex(i: number) {
+        const item = this.data.items[i];
+        this.tapRead(item);
     }
 
     public tapRead(item: IBulletinUser) {

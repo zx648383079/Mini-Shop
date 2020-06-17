@@ -8,16 +8,16 @@
         </div>
         <div class="comment-input">
             <p>分享您的使用体验吧</p>
-            <textarea name="content" v-model="comment.content"></textarea>
-            <div class="multi-image-box">
+            <textarea name="content" v-model="comment.content" placeholder="填写使用体验"></textarea>
+            <!-- <div class="multi-image-box">
                 <div class="image-item" v-for="(img, i) in comment.images" :key="i">
                     <img :src="img.image" alt="">
                     <i class="fa fa-times" @click="tapRemove(i)"></i>
                 </div>
-                <div class="add-item" >
+                <div class="add-item" @click="tapUpload">
                     <i class="fa fa-plus"></i>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class="input-radio">
             <span>匿名评价</span>
@@ -32,7 +32,7 @@ import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
 import { commentGoods } from "../../../api/order";
 
 interface IComponentData {
-    item?: IOrderGoods[],
+    item?: IOrderGoods,
     comment: IComment
 }
 
@@ -69,6 +69,11 @@ export class CommentItem extends WxComponent<IComponentData>  {
     }
 
     @WxMethod()
+    tapUpload() {
+        
+    }
+
+    @WxMethod()
     tapSave() {
         if (!this.data.item) {
             return;
@@ -82,6 +87,7 @@ export class CommentItem extends WxComponent<IComponentData>  {
         };
         if (!comment.content || comment.content.length < 10) {
             wx.showToast({
+                icon: 'none',
                 title: '评论内容必须大于10个字符'
             });
             return;
@@ -93,5 +99,18 @@ export class CommentItem extends WxComponent<IComponentData>  {
 }
 </script>
 <style lang="scss" scoped>
-
+.comment-input {
+    textarea {
+        background-color: #fff;
+        width: 100%;
+    }
+}
+switch {
+    float: right;
+}
+.add-item {
+    .fa {
+        font-size: 2rem;
+    }
+}
 </style>

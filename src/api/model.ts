@@ -221,6 +221,7 @@ export interface IUser {
     token?: string;
     birthday?: string;
     sex?: number;
+    is_admin?: boolean;
 }
 
 export interface IAccountLog {
@@ -468,6 +469,41 @@ export interface ISite {
     category: number;
     brand: number;
     currency: string;
+}
+
+export interface ILegworkForm {
+    name: string;
+    label: string;
+    required?: boolean;
+    only?: boolean;
+    value?: string;
+}
+
+export interface ILegworkService {
+    id: number;
+    name: string;
+    thumb: string;
+    brief: string;
+    content: string;
+    price: number;
+    form: ILegworkForm[];
+}
+
+export interface ILegworkOrder {
+    id: number;
+    user_id: string,
+    service_id: number,
+    remark: ILegworkForm[],
+    order_amount: number,
+    runner: number,
+    status: number,
+    service_rank: number,
+    pay_at: string,
+    taking_at: string,
+    taken_at: string,
+    finish_at: string,
+    created_at: string,
+    updated_at: string,
 }
 
 export const SET_GOODS_HISTORY = 'SET_GOODS_HISTORY';

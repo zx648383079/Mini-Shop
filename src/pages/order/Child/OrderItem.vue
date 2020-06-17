@@ -25,9 +25,9 @@
                 <span @click="tapOrder">详情</span>
                 <span @click="tapReceive" v-if="item.status == ORDER_STATUS.SHIPPED">确认收货</span>
                 <span @click="tapComment" v-if="item.status == ORDER_STATUS.RECEIVED">评价</span>
-                <span @click="tapRefund" v-if="item.status == ORDER_STATUS.SHIPPED || item.status == ORDER_STATUS.PAID_UN_SHIP">申请退款</span>
+                <!-- <span @click="tapRefund" v-if="item.status == ORDER_STATUS.SHIPPED || item.status == ORDER_STATUS.PAID_UN_SHIP">申请退款</span>
                 <span @click="tapRefund" v-if="item.status == ORDER_STATUS.RECEIVED">退换货</span>
-                <span @click="tapRefund" v-if="item.status == ORDER_STATUS.FINISH">售后</span>
+                <span @click="tapRefund" v-if="item.status == ORDER_STATUS.FINISH">售后</span> -->
                 <span @click="tapCancel" v-if="item.status == ORDER_STATUS.UN_PAY || item.status == ORDER_STATUS.PAID_UN_SHIP">取消</span>
             </div>
         </div>
@@ -101,12 +101,18 @@ export class OrderItem extends WxComponent<IComponentData>  {
 
     @WxMethod()
     public tapReceive() {
-        this.triggerEvent('receive')
+        if (!this.data.item) {
+            return;
+        }
+        this.triggerEvent('receive', this.data.item.id);
     }
 
     @WxMethod()
     public tapCancel() {
-        this.triggerEvent('cancel')
+        if (!this.data.item) {
+            return;
+        }
+        this.triggerEvent('cancel', this.data.item.id);
     }
 }
 </script>

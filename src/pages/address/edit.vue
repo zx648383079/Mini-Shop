@@ -3,16 +3,19 @@
         <div>
             <form class="form-inline" bindsubmit="tapSubmit">
                 <div class="input-group">
-                    <input type="text" name="name" placeholder="收货人" required  value="{{ address.name }}">
+                    <input type="text" name="name" placeholder="收货人" required  v-model="address.name">
                 </div>
                 <div class="input-group">
-                    <input type="text" name="tel" placeholder="手机号" required value="{{ address.tel}}">
+                    <input type="text" name="tel" placeholder="手机号" required v-model="address.tel">
                 </div>
                  <picker
                         name="region"
-                        mode="region"
+                        range="{{ regionList }}"
+                        range-key="name"
+                        mode="multiSelector"
                         bindchange="bindRegionChange"
-                        value="{{region}}">
+                        bindcolumnchange="bindRegionColumn"
+                        value="{{regionIndex}}">
                     <div class="input-group region-box">
                         <span v-if="region && region.length === 3">{{region[0]}} {{region[1]}} {{region[2]}}</span>
                         <span v-else>请选择地区</span>
@@ -20,7 +23,7 @@
                 </picker>
                 
                 <div class="input-group">
-                    <textarea name="address" placeholder="详细地址" required value="{{ address.address }}"></textarea>
+                    <textarea name="address" placeholder="详细地址" required v-model="address.address"></textarea>
                 </div>
 
                 <div class="input-radio">
@@ -39,14 +42,18 @@ import {
     IMyApp
 } from '../../app.vue';
 import { WxJson, WxPage, CustomEvent } from '../../../typings/wx/lib.vue';
-import { IAddress } from '../../api/model';
+import { IAddress, IRegion } from '../../api/model';
 import { getAddress, updateAddress, createAddress, deleteAddress } from '../../api/address';
+import { getRegionChildren } from '../../api/region';
 const app = getApp<IMyApp>();
 
 interface IPageData {
     address: IAddress,
     back: number,
-    region: string[]
+    region: string[],
+    regionIndex: number[];
+    regionList: IRegion[][],
+    regionCache: {[id: number]: IRegion[]},
 }
 @WxJson({
     navigationBarTitleText: "编辑地址",
@@ -66,7 +73,10 @@ export class Edit extends WxPage<IPageData> {
             is_default: false,
         },
         back: 0,
-        region: []
+        region: [],
+        regionIndex: [0, 0, 0],
+        regionList: [[], [], []],
+        regionCache: {}
     }
 
     public onLoad(query?: any) {
@@ -75,13 +85,15 @@ export class Edit extends WxPage<IPageData> {
                 back: parseInt(query.back)
             });
         }
-        // getRegionTree().then(res => {
-        //     if (res.data) {
-        //         this.setData({
-        //             regions: res.data
-        //         });
-        //     }
-        // });
+        this.getChildren(0).then(res => {
+            this.getChildren(res[0].id).then(city => {
+                this.getChildren(city[0].id).then(dist => {
+                    this.setData({
+                        regionList: [res, city, dist]
+                    });
+                });
+            });
+        });
         const id = query && query.id ? parseInt(query.id) : 0;
         if (!id) {
             return;
@@ -92,22 +104,66 @@ export class Edit extends WxPage<IPageData> {
             }
             this.setData({
                 address: res,
-                region: res.region ? (res.region.full_name as string).split(' ') : [],
+                region: res.region && res.region.full_name ? (res.region.full_name as string).split(' ') : [],
             });
         });
     }
 
+    public getChildren(id: number): Promise<IRegion[]> {
+        const regionCache = this.data.regionCache;
+        return new Promise((resolve, reject) => {
+            if (regionCache[id]) {
+                resolve(regionCache[id]);
+                return;
+            }
+            getRegionChildren(id).then(res => {
+                regionCache[id] = res.data as IRegion[];
+                resolve(regionCache[id]);
+            }).catch(reject);
+        });
+    }
+
     switchChange(e: CustomEvent) {
-        // let address = this.data.address;
-        // address.is_default = e.detail.value;
-        // this.setData({
-        //     address
-        // });
+        let address = this.data.address;
+        address.is_default = e.detail.value;
+        this.setData({
+            address
+        });
+    }
+
+    bindRegionColumn(e: CustomEvent) {
+        this.changeRegion(e.detail.column as number, e.detail.value as number);
+    }
+
+    changeRegion(column: number, index: number) {
+        let data = this.data;
+        data.regionIndex[column] = index;
+        if (data.regionList[column].length < index) {
+            this.setData(data);
+            return;
+        }
+        if (column > 1) {
+            this.setData(data);
+            return;
+        }
+        this.getChildren(data.regionList[column][index].id).then(res => {
+            data.regionList[column + 1] = res;
+            this.changeRegion(column + 1, 0);
+        });
     }
 
     bindRegionChange(e: CustomEvent) {
+        let data = this.data;
+        const ids = e.detail.value as number[];
+        const region = [];
+        for (let i = 0; i < ids.length; i++) {
+            const val = ids[i];
+            const item = data.regionList[i][val];
+            region.push(item.name);
+            data.address.region_id = item.id;
+        }
         this.setData({
-            region: e.detail.value
+            region
         });
     }
 
@@ -119,7 +175,7 @@ export class Edit extends WxPage<IPageData> {
             });
             return;
         }
-        if (!address.region || address.region.length < 3) {
+        if (!this.data.region || this.data.region.length < 3) {
             wx.showToast({
                 title: '请选择收货地址'
             });
@@ -129,8 +185,8 @@ export class Edit extends WxPage<IPageData> {
             id: this.data.address.id,
             name: address.name,
             tel: address.tel,
-            region_id: 0,
-            region_name: address.region.join(' '),
+            region_id: this.data.address.region_id,
+            region_name: this.data.region.join(' '),
             address: address.address,
             is_default: address.is_default
         };
@@ -150,6 +206,7 @@ export class Edit extends WxPage<IPageData> {
             updateAddress(data).then(res => {
                 this.saveBack(res);
             });
+            return;
         }
         createAddress(data).then(res => {
             this.saveBack(res);
@@ -161,7 +218,7 @@ export class Edit extends WxPage<IPageData> {
             return;
         }
         
-        deleteAddress(this.data.address.id).then(res => {
+        deleteAddress(this.data.address.id).then(_ => {
             app.setAddressList([]);
             wx.navigateBack({
                 delta: 0
@@ -186,7 +243,7 @@ export class Edit extends WxPage<IPageData> {
         }
         app.setAddress(address);
         if (this.data.back === 1) {
-            wx.navigateTo({
+            wx.redirectTo({
                 url: '/pages/cashier/index'
             });
             return;

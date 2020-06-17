@@ -77,16 +77,17 @@ export class Index extends WxPage<IPageData> {
     }
 
     public tapSelected(e: TouchEvent) {
+        let item = this.data.items[e.currentTarget.dataset.i as number];
         if (this.data.mode < 1) {
+            this.tapEdit(item);
             return;
         }
-        let item = this.data.items[e.currentTarget.dataset.i as number];
         this.setData({
             selected: item.id
         });
         app.setAddress(item);
         if (this.data.mode === 1) {
-            wx.navigateTo({
+            wx.redirectTo({
                 url: '/pages/cashier/index'
             });
             return;

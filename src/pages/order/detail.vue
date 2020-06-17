@@ -13,7 +13,7 @@
                     <span class="name">{{ order.address.name }}</span>
                     <span class="tel">{{ order.address.tel }}</span>
                 </p>
-                <p>{{ order.address.region_name }} {{ order.address.address }}</p>
+                <p class="desc">{{ order.address.region_name }} {{ order.address.address }}</p>
             </div>
 
             <div class="goods-list" v-if="order.goods">
@@ -32,10 +32,10 @@
                     <p class="text-right">共 {{ order.goods.length }} 件 合计：￥{{ order.goods_amount }}</p>
                     <p class="line-item"><span>订单号</span> <span>{{ order.series_number }}</span> </p>
                     <p class="line-item"><span>下单时间</span> <span>{{ order.created_at }}</span> </p>
-                    <p class="line-item" v-if="order.pay_at > 0"><span>支付时间</span> <span>{{ order.pay_at }}</span> </p>
-                    <p class="line-item" v-if="order.shipping_at > 0"><span>发货时间</span> <span>{{ order.shipping_at }}</span> </p>
-                    <p class="line-item" v-if="order.receive_at > 0"><span>签收时间</span> <span>{{ order.receive_at }}</span> </p>
-                    <p class="line-item" v-if="order.finish_at > 0"><span>完成时间</span> <span>{{ order.finish_at }}</span> </p>
+                    <p class="line-item" v-if="order.pay_at"><span>支付时间</span> <span>{{ order.pay_at }}</span> </p>
+                    <p class="line-item" v-if="order.shipping_at"><span>发货时间</span> <span>{{ order.shipping_at }}</span> </p>
+                    <p class="line-item" v-if="order.receive_at"><span>签收时间</span> <span>{{ order.receive_at }}</span> </p>
+                    <p class="line-item" v-if="order.finish_at"><span>完成时间</span> <span>{{ order.finish_at }}</span> </p>
                     <div class="hr"></div>
                     <p class="line-item"><span>商品总价</span> <span>￥{{ order.goods_amount }}</span> </p>
                     <p class="line-item"><span>+运费</span> <span>￥{{ order.shipping_fee }}</span> </p>
@@ -48,9 +48,9 @@
                         <span @click="tapPay" v-if="order.status == ORDER_STATUS.UN_PAY">支付</span>
                         <span @click="tapReceive" v-if="order.status == ORDER_STATUS.SHIPPED">确认收货</span>
                         <span @click="tapComment" v-if="order.status == ORDER_STATUS.RECEIVED">评价</span>
-                        <span @click="tapRefund" v-if="order.status == ORDER_STATUS.SHIPPED || order.status == ORDER_STATUS.PAID_UN_SHIP">申请退款</span>
+                        <!-- <span @click="tapRefund" v-if="order.status == ORDER_STATUS.SHIPPED || order.status == ORDER_STATUS.PAID_UN_SHIP">申请退款</span>
                         <span @click="tapRefund" v-if="order.status == ORDER_STATUS.RECEIVED">退换货</span>
-                        <span @click="tapRefund" v-if="order.status == ORDER_STATUS.FINISH">售后</span>
+                        <span @click="tapRefund" v-if="order.status == ORDER_STATUS.FINISH">售后</span> -->
                         <span @click="tapCancel" v-if="order.status == ORDER_STATUS.UN_PAY || order.status == ORDER_STATUS.PAID_UN_SHIP">取消</span>
                     </div>
                 </div>
@@ -105,7 +105,7 @@ export class Detail extends WxPage<IPageData> {
             return;
         }
         wx.navigateTo({
-            url: '/pages/pay/index?id=' + this.data.order.id
+            url: '/pages/cashier/pay?id=' + this.data.order.id
         });
     }
 
@@ -167,5 +167,10 @@ export class Detail extends WxPage<IPageData> {
 <style lang="scss" scoped>
 page {
     background-color: #f4f4f4;
+}
+.address-box {
+    .desc {
+        font-size: 10px;
+    }
 }
 </style>

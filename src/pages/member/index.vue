@@ -35,44 +35,17 @@
         </div>
         <div class="menu-large" v-if="user">
             <MenuLargeItem class="item" title="待付款" icon="fa-money" uri="/pages/order/index?status={{ORDER_STATUS.UN_PAY}}" count="{{order_subtotal.un_pay}}"/>
+            <MenuLargeItem class="item" title="待发货" icon="fa-exchange" uri="/pages/order/index?status={{ORDER_STATUS.PAID_UN_SHIP}}" count="{{order_subtotal.paid_un_ship}}"/>
             <MenuLargeItem class="item" title="待收货" icon="fa-shipping-fast" uri="/pages/order/index?status={{ORDER_STATUS.SHIPPED}}" count="{{order_subtotal.shipped}}"/>
             <MenuLargeItem class="item" title="待评价" icon="fa-comment" uri="/pages/comment/index" count="{{order_subtotal.uncomment}}"/>
-            <MenuLargeItem class="item" title="退换货" icon="fa-exchange" uri="/pages/refund/index" count="{{order_subtotal.refunding}}"/>
-        </div>
-
-        <div class="menu-panel" v-if="user">
-            <a href="/pages/account/index" class="panel-header">
-                <i class="fa fa-wallet" aria-hidden="true"></i>
-                我的钱包
-                <i class="fa fa-chevron-right" aria-hidden="true"></i>
-            </a>
-            <div class="panel-body">
-                <a href="/pages/account/index" class="item">
-                    <span class="menu-item-icon">{{ accountSubtotal.money || 0 }}
-                    </span>
-                    余额
-                </a><a href="" class="item">
-                    <span class="menu-item-icon">{{ accountSubtotal.integral || 0 }}
-                    </span>
-                    积分
-                </a><a href="" class="item">
-                    <span class="menu-item-icon">{{ accountSubtotal.bonus || 0 }}
-                    </span>
-                    红包
-                </a><a href="/pages/coupon/my" class="item">
-                    <span class="menu-item-icon">{{ accountSubtotal.coupon || 0 }}
-                    </span>
-                    优惠券
-                </a>
-            </div>
         </div>
 
         <div class="menu-list">
-            <MenuItem class="item" title="扫一扫" icon="fa-scan" @click="tapScan" v-if="user"/>
             <MenuItem class="item" title="签到" icon="fa-et-checking-in" uri="/pages/checkin/index" v-if="user"/>
             <MenuItem class="item" title="我的收货地址" icon="fa-map" uri="/pages/address/index" v-if="user"/>
+            <MenuItem class="item" title="代取件" icon="fa-runner" uri="/pages/legwork/index" v-if="user"/>
+            <MenuItem class="item" title="代取件管理" icon="fa-runner" uri="/pages/legwork/runner" v-if="user && user.is_admin"/>
             <MenuItem class="item" title="浏览历史" icon="fa-history" uri="/pages/goods/history"/>
-            <MenuItem class="item" title="我的推荐" icon="fa-share" uri="/pages/affiliate/index" v-if="user"/>
             <MenuItem class="item" title="帮助" icon="fa-help" uri="/pages/article/index"/>
             <MenuItem class="item" title="反馈" icon="fa-comment" uri="/pages/feedback/index"/>
         </div>
@@ -85,7 +58,6 @@ import {
 import { IUser, ORDER_STATUS, IOrderCount, ISubtotal } from '../../api/model';
 import { getOrderSubtotal } from '../../api/order';
 import { WxPage, WxJson } from '../../../typings/wx/lib.vue';
-import { getAccountSubtotal } from '../../api/account';
 
 const app = getApp<IMyApp>();
 
@@ -135,11 +107,11 @@ export class Index extends WxPage<IPageData> {
                 order_subtotal: res
             });
         });
-        getAccountSubtotal().then(res => {
-            this.setData({
-                accountSubtotal: res
-            });
-        })
+        // getAccountSubtotal().then(res => {
+        //     this.setData({
+        //         accountSubtotal: res
+        //     });
+        // })
     }
 
     public tapScan() {

@@ -18,7 +18,7 @@
                 <div class="checkbox" @click="agree = !agree">
                     <i :class="['fa', agree ? 'fa-check-square' : 'fa-square']"></i>
                 </div>
-                同意<span @click="tapaAgreement">本站协议</span>
+                同意<span @click="tapaAgreement">注册协议</span>
 
                 <span class="right" @click="tapMode" data-mode="0">返回登录</span>
             </div>
@@ -26,7 +26,8 @@
         <div class="agreement-box" v-if="mode == 1">
             <div class="title">注册协议</div>
             <div class="content">
-                <p>本程序使用过程中产生的数据仅对本人公开，不会对外公布，但会存储了服务器，直到用户注销，用户产生的数据都会被删除。</p>
+                <p>本程序使用过程中产生的数据，不会对外公布，但会存储了服务器，直到用户注销，用户产生的数据都会被删除。</p>
+                <p>本商城只支持微信支付，因此订单已微信支付成功为准，以微信支付对账单为准。</p>
             </div>
             <div class="footer">
                 <div class="btn" @click="tapAgree">我已阅读并同意协议</div>
@@ -125,7 +126,10 @@ export class EmailRegister extends WxComponent<IComponentData>  {
                 });
                 return;
             }
-            this.triggerEvent('back');
+            wx.redirectTo({
+                url: '/pages/account/bind'
+            });
+            //this.triggerEvent('back');
         });
     }
 

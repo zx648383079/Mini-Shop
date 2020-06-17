@@ -8,10 +8,9 @@
                 <i class="fa fa-search"></i>
                 <span>搜索商品, 共{{ subtotal ? subtotal.goods : 0 }}款好物</span>
             </a>
-            <a v-if="isGuest" href="/pages/member/login">登录</a>
-            <a v-if="!isGuest" href="/pages/message/index">
-                <i class="fa fa-message"></i>
-            </a>
+            <button class="servcie-btn" open-type="contact" lang="zh_CN">
+                <i class="fa fa-service"></i>
+            </button>
         </header>
 
         <div class="has-header">
@@ -220,5 +219,18 @@ page {
 .has-header {
     background-color: #f4f4f4;
     margin-top:46px;
+}
+.servcie-btn {
+    line-height: 30px;
+    background-color: #05a6b1;
+    border: none;
+    &[type=default] {
+        background-color: #05a6b1;
+        border: none;
+    }
+    .fa {
+        font-size: 20px;
+        color: #fff;
+    }
 }
 </style>

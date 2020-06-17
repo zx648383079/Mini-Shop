@@ -195,8 +195,10 @@ export class Pay extends WxPage<IPageData> {
                 },
                 fail(res) { 
                     wx.showToast({
+                        icon: 'none',
                         title: '支付失败,'+ res.errMsg
                     });
+                    return;
                     wx.redirectTo({
                         url: '/pages/order/detail?id=' + order_id
                     });
@@ -207,5 +209,13 @@ export class Pay extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 
+.fixed-footer {
+    .btn {
+        line-height: 3rem;
+    }
+}
 </style>
