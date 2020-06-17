@@ -16,7 +16,7 @@
             <block v-for="(item, index) in items" :key="index">
                 <dl class="article-item" @click="tapArticle(item.id)">
                     <dt class="item-dt">{{ item.title }}
-                        <span class="book-time">{{ item.crated_at }}</span></dt>
+                        <span class="book-time">{{ item.created_at }}</span></dt>
                     <dd class="item-dd">
                         <p class="item-p">{{ item.description }}</p>
                         <div class="tags">
@@ -175,6 +175,10 @@ page {
         line-height: 30px;
         font-weight: 800;
         font-size: 18px;
+    }
+    .book-time {
+        font-size: 10px;
+        color: #ccc;
     }
     .item-dd {
         .item-p {

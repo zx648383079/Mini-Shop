@@ -9,7 +9,7 @@
                 <div class="goods-list">
                     <MpSlideView v-for="(cart, i) in item.goods_list" :key="i" buttons="{{ cart.buttons }}" bindbuttontap="slideButtonTap">
                         <div class="cart-item goods-item">
-                            <i class="fa check-box {{ cart.checked ? 'active' : ''}}" @click="toggleCheck" data-group="{{ index }}" data-cart="{{ i }}"></i>
+                            <i class="fa check-box {{ cart.is_checked ? 'active' : ''}}" @click="toggleCheck" data-group="{{ index }}" data-cart="{{ i }}"></i>
                             <div class="goods-img">
                                 <img :src="cart.goods.thumb" alt="">
                             </div>
@@ -109,13 +109,16 @@ export class Index extends WxPage<IPageData> {
     }
 
     public formatCart(cart: ICartGroup[]) {
+        if (!cart) {
+            cart = [];
+        }
+        for (const item of cart) {
+            item.checked = this.isCheckGroup(item);
+            item.goods_list = this.formatButton(item.goods_list);
+        }
         this.setData({
             isLoading: false,
-            items: !cart ? [] : cart.map(item => {
-                item.checked = this.isCheckGroup(item);
-                item.goods_list = this.formatButton(item.goods_list);
-                return item;
-            })
+            items: cart
         });
         this.refresh();
     }
@@ -130,7 +133,7 @@ export class Index extends WxPage<IPageData> {
         }
         for (const item of this.data.items) {
             for (const cart of item.goods_list) {
-                if (cart.checked && cart.price) {
+                if (cart.is_checked && cart.price) {
                     total += cart.amount * cart.price;
                 }
             }
@@ -147,7 +150,7 @@ export class Index extends WxPage<IPageData> {
         for (const item of items) {
             item.checked = check;
             for (const cart of item.goods_list) {
-                cart.checked = check;
+                cart.is_checked = check;
                 if (check) {
                     checkId.push(cart.id as number);
                 }
@@ -167,7 +170,7 @@ export class Index extends WxPage<IPageData> {
         item.checked = !item.checked;
         let checkId = this.data.checkId;
         for (const cart of item.goods_list) {
-            cart.checked = item.checked;
+            cart.is_checked = item.checked;
             const i = checkId.indexOf(cart.id as number);
             if (item.checked && i < 0) {
                 checkId.push(cart.id as number);
@@ -191,16 +194,16 @@ export class Index extends WxPage<IPageData> {
         let items = this.data.items;
         let item = items[e.currentTarget.dataset.group as number];
         let cart = item.goods_list[e.currentTarget.dataset.cart as number];
-        cart.checked = !cart.checked;
+        cart.is_checked = !cart.is_checked;
         let check = this.data.checkedAll;
         let checkId = this.data.checkId;
         const i = checkId.indexOf(cart.id as number);
-        if (cart.checked && i < 0) {
+        if (cart.is_checked && i < 0) {
             checkId.push(cart.id as number);
-        } else if (!cart.checked && i >= 0) {
+        } else if (!cart.is_checked && i >= 0) {
             checkId.splice(i, 1);
         }
-        if (!cart.checked) {
+        if (!cart.is_checked) {
             check = false;
             item.checked = false;
         }
@@ -257,7 +260,7 @@ export class Index extends WxPage<IPageData> {
         for (const item of this.data.items) {
             const items: ICartItem[] = [];
             for (const cart of item.goods_list) {
-                if (cart.checked) {
+                if (cart.is_checked) {
                     items.push(cart);
                 }
             }
@@ -294,11 +297,11 @@ export class Index extends WxPage<IPageData> {
     }
 
     private formatButton(res: any[]): any[] {
-        return res.map(item => {
+        for (const item of res) {
             if (item.goods.name.length > 15) {
                 item.goods.name = item.goods.name.substr(0, 15) + '...';
             }
-            item.checked = this.isCheckItem(item);
+            item.is_checked = this.isCheckItem(item);
             item.buttons = [
                 {
                     type: 'warn',
@@ -306,8 +309,8 @@ export class Index extends WxPage<IPageData> {
                     data: item.id,
                 }
             ];
-            return item;
-        });
+        }
+        return res;
     }
 }
 </script>

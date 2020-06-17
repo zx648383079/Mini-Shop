@@ -150,7 +150,7 @@ export class Index extends WxPage<IPageData> {
     public refreshItem(item: IOrder) {
         let items = this.data.items;
         for (let i = 0; i < items.length; i++) {
-            if (items[i].id !== item.id) {
+            if (items[i].id != item.id) {
                 continue;
             }
             if (this.data.status > 0 && item.status != this.data.status) {

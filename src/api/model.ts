@@ -143,7 +143,7 @@ export interface ICartItem {
     id?: number;
     amount: number;
     price?: number;
-    checked?: boolean;
+    is_checked?: boolean;
     goods_id: number,
     product_id?: number,
     goods?: IProduct;

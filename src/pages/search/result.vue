@@ -189,6 +189,9 @@ export class Result extends WxPage<IPageData> {
 }
 </script>
 <style lang="scss" scoped>
+page {
+    background-color: #f4f4f4;
+}
 .home-btn {
     .fa {
         font-size: 28px;

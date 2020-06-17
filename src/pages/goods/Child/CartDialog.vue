@@ -20,7 +20,7 @@
                     <span>数量</span>
                     <div class="number-box">
                         <i class="fa fa-minus" @click="tapMinus"></i>
-                        <input type="text" class="number-input" value="{{amount}}" @change="tapChangeAmount">
+                        <input type="text" class="number-input" value="{{amount}}" bind:input="tapChangeAmount">
                         <i class="fa fa-plus" @click="tapPlus"></i>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
     </div>
 </template>
 <script lang="ts">
-import { WxJson, WxComponent, WxMethod } from "../../../../typings/wx/lib.vue";
+import { WxJson, WxComponent, WxMethod, InputEvent } from "../../../../typings/wx/lib.vue";
 import { IProduct, ICartGroup } from "../../../api/model";
 import { addGoods } from "../../../api/cart";
 import {
@@ -89,17 +89,17 @@ export class CartDialog extends WxComponent<IComponentData>  {
     }
 
     @WxMethod()
-    public tapChangeAmount() {
-        if (this.data.amount < 1) {
-            this.data.amount = 1;
-            return;
+    public tapChangeAmount(e: InputEvent) {
+        let amount = e.detail.value;
+        if (amount < 1) {
+            amount = 1;
+        } else {
+            const stock = this.getStock();
+            if (amount > stock) {
+                amount = stock;
+            }
         }
-        const stock = this.getStock();
-        if (this.data.amount > stock) {
-            this.setData({
-                amount: stock
-            });
-        }
+        this.setData({amount});
     }
 
     @WxMethod()

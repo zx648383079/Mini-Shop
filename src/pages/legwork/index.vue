@@ -14,9 +14,17 @@
                 <label>{{ item.label }}</label>
                 <input type="text" :placeholder="item.label" value="{{ item.value }}" bind:input="tapValueChange" data-i="{{ index }}">
             </div>
+            <div class="count-box">
+                <span>数量</span>
+                <div class="number-box">
+                    <i class="fa fa-minus" @click="tapMinus"></i>
+                    <input type="text" class="number-input" value="{{amount}}" bind:input="tapChangeAmount">
+                    <i class="fa fa-plus" @click="tapPlus"></i>
+                </div>
+            </div>
             <div class="price-input">
                 <span>服务费：</span>
-                <span class="price">￥{{ service.price }}</span>
+                <span class="price">￥{{ price }}</span>
             </div>
 
             <div class="btn del-btn" @click="tapSubmit">
@@ -45,6 +53,8 @@ interface IPageData {
     serviceList: ILegworkService[],
     serviceIndex: number;
     service: ILegworkService | null;
+    amount: number;
+    price: number;
 }
 @WxJson({
     navigationBarTitleText: "代取件",
@@ -56,6 +66,8 @@ export class Index extends WxPage<IPageData> {
         serviceList: [],
         serviceIndex: 0,
         service: null,
+        amount: 1,
+        price: 0,
     }
 
     public onLoad() {
@@ -66,7 +78,9 @@ export class Index extends WxPage<IPageData> {
             this.setData({
                 serviceList: res.data,
                 serviceIndex: 0,
+                amount: 1,
                 service: res.data[0],
+                price: res.data[0].price
             });
         });
     }
@@ -75,6 +89,7 @@ export class Index extends WxPage<IPageData> {
         const data = this.data;
         data.serviceIndex = i;
         data.service = data.serviceList[i];
+        data.price = data.service.price * data.amount;
         this.setData(data);
     }
     
@@ -86,6 +101,27 @@ export class Index extends WxPage<IPageData> {
         }
         const index = e.currentTarget.dataset.i as number;
         data.service.form[index].value = e.detail.value;
+        this.setData(data);
+    }
+
+    public tapMinus() {
+        let data = this.data;
+        data.amount = Math.max(1, data.amount - 1);
+        data.price = data.service ? data.service.price * data.amount : 0;
+        this.setData(data);
+    }
+
+    public tapPlus() {
+        let data = this.data;
+        data.amount = Math.max(1, data.amount + 1);
+        data.price = data.service ? data.service.price * data.amount : 0;
+        this.setData(data);
+    }
+
+    public tapChangeAmount(e: InputEvent) {
+        let data = this.data;
+        data.amount = Math.max(1, e.detail.value);
+        data.price = data.service ? data.service.price * data.amount : 0;
         this.setData(data);
     }
 
@@ -107,6 +143,7 @@ export class Index extends WxPage<IPageData> {
         }
         createOrder({
             service_id: data.service.id,
+            amount: data.amount,
             remark
         }).then(res => {
             if (!res.data) {
@@ -214,6 +251,15 @@ page {
         color: red;
         font-weight: 700;
         font-size: 20px;
+    }
+}
+.count-box {
+    line-height: 30px;
+    .number-box {
+        float: right;
+    }
+    .fa {
+        vertical-align: top;
     }
 }
 </style>

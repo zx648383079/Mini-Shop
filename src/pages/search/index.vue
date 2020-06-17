@@ -4,8 +4,8 @@
             <div class="search-box">
                 <div class="form-box">
                     <i class="fa fa-search" @click="tapConfirm"></i>
-                    <input type="text" name="keywords" value="{{ keywords }}" bindinput="onKeyUp" placeholder="搜索" autocomplete="off">
-                    <i class="fa fa-close" v-if="keywords && keywords.length > 0" @click="tapClearSearch" confirm-type="search" bindconfirm="tapConfirm"></i>
+                    <input type="text" name="keywords" value="{{ keywords }}" bindinput="onKeyUp" placeholder="搜索" autocomplete="off" confirm-type="search" bindconfirm="tapConfirm">
+                    <i class="fa fa-close" v-if="keywords && keywords.length > 0" @click="tapClearSearch"></i>
                 </div>
                 <a class="cancel-btn" href="/pages/index/index" open-type="switchTab">取消</a>
             </div>
