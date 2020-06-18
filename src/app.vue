@@ -3278,6 +3278,45 @@ footer,
     display: block;
     margin: 40px auto 0;
 }
+
+.legwork-item {
+    background-color: #fff;
+    margin-bottom: 10px;
+    .order-header {
+        line-height: 30px;
+
+        .status {
+            float: right;
+        }
+    }
+
+    .order-amount {
+        background-color: #fafafa;
+        .amount {
+            font-weight: 700;
+            color: red;
+        }
+        .price {
+            float: right;
+        }
+    }
+    .order-actions {
+        text-align: right;
+        text {
+            margin-left: 5px;
+        }
+    }
+    .order-remark {
+        border: 1px double #ccc;
+        .line-item {
+            color: #777;
+            .val {
+                float: right;
+            }
+        }
+    }
+}
+
 .hr {
     border-bottom: 1px solid #333;
 }

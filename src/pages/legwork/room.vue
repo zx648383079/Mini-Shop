@@ -2,13 +2,14 @@
     <div>
         <div class="has-footer">
             <div>
-                <div class="order-item" v-for="(item, index) in items" :key="index">
+                <div class="legwork-item" v-for="(item, index) in items" :key="index">
                     <div class="order-header">
                         <span>{{ item.id }}</span>
                         <span class="status">{{ item.status_label }}</span>
                     </div>
                      <div class="order-amount">
                         <span>【{{ item.service.name }}】</span>
+                        <span class="amount">x {{ item.amount }}</span>
                         <span class="price">
                             服务费：￥{{ item.order_amount }}
                         </span>
@@ -124,28 +125,5 @@ export class Room extends WxPage<IPageData> {
 page {
     background-color: #f4f4f4;
 }
-.order-item {
-    background-color: #fff;
-    margin-bottom: 10px;
-    .order-header {
-        line-height: 30px;
 
-        .status {
-            float: right;
-        }
-    }
-
-    .order-amount {
-        background-color: #f4f4f4;
-        .price {
-            float: right;
-        }
-    }
-    .order-actions {
-        text-align: right;
-        text {
-            margin-left: 5px;
-        }
-    }
-}
 </style>

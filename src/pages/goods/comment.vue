@@ -54,6 +54,7 @@ export class Comment extends WxPage<IPageData> {
         let item_id = parseInt(query.id);
         if (!item_id) {
             wx.showToast({
+                icon: 'none',
                 title: '商品错误'
             });
             wx.switchTab({

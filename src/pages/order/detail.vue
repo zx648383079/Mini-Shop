@@ -86,6 +86,7 @@ export class Detail extends WxPage<IPageData> {
         const id = parseInt(query.id);
         if (!id) {
             wx.showToast({
+                icon: 'none',
                 title: '订单错误'
             });
             wx.switchTab({

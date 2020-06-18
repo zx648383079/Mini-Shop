@@ -247,6 +247,7 @@ page {
 .price-input {
     line-height: 30px;
     text-align: right;
+    margin-top: 5px;
     .price {
         color: red;
         font-weight: 700;

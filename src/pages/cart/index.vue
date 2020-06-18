@@ -43,7 +43,7 @@
                 <a href="/pages/member/login" class="btn">登录</a>
             </div>
             <div v-else>
-                <p>购物车时空的</p>
+                <p>购物车是空的</p>
                 <a href="/pages/index/index" open-type="switchTab" class="btn">去逛逛</a>
             </div>
         </div>

@@ -73,6 +73,7 @@ export class Pay extends WxPage<IPageData> {
         const id = parseInt(query.id);
         if (!id) {
             wx.showToast({
+                icon: 'none',
                 title: '订单错误'
             });
             wx.switchTab({
@@ -83,6 +84,7 @@ export class Pay extends WxPage<IPageData> {
         app.getOrder(id).then(res => {
             if (res.status != ORDER_STATUS.UN_PAY) {
                 wx.showToast({
+                    icon: 'none',
                     title: '订单无法支付'
                 });
                  wx.switchTab({
@@ -146,6 +148,7 @@ export class Pay extends WxPage<IPageData> {
     tapPay() {
         if (!this.data.payment || !this.data.order) {
             wx.showToast({
+                icon: 'none',
                 title: '请选择支付方式'
             });
             return;
@@ -193,10 +196,10 @@ export class Pay extends WxPage<IPageData> {
                         url: '/pages/order/detail?id=' + order_id
                     });
                 },
-                fail(res) { 
+                fail() { 
                     wx.showToast({
                         icon: 'none',
-                        title: '支付失败,'+ res.errMsg
+                        title: '支付失败'
                     });
                     return;
                     wx.redirectTo({

@@ -140,10 +140,20 @@ export class Index extends WxPage<IPageData> {
                 });
                 return;
             }
-            wx.showToast({
-                icon: 'none',
-                title: '当前地址不支持配送',
-            })
+            wx.showModal({
+                title: '提示',
+                content: '当前地址不支持配送',
+                showCancel: false,
+            });
+        }, err => {
+            if (err.data && err.data.message) {
+                wx.hideToast();
+                wx.showModal({
+                    title: '提示',
+                    content: err.data.message,
+                    showCancel: false,
+                });
+            }
         })
     }
 
@@ -217,12 +227,12 @@ export class Index extends WxPage<IPageData> {
 
     public tapAddress() {
         if (!this.data.address_list || this.data.address_list.length < 1) {
-            wx.navigateTo({
+            wx.redirectTo({
                 url: '/pages/address/edit?back=1'
             });
             return;
         }
-        wx.navigateTo({
+        wx.redirectTo({
             url: '/pages/address/index?selected=' + (this.data.address ? this.data.address.id : '0')
         });
     }

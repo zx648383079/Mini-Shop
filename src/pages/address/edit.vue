@@ -171,12 +171,14 @@ export class Edit extends WxPage<IPageData> {
         let address = e.detail.value;
         if (!address) {
             wx.showToast({
+                icon: 'none',
                 title: '请完善收货地址'
             });
             return;
         }
         if (!this.data.region || this.data.region.length < 3) {
             wx.showToast({
+                icon: 'none',
                 title: '请选择收货地址'
             });
             return;
@@ -192,12 +194,14 @@ export class Edit extends WxPage<IPageData> {
         };
         if (!data.name) {
             wx.showToast({
+                icon: 'none',
                 title: '请输入收货人'
             });
             return;
         }
         if (!data.tel) {
             wx.showToast({
+                icon: 'none',
                 title: '请输入手机号'
             });
             return;
