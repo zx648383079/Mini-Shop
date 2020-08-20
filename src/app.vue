@@ -89,6 +89,7 @@ export interface IMyApp {
         "pages/legwork/order",
         "pages/legwork/room",
         "pages/legwork/runner",
+        "pages/browser/index",
     ],
     window: {
         backgroundTextStyle: 'light',
