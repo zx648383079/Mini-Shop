@@ -9,6 +9,8 @@ var gulp = require('gulp'),
     tsInstance = undefined,
     sassInstance = undefined;
 
+sass.compiler = require('sass');
+
 function getTs() { 
     if (!tsInstance) {
         tsInstance = tsProject();
