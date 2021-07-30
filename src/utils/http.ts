@@ -121,6 +121,21 @@ export function post<T>(url: string, data = {}, option?: IRequestOption): Promis
         data,
     }, option);
 }
+
+/**
+ * form 表单请求
+ * @param url 
+ * @param data 
+ * @param option 
+ * @returns 
+ */
+export function postForm<T = any>(url: string, data = {}, option: IRequestOption = {}): Promise<T> {
+    option.headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    };
+    return post(url, data, option);
+}
+
 /**
  * 删除请求
  * @param url 
@@ -224,7 +239,11 @@ export function uploadFile<T>(file: string, requestHandler: IRequest, name: stri
     });
 }
 
-
+/**
+ * 下载文件
+ * @param requestHandler 
+ * @returns 
+ */
 export function downloadFile(requestHandler: IRequest): Promise<WechatMiniprogram.DownloadFileSuccessCallbackResult> {
     let { url, params, headers, mask, loading } = requestHandler;
     loading = loading === undefined || loading;
